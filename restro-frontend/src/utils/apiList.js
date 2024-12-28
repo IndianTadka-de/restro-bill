@@ -1,4 +1,4 @@
-export const base_url = 'http://localhost:8080/api';
+export const base_url = 'https://restro-bill.onrender.com/api';
 
 export const orderList = 'orders';
 export const orderUpdate='';
