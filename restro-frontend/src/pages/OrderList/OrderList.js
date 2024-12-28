@@ -25,7 +25,7 @@ function OrderList() {
   // Handle payment option selection
   const handlePayment = async(record, paymentMethod) => {
     try {
-      const response = await axios.put(`${base_url}orders/${record.orderId}/paymentMethod`, { paymentMethod });
+      const response = await axios.put(`${base_url}/orders/${record.orderId}/paymentMethod`, { paymentMethod });
       if (response.status === 200) {
         toast.success("Order payment updated successfully", { position: "top-right" });
         setOrders((prev) =>
@@ -188,16 +188,20 @@ function OrderList() {
       title: "Actions",
       render: (_, record) => (
         <>
-         <Button
-            type="link"
-            onClick={() => genrateOrderBill(record)}
-            icon={<PrinterOutlined />} // Eye icon for "View"
-          />
-        <Button
-            type="link"
-            onClick={() => genrateOrder(record)}
-            icon={<DownloadOutlined />} // Eye icon for "View"
-          />
+         {record.paymentMethod && (
+            <>
+              <Button
+                type="link"
+                onClick={() => genrateOrder(record)}
+                icon={<DownloadOutlined />} // Eye icon for "View"
+              />
+              <Button
+                type="link"
+                onClick={() => genrateOrderBill(record)}
+                icon={<PrinterOutlined />} // Eye icon for "View"
+              />
+            </>
+          )}
           <Button
             type="link"
             onClick={() => navigate(`/orderDetails/${record.orderId}`)}
