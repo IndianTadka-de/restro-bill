@@ -39,6 +39,9 @@ export default function OrderForm({
         : [...prev, { ...item, quantity: 1 }]
     );
   };
+  const handleRemovePayload =(item) =>{
+    setOrderItems(orderItems.filter((i) => i.itemId !== item.itemId))
+  }
 
   const handleQuantityChange = (record, quantity) => {
     setOrderItems((prev) =>
@@ -50,6 +53,7 @@ export default function OrderForm({
 
   const handleSubmit = () => {
     const payload = { tableNumber, orderDate, orderItems, status };
+    payload.orderDate = getCurrentTime(payload.orderDate)
     onSubmit(payload);
   };
 
@@ -120,7 +124,7 @@ export default function OrderForm({
 
       {isModalOpen && (
         <Modal onClose={() => setIsModalOpen(false)}>
-          <ItemList data={orderItems} handleAddToPayload={handleAddItem} />
+          <ItemList data={orderItems} handleAddToPayload={handleAddItem} handleRemoveFromPayload={handleRemovePayload}/>
         </Modal>
       )}
     </div>
@@ -134,3 +138,12 @@ const getTodayDate = () => {
   const dd = String(today.getDate()).padStart(2, "0");
   return `${yyyy}-${mm}-${dd}`;
 };
+
+const getCurrentTime = (date) =>{
+const currentTime = new Date();
+const hours = String(currentTime.getHours()).padStart(2, '0');
+const minutes = String(currentTime.getMinutes()).padStart(2, '0');
+const seconds = String(currentTime.getSeconds()).padStart(2, '0');
+const dateWithTimeString = `${date}T${hours}:${minutes}:${seconds}`;
+return new Date(dateWithTimeString);
+}

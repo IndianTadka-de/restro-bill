@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import OrderForm from "../OrderForm/OrderFormer";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"; // Make sure to import the styles
+import { base_url } from "../../utils/apiList";
 
 export default function OrderCreate() {
   const navigate = useNavigate();
@@ -12,7 +13,7 @@ export default function OrderCreate() {
     try {
       setIsSubmitting(true);
 
-      const response = await fetch("https://restro-bill.onrender.com/api/orders", {
+      const response = await fetch(`${base_url}/orders`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),

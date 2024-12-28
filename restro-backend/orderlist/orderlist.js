@@ -6,6 +6,7 @@ const fs = require("fs");
 const path = require("path"); // Add this line at the top of your file
 const Counter = require("./models/counter.model");
 const Order = require("./models/orderlist.model");
+const moment = require('moment');
 
 /**
  * @swagger
@@ -592,29 +593,24 @@ router.get("/generate-bill/:orderId", async (req, res) => {
 
   doc.pipe(stream);
 
-  doc
-    .fontSize(12)
-    .font("Helvetica-Bold")
-    .text("Restaurant Bill", { align: "center" });
+  doc.fontSize(18).font("Helvetica-Bold").text("Indian Tadka", { align: "center" });
+  doc.fontSize(10).font("Helvetica").text("Friedrichstraße 69, 66538 Neunkirchen", { align: "center" });
+  doc.fontSize(10).font("Helvetica").text("Tel.: +4915212628877", { align: "center" });
   doc.moveDown(0.5);
-
-  doc.fontSize(10).font("Helvetica").text("Indian Tadka", { align: "center" });
-  doc.text("Friedrichstraße 69, 66538 Neunkirchen", { align: "center" });
-  doc.text("Tel.: +4915212628877", { align: "center" });
-  doc.moveDown(3);
-
   doc
-    .fontSize(10)
-    .font("Helvetica-Bold")
-    .text(`Order ID: ${order.displayId.substring(0, 15)}`);
-  doc.text(`Table Number: ${order.tableNumber}`);
-  doc.text(`Order Date: ${new Date(order.orderDate).toLocaleString()}`);
+  .fontSize(13)
+  .font("Helvetica-Bold")
+  .text(order.displayId,{align:"center"});
+  doc.moveDown(0.5)
+  //doc.text(order.orderDate);
+  doc.font('Helvetica').text(moment(order.orderDate).format('YYYY/MM/DD HH:mm'),{align:"center"});
+  doc.fontSize(10).text('________________________________')
+  doc.moveDown(1);
+  doc.fontSize(12).text(`Table Number: ${order.tableNumber}`);
   doc.moveDown(1);
 
-  doc.fontSize(9).font("Helvetica-Bold");
   const itemX = 10;
   const priceX = 50;
-  doc.fontSize(9).font("Helvetica");
 
   let total = 0;
   const itemByCategory = order.orderItems.reduce((acc, item) => {
@@ -626,13 +622,13 @@ router.get("/generate-bill/:orderId", async (req, res) => {
   }, {});
   Object.keys(itemByCategory).forEach((category) => {
     doc.fontSize(10).font("Helvetica-Bold").text(category);
-    doc.moveDown(0.5);
+    doc.moveDown(0.2);
 
     itemByCategory[category].forEach((item) => {
       const itemTotal = item.quantity * item.price;
       total += itemTotal;
 
-      doc.text(
+      doc.fontSize(8).font("Helvetica").text(
         `${item.quantity} X ${item.itemName}(#${item?.itemId})`,
         itemX,
         doc.y,
@@ -640,7 +636,7 @@ router.get("/generate-bill/:orderId", async (req, res) => {
       );
       // doc.text(item.quantity.toString(), qtyX , doc.y, { continued: true});
       doc.text(`€${itemTotal.toFixed(2)}`, priceX, doc.y, { align: "right" });
-      doc.moveDown();
+      //doc.moveDown();
     });
   });
 
@@ -653,8 +649,8 @@ router.get("/generate-bill/:orderId", async (req, res) => {
 
   doc
     .fontSize(9)
-    .font("Helvetica")
-    .text("Thank you for your order!", { align: "center" });
+    .font("Helvetica-Bold")
+    .text("Vielen Dank für Ihre Bestellung!", { align: "center" });
 
   doc.end();
 

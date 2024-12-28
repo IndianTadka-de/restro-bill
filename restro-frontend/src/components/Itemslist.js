@@ -14,8 +14,7 @@ const ItemList = ({ data, handleAddToPayload, handleRemoveFromPayload }) => {
 
 
   const filteredItems = ItemListData.filter((item) =>
-   item.itemName.toLowerCase().includes(searchTerm) || 
-    (item.itemId.toString().includes(searchTerm))
+   item.itemName.toLowerCase().includes(searchTerm) 
   );
 
   return (
@@ -36,7 +35,7 @@ const ItemList = ({ data, handleAddToPayload, handleRemoveFromPayload }) => {
             <Row style={{ width: '100%' }}>
               <Col span={16}>
                 <span className="item-name">{item.itemName}</span>
-                <p style={{ margin: 0 }}>{item.description}</p>
+                <p style={{ margin: 0 }}>{item.category}</p>
                 <p style={{ margin: 0, fontStyle: 'italic' }}>{item.price}</p>
               </Col>
               <Col span={8} style={{ textAlign: 'right' }}>

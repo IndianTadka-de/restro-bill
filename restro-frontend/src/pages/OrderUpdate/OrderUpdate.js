@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import OrderForm from "../OrderForm/OrderFormer";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { base_url } from "../../utils/apiList";
 
 export default function OrderUpdate() {
   const { id } = useParams();
@@ -12,7 +13,7 @@ export default function OrderUpdate() {
 
   const fetchOrderData = async (orderId) => {
     try {
-      const response = await fetch(`https://restro-bill.onrender.com/api/orders/${orderId}`);
+      const response = await fetch(`${base_url}/orders/${orderId}`);
       const data = await response.json();
       setInitialData({
         tableNumber: data.tableNumber,
@@ -36,7 +37,7 @@ export default function OrderUpdate() {
   const handleSubmit = async (payload) => {
     try {
       setIsSubmitting(true);
-      const response = await fetch(`http://localhost:8080/api/orders/${id}`, {
+      const response = await fetch(`${base_url}/orders/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -68,7 +69,7 @@ export default function OrderUpdate() {
   const handleStatusChange = async (status) => {
     try {
       setIsSubmitting(true);
-      const response = await fetch(`http://localhost:8080/api/orders/${id}/status`, {
+      const response = await fetch(`${base_url}/orders/${id}/status`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(status),

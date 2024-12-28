@@ -15,6 +15,7 @@ import { toast } from "react-toastify"; // Import toast for notifications
 import "react-toastify/dist/ReactToastify.css"; // Make sure to import the styles
 import * as XLSX from "xlsx"; // Import xlsx library for Excel functionality
 import "./OrderList.css";
+import { base_url, orderList } from "../../utils/apiList";
 
 function OrderList() {
   const navigate = useNavigate();
@@ -24,7 +25,7 @@ function OrderList() {
   // Handle payment option selection
   const handlePayment = async(record, paymentMethod) => {
     try {
-      const response = await axios.put(`https://restro-bill.onrender.com/api/orders/${record.orderId}/paymentMethod`, { paymentMethod });
+      const response = await axios.put(`${base_url}orders/${record.orderId}/paymentMethod`, { paymentMethod });
       if (response.status === 200) {
         toast.success("Order payment updated successfully", { position: "top-right" });
         setOrders((prev) =>
@@ -42,7 +43,7 @@ function OrderList() {
 
     try {
       // Send GET request to your backend route
-      const response = await axios.get(`https://restro-bill.onrender.com/api/generate-bill/${record.orderId}`, {
+      const response = await axios.get(`${base_url}/generate-bill/${record.orderId}`, {
         responseType: 'blob', // Ensure we handle the response as a Blob (binary data)
       });
 
@@ -68,7 +69,7 @@ function OrderList() {
   const genrateOrderBill = async (record) => {
     try {
       // Send GET request to your backend route
-      const response = await axios.get(`https://restro-bill.onrender.com/api/generate-bill/${record.orderId}`, {
+      const response = await axios.get(`${base_url}/generate-bill/${record.orderId}`, {
         responseType: 'blob', // Ensure we handle the response as a Blob (binary data)
       });
   
@@ -129,7 +130,7 @@ function OrderList() {
 
   const handleDeleteRow = async (record) => {
     try {
-      const response = await axios.delete(`https://restro-bill.onrender.com/api/orders/${record.orderId}`);
+      const response = await axios.delete(`${base_url}/orders/${record.orderId}`);
       if (response.status === 200) {
         setOrders((prev) => prev.filter((order) => order.orderId !== record.orderId));
         toast.success("Order deleted successfully", { position: "top-right" });
@@ -144,7 +145,7 @@ function OrderList() {
 
   const handleStatusChange = async (record, status) => {
     try {
-      const response = await axios.put(`https://restro-bill.onrender.com/api/orders/${record.orderId}/status`, { status });
+      const response = await axios.put(`${base_url}/orders/${record.orderId}/status`, { status });
       if (response.status === 200) {
         toast.success("Order status updated successfully", { position: "top-right" });
         setOrders((prev) =>
@@ -273,7 +274,7 @@ function OrderList() {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await axios.get("https://restro-bill.onrender.com/api/orders");
+        const response = await axios.get(`${base_url}/orders`);
         setOrders(response.data);
         setLoading(false);
       } catch (error) {

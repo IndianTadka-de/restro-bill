@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Table } from "antd";
 import "./OrderDetails.css";
+import { base_url } from "../../utils/apiList";
 
 export default function OrderDetails() {
   const { id } = useParams();
@@ -11,7 +12,7 @@ export default function OrderDetails() {
   const fetchOrderData = async (orderId) => {
     try {
       console.log("Fetching data...");
-      const response = await fetch(`https://restro-bill.onrender.com/api/orders/${orderId}`);
+      const response = await fetch(`${base_url}/orders/${orderId}`);
       const data = await response.json();
       console.log("Data fetched:", data);
       setOrderData(data);
