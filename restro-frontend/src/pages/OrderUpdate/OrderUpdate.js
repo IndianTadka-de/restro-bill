@@ -12,7 +12,7 @@ export default function OrderUpdate() {
 
   const fetchOrderData = async (orderId) => {
     try {
-      const response = await fetch(`http://localhost:8080/api/orders/${orderId}`);
+      const response = await fetch(`https://restro-bill.onrender.com/api/orders/${orderId}`);
       const data = await response.json();
       setInitialData({
         tableNumber: data.tableNumber,

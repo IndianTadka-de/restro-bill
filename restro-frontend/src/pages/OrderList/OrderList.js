@@ -24,7 +24,7 @@ function OrderList() {
   // Handle payment option selection
   const handlePayment = async(record, paymentMethod) => {
     try {
-      const response = await axios.put(`http://localhost:8080/api/orders/${record.orderId}/paymentMethod`, { paymentMethod });
+      const response = await axios.put(`https://restro-bill.onrender.com/api/orders/${record.orderId}/paymentMethod`, { paymentMethod });
       if (response.status === 200) {
         toast.success("Order payment updated successfully", { position: "top-right" });
         setOrders((prev) =>
@@ -42,7 +42,7 @@ function OrderList() {
 
     try {
       // Send GET request to your backend route
-      const response = await axios.get(`http://localhost:8080/api/generate-bill/${record.orderId}`, {
+      const response = await axios.get(`https://restro-bill.onrender.com/api/generate-bill/${record.orderId}`, {
         responseType: 'blob', // Ensure we handle the response as a Blob (binary data)
       });
 
@@ -68,7 +68,7 @@ function OrderList() {
   const genrateOrderBill = async (record) => {
     try {
       // Send GET request to your backend route
-      const response = await axios.get(`http://localhost:8080/api/generate-bill/${record.orderId}`, {
+      const response = await axios.get(`https://restro-bill.onrender.com/api/generate-bill/${record.orderId}`, {
         responseType: 'blob', // Ensure we handle the response as a Blob (binary data)
       });
   
@@ -129,7 +129,7 @@ function OrderList() {
 
   const handleDeleteRow = async (record) => {
     try {
-      const response = await axios.delete(`http://localhost:8080/api/orders/${record.orderId}`);
+      const response = await axios.delete(`https://restro-bill.onrender.com/api/orders/${record.orderId}`);
       if (response.status === 200) {
         setOrders((prev) => prev.filter((order) => order.orderId !== record.orderId));
         toast.success("Order deleted successfully", { position: "top-right" });
@@ -144,7 +144,7 @@ function OrderList() {
 
   const handleStatusChange = async (record, status) => {
     try {
-      const response = await axios.put(`http://localhost:8080/api/orders/${record.orderId}/status`, { status });
+      const response = await axios.put(`https://restro-bill.onrender.com/api/orders/${record.orderId}/status`, { status });
       if (response.status === 200) {
         toast.success("Order status updated successfully", { position: "top-right" });
         setOrders((prev) =>
@@ -273,7 +273,7 @@ function OrderList() {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await axios.get("http://localhost:8080/api/orders");
+        const response = await axios.get("https://restro-bill.onrender.com/api/orders");
         setOrders(response.data);
         setLoading(false);
       } catch (error) {

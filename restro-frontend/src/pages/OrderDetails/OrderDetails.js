@@ -11,7 +11,7 @@ export default function OrderDetails() {
   const fetchOrderData = async (orderId) => {
     try {
       console.log("Fetching data...");
-      const response = await fetch(`http://localhost:8080/api/orders/${orderId}`);
+      const response = await fetch(`https://restro-bill.onrender.com/api/orders/${orderId}`);
       const data = await response.json();
       console.log("Data fetched:", data);
       setOrderData(data);
