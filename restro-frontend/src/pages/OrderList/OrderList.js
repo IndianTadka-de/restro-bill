@@ -9,13 +9,13 @@ import {
   CheckCircleOutlined,
   DownloadOutlined,
   PayCircleOutlined, // Payment icon
-  PrinterOutlined
+  PrinterOutlined,
 } from "@ant-design/icons"; // Import icons for status update
 import { toast } from "react-toastify"; // Import toast for notifications
 import "react-toastify/dist/ReactToastify.css"; // Make sure to import the styles
 import * as XLSX from "xlsx"; // Import xlsx library for Excel functionality
 import "./OrderList.css";
-import { base_url, orderList } from "../../utils/apiList";
+import { base_url } from "../../utils/apiList";
 
 function OrderList() {
   const navigate = useNavigate();
@@ -23,36 +23,45 @@ function OrderList() {
   const [loading, setLoading] = useState(true);
 
   // Handle payment option selection
-  const handlePayment = async(record, paymentMethod) => {
+  const handlePayment = async (record, paymentMethod) => {
     try {
-      const response = await axios.put(`${base_url}orders/${record.orderId}/paymentMethod`, { paymentMethod });
+      const response = await axios.put(
+        `${base_url}/orders/${record.orderId}/paymentMethod`,
+        { paymentMethod }
+      );
       if (response.status === 200) {
-        toast.success("Order payment updated successfully", { position: "top-right" });
+        toast.success("Order payment updated successfully", {
+          position: "top-right",
+        });
         setOrders((prev) =>
           prev.map((order) =>
-            order.orderId === record.orderId ? { ...order, paymentMethod } : order
+            order.orderId === record.orderId
+              ? { ...order, paymentMethod }
+              : order
           )
         );
-      } 
+      }
     } catch (error) {
       toast.error(error.response.data.message, { position: "top-right" });
     }
   };
 
-  const genrateOrder = async(record) => {
-
+  const genrateOrder = async (record) => {
     try {
       // Send GET request to your backend route
-      const response = await axios.get(`${base_url}/generate-bill/${record.orderId}`, {
-        responseType: 'blob', // Ensure we handle the response as a Blob (binary data)
-      });
+      const response = await axios.get(
+        `${base_url}/generate-bill/${record.orderId}`,
+        {
+          responseType: "blob", // Ensure we handle the response as a Blob (binary data)
+        }
+      );
 
       // Create a URL for the Blob
-      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const blob = new Blob([response.data], { type: "application/pdf" });
       const url = window.URL.createObjectURL(blob);
 
       // Create a link element to trigger the download
-      const link = document.createElement('a');
+      const link = document.createElement("a");
       link.href = url;
       link.download = `bill_${record.displayId}.pdf`; // Name the file
       document.body.appendChild(link);
@@ -62,37 +71,42 @@ function OrderList() {
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
     } catch (error) {
-      console.error('Download Error:', error);
-    } 
+      console.error("Download Error:", error);
+    }
   };
 
   const genrateOrderBill = async (record) => {
     try {
       // Send GET request to your backend route
-      const response = await axios.get(`${base_url}/generate-bill/${record.orderId}`, {
-        responseType: 'blob', // Ensure we handle the response as a Blob (binary data)
-      });
-  
+      const response = await axios.get(
+        `${base_url}/generate-bill/${record.orderId}`,
+        {
+          responseType: "blob", // Ensure we handle the response as a Blob (binary data)
+        }
+      );
+
       // Create a Blob URL for the PDF
-      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const blob = new Blob([response.data], { type: "application/pdf" });
       const url = window.URL.createObjectURL(blob);
-  
+
       // Open the PDF in a new browser tab
-      const newWindow = window.open(url, '_blank');
+      const newWindow = window.open(url, "_blank");
       if (newWindow) {
         newWindow.onload = () => {
           // Trigger the print dialog
           newWindow.print();
         };
       }
-  
+
       // Optionally revoke the Blob URL after some time
       setTimeout(() => {
         window.URL.revokeObjectURL(url);
       }, 10000);
     } catch (error) {
-      console.error('Error generating the bill:', error);
-      toast.error('Failed to generate the bill. Please try again.', { position: 'top-right' });
+      console.error("Error generating the bill:", error);
+      toast.error("Failed to generate the bill. Please try again.", {
+        position: "top-right",
+      });
     }
   };
 
@@ -103,7 +117,7 @@ function OrderList() {
       const totalPrice = order.orderItems
         .reduce((sum, item) => sum + item.price * item.quantity, 0)
         .toFixed(2);
-  
+
       // Format each item of the order with its details in separate rows
       return order.orderItems.map((item) => ({
         "Order ID": order.orderId,
@@ -112,42 +126,55 @@ function OrderList() {
         "Order Status": order.status,
         "Order Total Price": `€${totalPrice}`,
         "Item Name": item.itemName,
-        "Quantity": item.quantity,
-        "Item Price": `€${(item.price * item.quantity).toFixed(2)}`
+        Quantity: item.quantity,
+        "Item Price": `€${(item.price * item.quantity).toFixed(2)}`,
       }));
     });
-  
+
     // Create a new worksheet from the formatted data
     const ws = XLSX.utils.json_to_sheet(formattedOrders);
-  
+
     // Create a new workbook
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Orders");
-  
+
     // Trigger the download of the Excel file
     XLSX.writeFile(wb, "Order_List.xlsx");
   };
 
   const handleDeleteRow = async (record) => {
     try {
-      const response = await axios.delete(`${base_url}/orders/${record.orderId}`);
+      const response = await axios.delete(
+        `${base_url}/orders/${record.orderId}`
+      );
       if (response.status === 200) {
-        setOrders((prev) => prev.filter((order) => order.orderId !== record.orderId));
+        setOrders((prev) =>
+          prev.filter((order) => order.orderId !== record.orderId)
+        );
         toast.success("Order deleted successfully", { position: "top-right" });
       } else {
-        toast.error("Failed to delete order. Please try again.", { position: "top-right" });
+        toast.error("Failed to delete order. Please try again.", {
+          position: "top-right",
+        });
       }
     } catch (error) {
       console.error("Error deleting order", error);
-      toast.error("Failed to delete order. Please try again.", { position: "top-right" });
+      toast.error("Failed to delete order. Please try again.", {
+        position: "top-right",
+      });
     }
   };
 
   const handleStatusChange = async (record, status) => {
     try {
-      const response = await axios.put(`${base_url}/orders/${record.orderId}/status`, { status });
+      const response = await axios.put(
+        `${base_url}/orders/${record.orderId}/status`,
+        { status }
+      );
       if (response.status === 200) {
-        toast.success("Order status updated successfully", { position: "top-right" });
+        toast.success("Order status updated successfully", {
+          position: "top-right",
+        });
         setOrders((prev) =>
           prev.map((order) =>
             order.orderId === record.orderId ? { ...order, status } : order
@@ -188,29 +215,30 @@ function OrderList() {
       title: "Actions",
       render: (_, record) => (
         <>
-         <Button
-            type="link"
-            onClick={() => genrateOrderBill(record)}
-            icon={<PrinterOutlined />} // Eye icon for "View"
-          />
-        <Button
+          <Button
             type="link"
             onClick={() => genrateOrder(record)}
             icon={<DownloadOutlined />} // Eye icon for "View"
           />
           <Button
             type="link"
+            onClick={() => genrateOrderBill(record)}
+            icon={<PrinterOutlined />} // Eye icon for "View"
+          />
+
+          <Button
+            type="link"
             onClick={() => navigate(`/orderDetails/${record.orderId}`)}
             icon={<EyeOutlined />} // Eye icon for "View"
           />
-          {
-            record.status !== 'COMPLETED'&&(<Button
-            type="link"
-            onClick={() => navigate(`/orderUpdate/${record.orderId}`)}
-            icon={<EditOutlined />} // Edit icon for "Edit"
-          />)
-          }
-          
+          {record.status !== "COMPLETED" && (
+            <Button
+              type="link"
+              onClick={() => navigate(`/orderUpdate/${record.orderId}`)}
+              icon={<EditOutlined />} // Edit icon for "Edit"
+            />
+          )}
+
           <Popconfirm
             title="Are you sure you want to delete this order?"
             onConfirm={() => handleDeleteRow(record)}
@@ -223,39 +251,50 @@ function OrderList() {
               icon={<DeleteOutlined />} // Delete icon for "Delete"
             />
           </Popconfirm>
-          <Dropdown
-            overlay={
-              <Menu>
-                <Menu.Item key="1" onClick={() => handlePayment(record, "Cash")}>
-                  Cash
-                </Menu.Item>
-                <Menu.Item key="2" onClick={() => handlePayment(record, "Card")}>
-                  Card
-                </Menu.Item>
-                <Menu.Item key="3" onClick={() => handlePayment(record, "Paypal")}>
-                  Paypal
-                </Menu.Item>
-              </Menu>
-            }
-          >
+          {!record.paymentMethod && (
+            <Dropdown
+              overlay={
+                <Menu>
+                  <Menu.Item
+                    key="1"
+                    onClick={() => handlePayment(record, "Cash")}
+                  >
+                    Cash
+                  </Menu.Item>
+                  <Menu.Item
+                    key="2"
+                    onClick={() => handlePayment(record, "Card")}
+                  >
+                    Card
+                  </Menu.Item>
+                  <Menu.Item
+                    key="3"
+                    onClick={() => handlePayment(record, "Paypal")}
+                  >
+                    Paypal
+                  </Menu.Item>
+                </Menu>
+              }
+            >
+              <Button
+                type="link"
+                icon={<PayCircleOutlined />} // Payment icon
+                disabled={record.paymentMethod}
+              >
+                {record.paymentMethod}
+              </Button>
+            </Dropdown>
+          )}
+
+          {record.paymentMethod && record.status !== "COMPLETED" && (
             <Button
               type="link"
-              icon={<PayCircleOutlined />} // Payment icon
-              disabled={record.paymentMethod}
+              onClick={() => handleStatusChange(record, "COMPLETED")}
+              icon={<CheckCircleOutlined />} // Icon for "Update Status"
             >
-              {record.paymentMethod}
+              Complete
             </Button>
-          </Dropdown>
-          {record.paymentMethod && record.status !== "COMPLETED" && (
-          <Button
-            type="link"
-            onClick={() => handleStatusChange(record, "COMPLETED")}
-            icon={<CheckCircleOutlined />} // Icon for "Update Status"
-          >
-            Complete
-          </Button>
-        )}
-        
+          )}
         </>
       ),
     },
@@ -290,7 +329,10 @@ function OrderList() {
     <div className="centered-container">
       <div className="list-page-heading">The Indian Tadka</div>
       <div className="place-order-btn-container">
-        <Button className="place-order-btn" onClick={() => navigate("/orderCreate")}>
+        <Button
+          className="place-order-btn"
+          onClick={() => navigate("/orderCreate")}
+        >
           Place Order
         </Button>
         {/* Add the Excel Download Button */}

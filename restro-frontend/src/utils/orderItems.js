@@ -514,15 +514,17 @@ export const ItemListData = [
       "price":9.5,
       "itemId": "111",
       "category": "Kinder Menü"
-  },
+  },//749809-0-98478982309-0=243894732809-0=243958934029-0=4-905894309-20=45930-20=
   {
       "itemName": "Chicken Nuggets",
       "price":7,
+      "itemId": "112",
       "category": "Kinder Menü"
   },
   {
       "itemName": "Pommes frites",
       "price":4,
+      "itemId": "113",
       "category": "Kinder Menü"
   },
   {
@@ -558,341 +560,409 @@ export const ItemListData = [
   {
       "itemName": "Gulab Jamun",
       "price":4,
+      "itemId": "120",
       "category": "Dessert-Menü"
   },
   {
       "itemName": "Firni",
       "price":5.5,
+      "itemId": "121",
       "category": "Dessert-Menü"
   },
   {
       "itemName": "Spezial Eisbecher",
       "price":7.5,
+      "itemId": "122",
       "category": "Dessert-Menü"
   },
   {
       "itemName": "Schokokuss",
       "price":7,
+      "itemId": "123",
       "category": "Dessert-Menü"
   },
   {
       "itemName": "Spezial Eisbecher (mit Sahne)",
       "price":8.5,
+      "itemId": "124",
       "category": "Dessert-Menü"
   },
   {
       "itemName": "Campari Soda oder Orange Longdrink",
       "price":5.5,
+      "itemId": "201",
       "category": "Aperitif"
   },
   {
       "itemName": "Pernod mit Naturwasser, 2cl",
       "price":3,
+      "itemId": "202",
       "category": "Aperitif"
   },
   {
       "itemName": "Martini Rosso oder Bianco 5cl",
       "price":3.5,
+      "itemId": "203",
       "category": "Aperitif"
   },
   {
       "itemName": "Sherry Dry oder Medium 5cl",
       "price":3.5,
+      "itemId": "204",
       "category": "Aperitif"
   },
   {
       "itemName": "Prosecco 0,1",
       "price":4,
+      "itemId": "205",
       "category": "Aperitif"
   },
   {
       "itemName": "Prosecco Aperol Spritz ",
       "price":6,
+      "itemId": "206",
       "category": "Aperitif"
   },
   {
       "itemName": "Prosecco mit Waldbeerenlikör",
       "price":6,
+      "itemId": "207",
       "category": "Aperitif"
   },
   {
       "itemName": "Hugo - Cocktail",
       "price":6,
+      "itemId": "208",
       "category": "Aperitif"
   },
   {
       "itemName": "Lassi (Salz und Pfeffer)",
       "price":4,
+      "itemId": "209",
       "category": "Indische Kaltgetränke"
   },
   {
       "itemName": "Mango Lassi",
       "price":4.5,
+      "itemId": "210",
       "category": "Indische Kaltgetränke"
   },
   {
       "itemName": "Mango Saft, Orangen saft 0,2",
       "price":2.5,
+      "itemId": "211",
       "category": "Alkoholfreie Getränke "
   },
   {
       "itemName": "Mango Saft, Orangen saft 0,4",
       "price":4.5,
+      "itemId": "212",
       "category": "Alkoholfreie Getränke "
   },
   {
       "itemName": "Mango Milk Shake",
       "price":5,
+      "itemId": "213",
       "category": "Alkoholfreie Getränke "
   },
   {
       "itemName": "Bitburger vom Fass 0,5",
       "price":4.5,
+      "itemId": "214",
       "category": "Biere "
   },
   {
       "itemName": "Bitburger vom Fass 0,25",
       "price":3.5,
+      "itemId": "215",
       "category": "Biere "
   },
   {
       "itemName": "Bitburger alkoholfrei 0,3",
       "price":3.5,
+      "itemId": "216",
       "category": "Biere "
   },
   {
       "itemName": "King Fisher 0,33",
       "price":4,
+      "itemId": "217",
       "category": "Biere "
   },
   {
       "itemName": "Energy-Drink 0.25",
       "price":3.5,
+      "itemId": "218",
       "category": "Biere "
   },
   {
       "itemName": "Radler 0.25",
       "price":3.5,
+      "itemId": "219",
       "category": "Biere "
   },
   {
       "itemName": "Radler 0.5",
       "price":4.5,
+      "itemId": "220",
       "category": "Biere "
   },
   {
       "itemName": "Weizenbier ",
       "price":4.5,
+      "itemId": "221",
       "category": "Biere "
   },
   {
       "itemName": "Alkoholfreie Weizenbier",
       "price":4.5,
+      "itemId": "222",
       "category": "Alkoholfreie Getränke "
   },
   {
       "itemName": "Soave Weißwein 0,25",
       "price":6,
+      "itemId": "223",
       "category": "Weine  "
   },
   {
       "itemName": "Pinot Grigio 0,25",
       "price":6,
+      "itemId": "224",
       "category": "Weine  "
   },
   {
       "itemName": "Rosé di Veneto 0,25",
       "price":6,
+      "itemId": "225",
       "category": "Weine  "
   },
   {
       "itemName": "Lambrusco 0,25",
       "price":6,
+      "itemId": "226",
       "category": "Weine  "
   },
   {
       "itemName": "Barbera 0,25",
       "price":6,
+      "itemId": "227",
       "category": "Weine  "
   },
   {
       "itemName": "Montepulciano 0,25",
       "price":6,
+      "itemId": "227",
       "category": "Weine  "
   },
   {
       "itemName": "Weinschorle (rot oder weiß) ",
       "price":5.5,
+      "itemId": "228",
       "category": "Weine  "
   },
   {
       "itemName": "Ouzo",
       "price":2.5,
+      "itemId": "229",
       "category": "Spirituosen / Liköre"
   },
   {
       "itemName": "Limoncello",
       "price":2.5,
+      "itemId": "230",
       "category": "Spirituosen / Liköre"
   },
   {
       "itemName": "Sambuca Molinari",
       "price":3,
+      "itemId": "231",
       "category": "Spirituosen / Liköre"
   },
   {
       "itemName": "Baileys",
       "price":3,
+      "itemId": "232",
       "category": "Spirituosen / Liköre"
   },
   {
       "itemName": "Haselnuss Schnaps",
       "price":3.5,
+      "itemId": "233",
       "category": "Spirituosen / Liköre"
   },
   {
       "itemName": "Jägermeister",
       "price":3.5,
+      "itemId": "234",
       "category": "Spirituosen / Liköre"
   },
   {
       "itemName": "Jack Daniels - Longdrink",
       "price":4.5,
+      "itemId": "235",
       "category": "Spirituosen / Liköre"
   },
   {
       "itemName": "Grappa",
       "price":3,
+      "itemId": "236",
       "category": "Spirituosen / Liköre"
   },
   {
       "itemName": "Tequila",
       "price":3.5,
+      "itemId": "236",
       "category": "Spirituosen / Liköre"
   },
   {
       "itemName": "Chivas",
       "price":3.5,
+      "itemId": "237",
       "category": "Whisky"
   },
   {
       "itemName": "Black Label",
       "price":3.5,
+      "itemId": "238",
       "category": "Whisky"
   },
   {
       "itemName": "JimBeam Cola",
       "price":3.5,
+      "itemId": "239",
       "category": "Whisky"
   },
   {
       "itemName": "Indischer Old Mog Rum",
       "price":3.5,
+      "itemId": "240",
       "category": "Whisky"
   },
   {
       "itemName": "Jacky (Whiskey)",
       "price":3.5,
+      "itemId": "241",
       "category": "Whisky"
   },
   {
       "itemName": "Red Label (Whiskey)",
       "price":3.5,
+      "itemId": "242",
       "category": "Whisky"
   },
   {
       "itemName": "Indischer Tee",
       "price":3.5,
+      "itemId": "243",
       "category": "Warme Getränke "
   },
   {
       "itemName": "Espresso",
       "price":2.2,
+      "itemId": "244",
       "category": "Warme Getränke "
   },
   {
       "itemName": "Kaffee",
       "price":3,
+      "itemId": "245",
       "category": "Warme Getränke "
   },
   {
       "itemName": "Cappuccino",
       "price":4,
+      "itemId": "246",
       "category": "Warme Getränke "
   },
   {
       "itemName": "Kakao",
       "price":3,
+      "itemId": "247",
       "category": "Warme Getränke "
   },
   {
       "itemName": "Kakao mit sahne",
       "price":3.5,
+      "itemId": "248",
       "category": "Warme Getränke "
   },
   {
       "itemName": "Latte Macchiato",
       "price":4,
+      "itemId": "249",
       "category": "Warme Getränke "
   },
   {
       "itemName": "Tee (verschiedene Sorten)",
       "price":2.5,
+      "itemId": "250",
       "category": "Warme Getränke "
   },
   {
       "itemName": "Fanta / Sprite 0,2",
       "price":3,
+      "itemId": "251",
       "category": "Alkoholfreie Getränke "
   },
   {
       "itemName": "Fanta / Sprite 0,4",
       "price":4,
+      "itemId": "252",
       "category": "Alkoholfreie Getränke "
   },
   {
       "itemName": "CocaCola / CocaCola Zero 0,2",
       "price":3,
+      "itemId": "253",
       "category": "Alkoholfreie Getränke "
   },
   {
       "itemName": "CocaCola / CocaCola Zero 0,4",
       "price":4,
+      "itemId": "254",
       "category": "Alkoholfreie Getränke "
   },
   {
       "itemName": "Apfelsaftschorle 0,3",
       "price":3,
+      "itemId": "255",
       "category": "Alkoholfreie Getränke "
   },
   {
       "itemName": "Apfelsaftschorle 0,4",
       "price":4,
+      "itemId": "256",
       "category": "Alkoholfreie Getränke "
   },
   {
       "itemName": "Mineralwasser / Stilles Wasser 0,25",
       "price":2,
+      "itemId": "257",
       "category": "Alkoholfreie Getränke "
   },
   {
       "itemName": "Mineralwasser / Stilles Wasser 0,75",
       "price":5,
+      "itemId": "258",
       "category": "Alkoholfreie Getränke "
   },
   {
       "itemName": "Apfelsaft 0,2",
       "price":3.5,
+      "itemId": "259",
       "category": "Alkoholfreie Getränke "
   },
   {
       "itemName": "Apfelsaft 0,4",
       "price":4.5,
+      "itemId": "260",
       "category": "Alkoholfreie Getränke "
   },
   {
       "itemName": "Bitter Lemon (Schweppes)",
       "price":2.5,
+      "itemId": "261",
       "category": "Alkoholfreie Getränke "
   }
 ]

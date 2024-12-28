@@ -4,6 +4,7 @@ import OrderForm from "../OrderForm/OrderFormer";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { base_url } from "../../utils/apiList";
+import axios from "axios";
 
 export default function OrderUpdate() {
   const { id } = useParams();
@@ -37,27 +38,15 @@ export default function OrderUpdate() {
   const handleSubmit = async (payload) => {
     try {
       setIsSubmitting(true);
-      const response = await fetch(`${base_url}/orders/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      const result = await response.json();
+      const response = await axios.put(`${base_url}/orders/${id}`, {payload})
 
       if (response.ok) {
         toast.success("Order updated successfully!", {
           position: "top-right",
         });
         navigate("/");
-      } else {
-        toast.error(result.message || "Failed to update order.", {
-          position: "top-right",
-        });
-        throw new Error(result.message || "Failed to update order.");
-      }
+      } 
     } catch (error) {
-      console.error(error.message);
       toast.error(error.message, {
         position: "top-right",
       });
