@@ -1,0 +1,56 @@
+/* General Table Styling */
+.table-container {
+  width: 100%;
+  margin-top: 20px;
+  padding: 0 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background-color: white;
+}
+
+.table-container .ant-table th {
+  background-color: #f1f1f1;
+}
+
+.table-container .ant-table-tbody > tr:hover {
+  background-color: #f5f5f5;
+}
+
+/* Heading Styling */
+.list-page-heading {
+  font-size: 2.5rem; /* Slightly bigger heading */
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+  font-weight: bold;
+  text-transform: uppercase; /* Make it more prominent */
+  letter-spacing: 1px; /* Add some spacing for style */
+}
+
+/* Place Order Button */
+.place-order-btn-container {
+  display: flex;
+  justify-content: flex-end; /* Align the button to the right */
+  margin-top: 20px; /* Add some spacing from the table */
+}
+
+.place-order-btn {
+  background: #4caf50;
+  color: white;
+  border: none;
+  padding: 15px 30px;
+  font-size: 1.2rem;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.place-order-btn:hover {
+  transform: translateY(-5px);
+  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2);
+}
+
+.place-order-btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}

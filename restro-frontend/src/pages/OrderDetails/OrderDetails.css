@@ -1,0 +1,72 @@
+/* Container for Details Page */
+.details-container {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin: 20px;
+}
+
+.details-header {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #4CAF50;
+}
+
+.details-item {
+    margin-bottom: 15px;
+}
+
+.details-item label {
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+.details-item span {
+    font-size: 1rem;
+    color: #555;
+}
+
+/* Buttons for Details Page */
+.back-btn {
+    padding: 10px 20px;
+    font-size: 1rem;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.back-btn:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
+.back-btn:active {
+    transform: scale(1);
+}
+
+/* CSS for the button (OrderDetails.css) */
+.back-button {
+    background-color: #1890ff; /* Ant Design primary color */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .back-button:hover {
+    background-color: #40a9ff; /* Lighter blue */
+    transform: scale(1.05);
+  }
+  
+  .back-button:active {
+    transform: scale(0.95);
+  }
