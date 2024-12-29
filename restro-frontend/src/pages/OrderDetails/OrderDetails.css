@@ -70,3 +70,139 @@
   .back-button:active {
     transform: scale(0.95);
   }
+/* Split Bill Section */
+.split-bill-summary {
+    margin-top: 20px;
+    font-size: 16px;
+    font-weight: bold;
+  }
+  
+  .split-bill-button {
+    background-color: #1890ff;
+    color: white;
+    width: 10%;
+    padding: 10px;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  
+  .split-bill-button:hover {
+    background-color: #40a9ff;
+  }
+  
+  /* Number of People Input */
+  .split-bill-people-label {
+    margin-right: 10px;
+  }
+  
+  .split-bill-people-input {
+    width: 60px;
+    margin-bottom: 20px;
+  }
+  
+  /* Item Assignment Section */
+  .split-bill-item-wrapper {
+    margin-bottom: 20px;
+  }
+  
+  .split-bill-item-name {
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .split-bill-item-price {
+    font-style: italic;
+    color: gray;
+  }
+  
+  .split-bill-assignment-input {
+    width: 60px;
+    margin-bottom: 10px;
+    display: inline-block;
+  }
+  
+  /* Buttons */
+  .split-bill-confirm-button {
+    background-color: #1890ff;
+    color: white;
+    width: 100%;
+    padding: 10px;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  
+  .split-bill-confirm-button:hover {
+    background-color: #40a9ff;
+  }
+  
+  .split-bill-back-button {
+    background-color: #f0f0f0;
+    color: #1890ff;
+    padding: 10px;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  
+  .split-bill-back-button:hover {
+    background-color: #e6f7ff;
+  }
+  
+  /* Total Summary Section */
+  .split-bill-total-summary {
+    margin-top: 20px;
+    font-size: 16px;
+    font-weight: bold;
+  }
+  
+  .split-bill-person-total {
+    margin-bottom: 10px;
+  }
+  
+  .split-bill-person-total b {
+    color: #1890ff;
+  }
+  
+
+  /* Container for the buttons */
+.button-container {
+  display: flex;
+  align-items: center; /* Vertically align buttons */
+  gap: 10px; /* Optional: adds space between the buttons */
+  margin-top: 30px;
+}
+
+/* Split Bill Button */
+.split-bill-button {
+  background-color: #1890ff;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.split-bill-button:hover {
+  background-color: #40a9ff;
+}
+
+/* Back to Home Button */
+.back-button {
+  background-color: #f0f0f0;
+  color: #1890ff;
+  padding: 10px 20px;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.back-button:hover {
+  background-color: #e6f7ff;
+}
