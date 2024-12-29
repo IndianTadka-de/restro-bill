@@ -1,208 +1,147 @@
-/* Container for Details Page */
-.details-container {
-    background-color: white;
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f7f7f7;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .order-details-container {
     padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    background-color: #ffffff;
     border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    margin: 20px;
-}
-
-.details-header {
-    font-size: 1.5rem;
-    font-weight: bold;
-    margin-bottom: 10px;
-    color: #4CAF50;
-}
-
-.details-item {
-    margin-bottom: 15px;
-}
-
-.details-item label {
-    font-size: 1rem;
-    font-weight: bold;
-}
-
-.details-item span {
-    font-size: 1rem;
-    color: #555;
-}
-
-/* Buttons for Details Page */
-.back-btn {
-    padding: 10px 20px;
-    font-size: 1rem;
-    background-color: #007BFF;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.3s ease;
-}
-
-.back-btn:hover {
-    background-color: #0056b3;
-    transform: scale(1.05);
-}
-
-.back-btn:active {
-    transform: scale(1);
-}
-
-/* CSS for the button (OrderDetails.css) */
-.back-button {
-    background-color: #1890ff; /* Ant Design primary color */
-    color: white;
-    border: none;
-    border-radius: 5px;
-    padding: 10px 20px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
   
-  .back-button:hover {
-    background-color: #40a9ff; /* Lighter blue */
-    transform: scale(1.05);
+  h2 {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 24px;
+    font-weight: 600;
   }
   
-  .back-button:active {
-    transform: scale(0.95);
-  }
-/* Split Bill Section */
-.split-bill-summary {
+  .split-bill-summary {
     margin-top: 20px;
     font-size: 16px;
-    font-weight: bold;
+    font-weight: 500;
+    color: #333;
+  }
+  
+  .button-container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
   }
   
   .split-bill-button {
+    width: 200px;
     background-color: #1890ff;
     color: white;
-    width: 10%;
-    padding: 10px;
-    border: none;
+  }
+  
+  .back-button {
+    padding: 8px 16px;
     font-size: 16px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
     cursor: pointer;
-    border-radius: 4px;
   }
   
-  .split-bill-button:hover {
-    background-color: #40a9ff;
+  .person-split {
+    background-color: #f4f4f4;
+    padding: 20px;
+    margin-top: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
   
-  /* Number of People Input */
-  .split-bill-people-label {
+  .person-split h3 {
+    font-size: 20px;
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 10px;
+  }
+  
+  .item-assignment {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    margin-top: 10px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  }
+  
+  .item-assignment div {
+    font-size: 16px;
+    font-weight: 500;
+  }
+  
+  .confirm-split-button {
+    width: 100%;
+    background-color: #4CAF50;
+    color: white;
+    font-size: 18px;
+    padding: 12px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .confirm-split-button:hover {
+    background-color: #45a049;
+  }
+  
+  .totals {
+    margin-top: 20px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+  }
+  
+  .input-section {
+    margin-bottom: 20px;
+  }
+  
+  .input-section label {
+    font-size: 16px;
     margin-right: 10px;
   }
   
-  .split-bill-people-input {
-    width: 60px;
-    margin-bottom: 20px;
+  input[type="number"], input[type="text"] {
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    padding: 8px;
+    width: 150px;
+    font-size: 14px;
+    margin-right: 10px;
   }
   
-  /* Item Assignment Section */
-  .split-bill-item-wrapper {
-    margin-bottom: 20px;
+  input[type="number"]:focus, input[type="text"]:focus {
+    border-color: #1890ff;
+    outline: none;
   }
   
-  .split-bill-item-name {
-    font-weight: bold;
-    margin-bottom: 10px;
+  @media (max-width: 768px) {
+    .order-details-container {
+      padding: 10px;
+    }
+  
+    .item-assignment {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    
+    .split-bill-button, .back-button {
+      width: 100%;
+    }
+  
+    .confirm-split-button {
+      width: 100%;
+    }
   }
   
-  .split-bill-item-price {
-    font-style: italic;
-    color: gray;
-  }
-  
-  .split-bill-assignment-input {
-    width: 60px;
-    margin-bottom: 10px;
-    display: inline-block;
-  }
-  
-  /* Buttons */
-  .split-bill-confirm-button {
-    background-color: #1890ff;
-    color: white;
-    width: 100%;
-    padding: 10px;
-    border: none;
-    font-size: 16px;
-    cursor: pointer;
-    border-radius: 4px;
-  }
-  
-  .split-bill-confirm-button:hover {
-    background-color: #40a9ff;
-  }
-  
-  .split-bill-back-button {
-    background-color: #f0f0f0;
-    color: #1890ff;
-    padding: 10px;
-    border: none;
-    font-size: 16px;
-    cursor: pointer;
-    border-radius: 4px;
-  }
-  
-  .split-bill-back-button:hover {
-    background-color: #e6f7ff;
-  }
-  
-  /* Total Summary Section */
-  .split-bill-total-summary {
-    margin-top: 20px;
-    font-size: 16px;
-    font-weight: bold;
-  }
-  
-  .split-bill-person-total {
-    margin-bottom: 10px;
-  }
-  
-  .split-bill-person-total b {
-    color: #1890ff;
-  }
-  
-
-  /* Container for the buttons */
-.button-container {
-  display: flex;
-  align-items: center; /* Vertically align buttons */
-  gap: 10px; /* Optional: adds space between the buttons */
-  margin-top: 30px;
-}
-
-/* Split Bill Button */
-.split-bill-button {
-  background-color: #1890ff;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  font-size: 16px;
-  cursor: pointer;
-  border-radius: 4px;
-}
-
-.split-bill-button:hover {
-  background-color: #40a9ff;
-}
-
-/* Back to Home Button */
-.back-button {
-  background-color: #f0f0f0;
-  color: #1890ff;
-  padding: 10px 20px;
-  border: none;
-  font-size: 16px;
-  cursor: pointer;
-  border-radius: 4px;
-}
-
-.back-button:hover {
-  background-color: #e6f7ff;
-}

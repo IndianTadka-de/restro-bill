@@ -661,6 +661,110 @@ router.get("/generate-bill/:orderId", async (req, res) => {
   });
 });
 
+router.post("/generate-bill-for-person", async (req, res) => {
+  const { orderId, personIndex, personItems } = req.body; // Receive the orderId, personIndex, and personItems as payload
+  const order = await Order.findOne({ orderId });
+
+  if (!order) {
+    return res.status(404).json({ error: "Order not found" });
+  }
+
+  // If no items for this person, return error
+  if (!personItems || personItems.length === 0) {
+    return res.status(400).json({ error: "No items selected for this person" });
+  }
+
+  const doc = new PDFDocument({ size: [204, 841.89], margin: 10 });
+  const fileName = `bill_person_${personIndex + 1}_${order.displayId}.pdf`;
+  const filePath = path.join(__dirname, fileName);
+  const stream = fs.createWriteStream(filePath);
+
+  doc.pipe(stream);
+
+  // Restaurant Header
+  doc.fontSize(18).font("Helvetica-Bold").text("Indian Tadka", { align: "center" });
+  doc.fontSize(10).font("Helvetica").text("Friedrichstraße 69, 66538 Neunkirchen", { align: "center" });
+  doc.fontSize(10).font("Helvetica").text("Tel.: +4915212628877", { align: "center" });
+  doc.moveDown(0.5);
+
+  // Order and Date
+  doc.fontSize(13).font("Helvetica-Bold").text(`Order ID: ${order.displayId}`, { align: "center" });
+  doc.moveDown(0.5);
+  doc.font('Helvetica').text(moment(order.orderDate).format('YYYY/MM/DD HH:mm'), { align: "center" });
+  doc.fontSize(10).text('________________________________');
+  doc.moveDown(1);
+  doc.fontSize(12).text(`Table Number: ${order.tableNumber}`);
+  doc.moveDown(1);
+
+  // Item details
+  const itemX = 10;
+  const priceX = 50;
+  let total = 0;
+
+  // Create an object to categorize items by their category
+  const itemByCategory = {};
+
+  // Add category to personItems by matching itemId with orderItems
+  personItems.forEach((personItem) => {
+    // Find the matching orderItem based on itemId
+    const matchedOrderItem = order.orderItems.find(
+      (orderItem) => orderItem.itemId === personItem.itemId
+    );
+
+    // If a match is found, add the category to the personItem
+    if (matchedOrderItem) {
+      personItem.category = matchedOrderItem.category;
+
+      // Organize items by category
+      if (!itemByCategory[personItem.category]) {
+        itemByCategory[personItem.category] = [];
+      }
+      itemByCategory[personItem.category].push(personItem);
+    }
+  });
+
+  // Loop through each category and add the items to the PDF
+  Object.keys(itemByCategory).forEach((category) => {
+    doc.fontSize(10).font("Helvetica-Bold").text(category);
+    doc.moveDown(0.2);
+
+    itemByCategory[category].forEach((item) => {
+      const itemTotal = item.quantity * item.price;
+      total += itemTotal;
+
+      doc.fontSize(8).font("Helvetica").text(
+        `${item.quantity} X ${item.itemName} (#${item.itemId})`,
+        itemX,
+        doc.y,
+        { width: 100, ellipsis: true, continued: true }
+      );
+      doc.text(`€${itemTotal.toFixed(2)}`, priceX, doc.y, { align: "right" });
+      doc.moveDown(0.2); // Move to the next line
+    });
+  });
+
+  // Total for this person
+  doc.moveDown(1);
+  doc.fontSize(10).font("Helvetica-Bold").text(`Total: €${total.toFixed(2)}`, { align: "right" });
+  doc.moveDown(1);
+
+  // Closing message
+  doc.fontSize(9).font("Helvetica-Bold").text("Vielen Dank für Ihre Bestellung!", { align: "center" });
+
+  doc.end();
+
+  // Send the PDF to the client
+  stream.on("finish", () => {
+    res.download(filePath, fileName, (err) => {
+      if (err) {
+        console.error("Error downloading the file:", err);
+      }
+      fs.unlinkSync(filePath); // Clean up the file after sending
+    });
+  });
+});
+
+
 /**
  * @swagger
  * /api/orders/exportData:
