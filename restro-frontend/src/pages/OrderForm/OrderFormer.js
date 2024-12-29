@@ -47,7 +47,7 @@ export default function OrderForm({
   const handleQuantityChange = (record, quantity) => {
     setOrderItems((prev) =>
       prev.map((item) =>
-        item.itemId === record.itemId ? { ...item, quantity } : item
+        item.itemId === record.itemId ? { ...item,price:quantity * item.price, quantity } : item
       )
     );
   };
