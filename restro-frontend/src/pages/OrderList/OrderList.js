@@ -202,6 +202,7 @@ function OrderList() {
     {
       title: "Order Date",
       dataIndex: "createdAt",
+      sorter: true,
       render: (text, record) => new Date(record.createdAt).toLocaleDateString(),
     },
     {
@@ -231,7 +232,7 @@ function OrderList() {
             onClick={() => navigate(`/orderDetails/${record.orderId}`)}
             icon={<EyeOutlined />} // Eye icon for "View"
           />
-          {record.status !== "COMPLETED" && (
+          {!record.paymentMethod && record.status !== "COMPLETED" && (
             <Button
               type="link"
               onClick={() => navigate(`/orderUpdate/${record.orderId}`)}

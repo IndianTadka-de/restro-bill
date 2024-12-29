@@ -128,43 +128,37 @@ router.post("/orders", async (req, res) => {
       orderDate,
       status = "INPROGRESS",
     } = req.body;
+
     // Increment the counter value for 'orderId'
     const counter = await Counter.findByIdAndUpdate(
-      { _id: "orderId" }, // Counter name
-      { $inc: { seq: 1 } }, // Increment sequence
-      { new: true, upsert: true } // Create counter if it doesn't exist
+      { _id: "orderId" },
+      { $inc: { seq: 1 } },
+      { new: true, upsert: true }
     );
 
-    // Format the displayId as "B00000001"
     const displayId = `B${String(counter.seq).padStart(8, "0")}`;
 
-    // Create a new order with the status field
     const newOrder = new Order({
       tableNumber,
       orderItems,
       orderDate,
       displayId,
-      status, // Assign status, default is "INPROGRESS"
+      status,
     });
 
-    // Check if there is already an existing order for the same table with status other than COMPLETED
     const existingOrder = await Order.findOne({
       tableNumber,
-      status: { $ne: "COMPLETED" }, // Find order with status not equal to "COMPLETED"
+      status: { $ne: "COMPLETED" },
     });
 
-    // If an existing order with non-COMPLETED status exists, prevent creation of the new order
     if (existingOrder) {
       return res.status(400).json({
-        message:
-          "An active order already exists for this table. Please update the existing order!",
+        message: "An active order already exists for this table. Please update the existing order!",
       });
     }
 
-    // Save the new order to the database
     await newOrder.save();
 
-    // Return the newly created order
     res.status(201).json({
       message: "Order created successfully",
       order: newOrder,
@@ -176,6 +170,7 @@ router.post("/orders", async (req, res) => {
     });
   }
 });
+
 
 /**
  * @swagger
@@ -209,6 +204,13 @@ router.post("/orders", async (req, res) => {
 router.get("/orders", async (req, res) => {
   try {
     const orders = await Order.find();
+
+    if (orders.length === 0) {
+      return res.status(404).json({
+        message: "No orders found",
+      });
+    }
+
     res.status(200).json(orders);
   } catch (error) {
     res.status(400).json({
@@ -217,6 +219,7 @@ router.get("/orders", async (req, res) => {
     });
   }
 });
+
 
 /**
  * @swagger
@@ -287,13 +290,16 @@ router.get("/orders", async (req, res) => {
  *                   type: string
  *                   example: Order not found
  */
-
 router.get("/orders/:orderId", async (req, res) => {
   try {
     const order = await Order.findOne({ orderId: req.params.orderId });
+
     if (!order) {
-      return res.status(404).json({ message: "Order not found" });
+      return res.status(404).json({
+        message: "Order not found",
+      });
     }
+
     res.status(200).json(order);
   } catch (error) {
     res.status(400).json({
@@ -302,6 +308,7 @@ router.get("/orders/:orderId", async (req, res) => {
     });
   }
 });
+
 
 /**
  * @swagger
@@ -361,29 +368,24 @@ router.put("/orders/:orderId", async (req, res) => {
     const { orderId } = req.params;
     const { tableNumber, orderDate, orderItems } = req.body;
 
-    // Validate that there is at least one order item
     if (!orderItems || orderItems.length === 0) {
-      return res
-        .status(400)
-        .json({
-          message: "Please select at least one item to update the order.",
-        });
+      return res.status(400).json({
+        message: "Please select at least one item to update the order.",
+      });
     }
 
-    // Find the existing order using `orderId` instead of `_id`
     const existingOrder = await Order.findOne({ orderId });
+
     if (!existingOrder) {
-      return res.status(404).json({ message: "Order not found" });
+      return res.status(404).json({
+        message: "Order not found",
+      });
     }
 
-    // Update the main order details
     existingOrder.tableNumber = tableNumber;
     existingOrder.orderDate = orderDate;
-
-    // Update or replace order items
     existingOrder.orderItems = orderItems;
 
-    // Save the updated order
     const updatedOrder = await existingOrder.save();
 
     res.status(200).json({
@@ -397,6 +399,7 @@ router.put("/orders/:orderId", async (req, res) => {
     });
   }
 });
+
 
 /**
  * @swagger
@@ -471,31 +474,26 @@ router.delete("/orders/:orderId", async (req, res) => {
  *       404:
  *         description: Order not found
  */
-
 router.put("/orders/:orderId/status", async (req, res) => {
   try {
     const { orderId } = req.params;
     const { status } = req.body;
 
-    // Find the order by orderId
     const order = await Order.findOne({ orderId });
+
     if (!order) {
-      return res.status(404).json({ message: "Order not found" });
+      return res.status(404).json({
+        message: "Order not found",
+      });
     }
 
     if (order.paymentMethod === undefined || order.paymentMethod === null) {
-      return res
-        .status(400)
-        .json({
-          message:
-            "Order payment method is missing so Please add payment method before completing the order",
-        });
+      return res.status(400).json({
+        message: "Order payment method is missing. Please add a payment method before completing the order.",
+      });
     }
 
-    // Update the order status
     order.status = status;
-
-    // Save the updated order
     await order.save();
 
     res.status(200).json({
@@ -509,6 +507,7 @@ router.put("/orders/:orderId/status", async (req, res) => {
     });
   }
 });
+
 
 /**
  * @swagger
@@ -542,29 +541,26 @@ router.put("/orders/:orderId/status", async (req, res) => {
  *       404:
  *         description: Order not found
  */
-
 router.put("/orders/:orderId/paymentMethod", async (req, res) => {
   try {
     const { orderId } = req.params;
     const { paymentMethod } = req.body;
 
-    // Find the order by orderId
     const order = await Order.findOne({ orderId });
+
     if (!order) {
-      return res.status(404).json({ message: "Order not found" });
+      return res.status(404).json({
+        message: "Order not found",
+      });
     }
+
     if (order.status === "COMPLETED") {
-      return res
-        .status(400)
-        .json({
-          message: "Order status is completed so unable to add payment method",
-        });
+      return res.status(400).json({
+        message: "Order status is completed, so unable to add payment method.",
+      });
     }
 
-    // Update the order status
     order.paymentMethod = paymentMethod;
-
-    // Save the updated order
     await order.save();
 
     res.status(200).json({
@@ -573,11 +569,12 @@ router.put("/orders/:orderId/paymentMethod", async (req, res) => {
     });
   } catch (error) {
     res.status(400).json({
-      message: "Error updating order status",
+      message: "Error updating order payment method",
       error: error.message,
     });
   }
 });
+
 
 router.get("/generate-bill/:orderId", async (req, res) => {
   const orderId = req.params.orderId;
@@ -684,13 +681,13 @@ router.get("/generate-bill/:orderId", async (req, res) => {
  *         description: Internal server error
  */
 router.get("/orders/exportData", async (req, res) => {
-  console.log("Export API sssshit");
-
   try {
     const orders = await Order.find();
 
     if (!orders.length) {
-      return res.status(404).json({ message: "No orders found to export." });
+      return res.status(404).json({
+        message: "No orders found to export.",
+      });
     }
 
     const excelData = [];
@@ -715,7 +712,6 @@ router.get("/orders/exportData", async (req, res) => {
 
     const excelFile = xlsx.write(wb, { bookType: "xlsx", type: "buffer" });
 
-    // Set headers to download the file
     res.setHeader("Content-Disposition", "attachment; filename=orders.xlsx");
     res.setHeader(
       "Content-Type",
@@ -725,12 +721,12 @@ router.get("/orders/exportData", async (req, res) => {
   } catch (err) {
     console.error("Error exporting orders:", err);
 
-    // Return a 500 error for unexpected issues
     res.status(500).json({
       message: "Internal server error occurred while exporting orders.",
       error: err.message,
     });
   }
 });
+
 
 module.exports = router;

@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Input, Button, Table } from "antd";
+import { Input, Button, Table, Col, Row } from "antd";
 import CounterButton from "../../components/CounterButton";
 import Modal from "../../components/Modal";
 import ItemList from "../../components/Itemslist";
 import { useNavigate } from "react-router-dom";
-import { isEmpty } from "loadsh";
-import { ArrowLeftOutlined, DeleteOutlined } from "@ant-design/icons"; // Import the back arrow icon
+import { ArrowLeftOutlined, DeleteOutlined } from "@ant-design/icons";
+import "./OrderForm.css";
 
 export default function OrderForm({
   title,
@@ -20,12 +20,12 @@ export default function OrderForm({
   );
   const [orderItems, setOrderItems] = useState(initialData?.orderItems || []);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [orderDate, setOrderDate] = useState(getTodayDate);
+  const [orderDate, setOrderDate] = useState(getTodayDate());
   const [status] = useState("INPROGRESS");
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!isEmpty(initialData)) {
+    if (initialData && Object.keys(initialData).length > 0) {
       setOrderDate(initialData.orderDate);
       setTableNumber(initialData.tableNumber);
       setOrderItems(initialData.orderItems);
@@ -39,9 +39,10 @@ export default function OrderForm({
         : [...prev, { ...item, quantity: 1 }]
     );
   };
-  const handleRemovePayload =(item) =>{
-    setOrderItems(orderItems.filter((i) => i.itemId !== item.itemId))
-  }
+
+  const handleRemovePayload = (item) => {
+    setOrderItems(orderItems.filter((i) => i.itemId !== item.itemId));
+  };
 
   const handleQuantityChange = (record, quantity) => {
     setOrderItems((prev) =>
@@ -51,9 +52,17 @@ export default function OrderForm({
     );
   };
 
+  const handlePriceChange = (record, newPrice) => {
+    const updatedItems = orderItems.map((item) =>
+      item.itemId === record.itemId ? { ...item, price: newPrice } : item
+    );
+    setOrderItems(updatedItems);
+  };
+
   const handleSubmit = () => {
     const payload = { tableNumber, orderDate, orderItems, status };
-    payload.orderDate = getCurrentTime(payload.orderDate)
+    console.log('payload>>>>>>>',payload)
+    payload.orderDate = getCurrentTime(payload.orderDate);
     onSubmit(payload);
   };
 
@@ -70,61 +79,109 @@ export default function OrderForm({
         />
       ),
     },
-    { title: "Price", dataIndex: "price" },
+    { 
+      title: "Price",
+       dataIndex: "price",
+       render: (_, record) => (
+        <Input
+          value={record.price}
+          onChange={(e) => handlePriceChange(record, e.target.value)}
+          style={{ width: 80 }}
+          type="number"
+        />
+      ),
+    },
     {
       title: "Actions",
       render: (_, record) => (
-        <Button danger
+        <Button
+          danger
           onClick={() =>
             setOrderItems(orderItems.filter((i) => i.itemId !== record.itemId))
           }
-          icon={<DeleteOutlined />} // Edit icon for "Edit"
+          icon={<DeleteOutlined />}
         />
       ),
     },
   ];
 
+  const generateTableGrid = () => {
+    const tableNumbers = [];
+    for (let i = 1; i <= 12; i++) {
+      const isSelected = String(tableNumber) === String(i);
+      tableNumbers.push(
+        <Col span={6} key={i}>
+          <Button
+            className={`table-button ${isSelected ? "selected" : ""}`}
+            onClick={() => setTableNumber(String(i))}
+          >
+            {i}
+          </Button>
+        </Col>
+      );
+    }
+    return tableNumbers;
+  };
+
   return (
-    <div>
-      <div style={{ display: "flex", alignItems: "center" }}>
-        {/* Back Arrow Icon */}
+    <div className="order-form-container">
+      {/* Header */}
+      <div className="order-form-header">
         <ArrowLeftOutlined
           onClick={() => navigate("/")}
-          style={{ fontSize: "20px", marginRight: "10px", cursor: "pointer" }}
+          className="back-arrow"
         />
         <h2>{title}</h2>
       </div>
+      <div className="order-date-container">
+        <label className="order-date-label">Order Date:</label>
+        <Input
+          value={orderDate}
+          onChange={(e) => setOrderDate(e.target.value)}
+          type="date"
+          className="order-date-input"
+        />
+      </div>
+      {/* Main Section: Table Grid and Items Table */}
+      <div className="main-content">
+        {/* Table Number Selection */}
+        <div className="table-selection-container">
+          <h4 className="table-selection-label">Select Table Number</h4>
+          <Row gutter={[12, 12]}>{generateTableGrid()}</Row>
+          <Input
+            value={tableNumber}
+            onChange={(e) => setTableNumber(e.target.value)}
+            placeholder="Table Number"
+            className="table-number-input"
+          />
+        </div>
 
-      <Input
-        value={orderDate}
-        onChange={(e) => setOrderDate(e.target.value)}
-        placeholder="Order Date"
-        type="date"
-      />
-      <Input
-        value={tableNumber}
-        onChange={(e) => setTableNumber(e.target.value)}
-        placeholder="Table Number"
-      />
-      <Table columns={columns} dataSource={orderItems} rowKey="itemId" />
-      <Button
-        style={{ margin: "10px" }}
-        type="primary"
-        onClick={() => setIsModalOpen(true)}
-      >
-        Add Item
-      </Button>
-      <Button
-        style={{ margin: "10px" }}
-        onClick={handleSubmit}
-        disabled={isSubmitting}
-      >
-        {isSubmitting ? "Submitting..." : "Submit"}
-      </Button>
+        {/* Items Table */}
+        <Table
+          columns={columns}
+          dataSource={orderItems}
+          rowKey="itemId"
+          className="order-items-table"
+        />
+      </div>
+
+      {/* Action Buttons */}
+      <div className="action-buttons">
+        <Button type="primary" onClick={() => setIsModalOpen(true)}>
+          Add Item
+        </Button>
+        <Button type="primary" onClick={handleSubmit} disabled={isSubmitting}>
+          {isSubmitting ? "Submitting..." : "Submit"}
+        </Button>
+      </div>
 
       {isModalOpen && (
         <Modal onClose={() => setIsModalOpen(false)}>
-          <ItemList data={orderItems} handleAddToPayload={handleAddItem} handleRemoveFromPayload={handleRemovePayload}/>
+          <ItemList
+            data={orderItems}
+            handleAddToPayload={handleAddItem}
+            handleRemoveFromPayload={handleRemovePayload}
+          />
         </Modal>
       )}
     </div>
@@ -133,17 +190,10 @@ export default function OrderForm({
 
 const getTodayDate = () => {
   const today = new Date();
-  const yyyy = today.getFullYear();
-  const mm = String(today.getMonth() + 1).padStart(2, "0");
-  const dd = String(today.getDate()).padStart(2, "0");
-  return `${yyyy}-${mm}-${dd}`;
+  return today.toISOString().split("T")[0];
 };
 
-const getCurrentTime = (date) =>{
-const currentTime = new Date();
-const hours = String(currentTime.getHours()).padStart(2, '0');
-const minutes = String(currentTime.getMinutes()).padStart(2, '0');
-const seconds = String(currentTime.getSeconds()).padStart(2, '0');
-const dateWithTimeString = `${date}T${hours}:${minutes}:${seconds}`;
-return new Date(dateWithTimeString);
-}
+const getCurrentTime = (date) => {
+  const now = new Date();
+  return `${date}T${now.toTimeString().split(" ")[0]}`;
+};

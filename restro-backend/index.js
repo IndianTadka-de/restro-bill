@@ -50,8 +50,8 @@ app.use('/api', orderRoutes); // All routes in orderRoutes will be prefixed with
 // MongoDB connection using Mongoose
 const MONGODB_URI='mongodb+srv://indiancusine:HVVcs8QBxPMCQxMx@cluster0.xtrfg.mongodb.net/Orders'
 mongoose.connect(MONGODB_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
+   // useNewUrlParser: true,
+    //useUnifiedTopology: true,
 })
     .then(() => {
         console.log('Connected to MongoDB');

@@ -24,6 +24,7 @@ export default function OrderUpdate() {
           itemName: item.itemName,
           quantity: item.quantity,
           price: item.price,
+          category:item.category
         })),
       });
     } catch (error) {
@@ -38,9 +39,9 @@ export default function OrderUpdate() {
   const handleSubmit = async (payload) => {
     try {
       setIsSubmitting(true);
-      const response = await axios.put(`${base_url}/orders/${id}`, {payload})
+      const response = await axios.put(`${base_url}/orders/${id}`, {...payload})
 
-      if (response.ok) {
+      if (response.status === 200) {
         toast.success("Order updated successfully!", {
           position: "top-right",
         });
