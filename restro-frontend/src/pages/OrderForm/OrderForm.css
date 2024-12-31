@@ -102,3 +102,29 @@
   justify-content: flex-end;
   gap: 10px;
 }
+
+/* Customize Table */
+.order-items-table .ant-table {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.order-items-table .ant-table-thead {
+  background-color: #f0f0f0;
+  font-weight: bold;
+}
+
+.order-items-table .ant-table-tbody tr:hover {
+  background-color: #f9f9f9;
+}
+
+.order-items-table .ant-table-tbody td {
+  padding: 12px 16px; /* Increase padding for better readability */
+}
+
+.order-items-table .ant-table th {
+  padding: 16px 8px;
+  background-color: #f5f5f5;
+}
+

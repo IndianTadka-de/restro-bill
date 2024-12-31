@@ -45,9 +45,10 @@ export default function OrderForm({
   };
 
   const handleQuantityChange = (record, quantity) => {
+    if (quantity < 0) return; // Prevent negative quantities
     setOrderItems((prev) =>
       prev.map((item) =>
-        item.itemId === record.itemId ? { ...item,price:quantity * item.price, quantity } : item
+        item.itemId === record.itemId ? { ...item,quantity } : item
       )
     );
   };
@@ -89,6 +90,13 @@ export default function OrderForm({
           style={{ width: 80 }}
           type="number"
         />
+      ),
+    },
+    { 
+      title: "Total Price",
+      dataIndex: "totalPrice",
+      render: (_, record) => (
+        <span>{(record.quantity * record.price).toFixed(2)}</span> // Display total price based on qty * unitPrice
       ),
     },
     {
