@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Input, Button, Table, Col, Row } from "antd";
+import { Input, Button, Table, Col, Row, Switch } from "antd";
 import CounterButton from "../../components/CounterButton";
 import Modal from "../../components/Modal";
 import ItemList from "../../components/Itemslist";
@@ -15,12 +15,11 @@ export default function OrderForm({
   formType,
   onStatusChange,
 }) {
-  const [tableNumber, setTableNumber] = useState(
-    initialData?.tableNumber || ""
-  );
+  const [tableNumber, setTableNumber] = useState(initialData?.tableNumber || "");
   const [orderItems, setOrderItems] = useState(initialData?.orderItems || []);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [orderDate, setOrderDate] = useState(getTodayDate());
+  const [pickupOrder, setPickupOrder] = useState(initialData?.pickupOrder || false); // State for pickupOrder
   const [status] = useState("INPROGRESS");
   const navigate = useNavigate();
 
@@ -29,6 +28,7 @@ export default function OrderForm({
       setOrderDate(initialData.orderDate);
       setTableNumber(initialData.tableNumber);
       setOrderItems(initialData.orderItems);
+      setPickupOrder(initialData.pickupOrder || false); // Set initial value for pickupOrder
     }
   }, [initialData]);
 
@@ -48,7 +48,7 @@ export default function OrderForm({
     if (quantity < 0) return; // Prevent negative quantities
     setOrderItems((prev) =>
       prev.map((item) =>
-        item.itemId === record.itemId ? { ...item,quantity } : item
+        item.itemId === record.itemId ? { ...item, quantity } : item
       )
     );
   };
@@ -61,9 +61,14 @@ export default function OrderForm({
   };
 
   const handleSubmit = () => {
-    const payload = { tableNumber, orderDate, orderItems, status };
-    console.log('payload>>>>>>>',payload)
+    const payload = { tableNumber, orderDate, orderItems, status, pickupOrder };
     payload.orderDate = getCurrentTime(payload.orderDate);
+
+    // Ensure tableNumber is only included when pickupOrder is false
+    if (pickupOrder) {
+      delete payload.tableNumber;
+    }
+
     onSubmit(payload);
   };
 
@@ -122,6 +127,7 @@ export default function OrderForm({
           <Button
             className={`table-button ${isSelected ? "selected" : ""}`}
             onClick={() => setTableNumber(String(i))}
+            disabled={pickupOrder} // Disable table selection if pickupOrder is true
           >
             {i}
           </Button>
@@ -141,6 +147,17 @@ export default function OrderForm({
         />
         <h2>{title}</h2>
       </div>
+
+      {/* Pickup Order Toggle */}
+      <div className="pickup-order-toggle">
+        <label>Pickup Order</label>
+        <Switch 
+          checked={pickupOrder} 
+          onChange={(checked) => setPickupOrder(checked)} 
+        />
+      </div>
+
+      {/* Order Date */}
       <div className="order-date-container">
         <label className="order-date-label">Order Date:</label>
         <Input
@@ -150,19 +167,22 @@ export default function OrderForm({
           className="order-date-input"
         />
       </div>
+
       {/* Main Section: Table Grid and Items Table */}
       <div className="main-content">
         {/* Table Number Selection */}
-        <div className="table-selection-container">
-          <h4 className="table-selection-label">Select Table Number</h4>
-          <Row gutter={[12, 12]}>{generateTableGrid()}</Row>
-          <Input
-            value={tableNumber}
-            onChange={(e) => setTableNumber(e.target.value)}
-            placeholder="Table Number"
-            className="table-number-input"
-          />
-        </div>
+        {!pickupOrder && (
+          <div className="table-selection-container">
+            <h4 className="table-selection-label">Select Table Number</h4>
+            <Row gutter={[12, 12]}>{generateTableGrid()}</Row>
+            <Input
+              value={tableNumber}
+              onChange={(e) => setTableNumber(e.target.value)}
+              placeholder="Table Number"
+              className="table-number-input"
+            />
+          </div>
+        )}
 
         {/* Items Table */}
         <Table
