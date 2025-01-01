@@ -126,16 +126,8 @@ router.post("/orders", async (req, res) => {
       tableNumber,
       orderItems,
       orderDate,
-      pickupOrder = false, // Default to false if not provided
       status = "INPROGRESS",
     } = req.body;
-
-    // Validate if tableNumber is provided when pickupOrder is false
-    if (!pickupOrder && !tableNumber) {
-      return res.status(400).json({
-        message: "Table number is required unless it's a pickup order.",
-      });
-    }
 
     // Increment the counter value for 'orderId'
     const counter = await Counter.findByIdAndUpdate(
@@ -150,7 +142,6 @@ router.post("/orders", async (req, res) => {
       tableNumber,
       orderItems,
       orderDate,
-      pickupOrder,
       displayId,
       status,
     });
@@ -592,8 +583,6 @@ router.get("/generate-bill/:orderId", async (req, res) => {
   if (!order) {
     return res.status(404).json({ error: "Order not found" });
   }
-
-  // Create a new PDF document
   const doc = new PDFDocument({ size: [204, 841.89], margin: 10 });
   const fileName = `bill_${order.displayId}.pdf`;
   const filePath = path.join(__dirname, fileName);
@@ -601,29 +590,22 @@ router.get("/generate-bill/:orderId", async (req, res) => {
 
   doc.pipe(stream);
 
-  // Header information
   doc.fontSize(18).font("Helvetica-Bold").text("Indian Tadka", { align: "center" });
   doc.fontSize(10).font("Helvetica").text("Friedrichstraße 69, 66538 Neunkirchen", { align: "center" });
   doc.fontSize(10).font("Helvetica").text("Tel.: +4915212628877", { align: "center" });
   doc.moveDown(0.5);
-
-  // Order ID and Date
-  doc.fontSize(13).font("Helvetica-Bold").text(order.displayId, { align: "center" });
-  doc.moveDown(0.5);
-  doc.font('Helvetica').text(moment(order.orderDate).format('YYYY/MM/DD HH:mm'), { align: "center" });
-  doc.fontSize(10).text('________________________________');
+  doc
+  .fontSize(13)
+  .font("Helvetica-Bold")
+  .text(order.displayId,{align:"center"});
+  doc.moveDown(0.5)
+  //doc.text(order.orderDate);
+  doc.font('Helvetica').text(moment(order.orderDate).format('YYYY/MM/DD HH:mm'),{align:"center"});
+  doc.fontSize(10).text('________________________________')
+  doc.moveDown(1);
+  doc.fontSize(12).text(`Table Number: ${order.tableNumber}`);
   doc.moveDown(1);
 
-  // Add Table Number only if it's not a pickup order
-  if (!order.pickupOrder) {
-    doc.fontSize(12).text(`Table Number: ${order.tableNumber}`);
-    doc.moveDown(1);
-  }else{
-    doc.fontSize(12).font("Helvetica-Bold").text(`Abholung`,{ align: "center" });
-    doc.moveDown(1);
-  }
-
-  // Items by category
   const itemX = 10;
   const priceX = 50;
 
@@ -635,8 +617,6 @@ router.get("/generate-bill/:orderId", async (req, res) => {
     acc[item.category].push(item);
     return acc;
   }, {});
-
-  // Loop through each category and items
   Object.keys(itemByCategory).forEach((category) => {
     doc.fontSize(10).font("Helvetica-Bold").text(category);
     doc.moveDown(0.2);
@@ -651,31 +631,35 @@ router.get("/generate-bill/:orderId", async (req, res) => {
         doc.y,
         { width: 100, ellipsis: true, continued: true }
       );
+      // doc.text(item.quantity.toString(), qtyX , doc.y, { continued: true});
       doc.text(`€${itemTotal.toFixed(2)}`, priceX, doc.y, { align: "right" });
+      //doc.moveDown();
     });
   });
 
-  // Total amount
   doc.moveDown(1);
-  doc.fontSize(10).font("Helvetica-Bold").text(`Total: €${total.toFixed(2)}`, { align: "right" });
+  doc
+    .fontSize(10)
+    .font("Helvetica-Bold")
+    .text(`Total: €${total.toFixed(2)}`, { align: "right" });
   doc.moveDown(1);
 
-  // Thank you note
-  doc.fontSize(9).font("Helvetica-Bold").text("Vielen Dank für Ihre Bestellung!", { align: "center" });
+  doc
+    .fontSize(9)
+    .font("Helvetica-Bold")
+    .text("Vielen Dank für Ihre Bestellung!", { align: "center" });
 
   doc.end();
 
-  // Send the PDF file as download
   stream.on("finish", () => {
     res.download(filePath, fileName, (err) => {
       if (err) {
         console.error("Error downloading the file:", err);
       }
-      fs.unlinkSync(filePath);  // Clean up the file after sending
+      fs.unlinkSync(filePath);
     });
   });
 });
-
 
 router.post("/generate-bill-for-person", async (req, res) => {
   const { orderId, personIndex, personItems } = req.body; // Receive the orderId, personIndex, and personItems as payload
