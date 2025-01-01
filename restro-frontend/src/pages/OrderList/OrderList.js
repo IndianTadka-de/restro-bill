@@ -16,7 +16,6 @@ import "react-toastify/dist/ReactToastify.css"; // Make sure to import the style
 import * as XLSX from "xlsx"; // Import xlsx library for Excel functionality
 import "./OrderList.css";
 import { base_url } from "../../utils/apiList";
-import moment from "moment";
 
 function OrderList() {
   const navigate = useNavigate();
