@@ -211,7 +211,8 @@ router.post("/orders", async (req, res) => {
  */
 router.get("/orders", async (req, res) => {
   try {
-    const orders = await Order.find();
+    // Fetch orders and sort by createdAt in descending order
+    const orders = await Order.find().sort({ createdAt: -1 }); // -1 for descending order (recent first)
 
     if (orders.length === 0) {
       return res.status(404).json({

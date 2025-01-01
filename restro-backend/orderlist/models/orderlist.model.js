@@ -21,7 +21,7 @@ const orderSchema = new mongoose.Schema({
     },
     pickupOrder: {
         type: Boolean,
-        required: true,
+        required: false,
     },
     status:{
         type:String,
