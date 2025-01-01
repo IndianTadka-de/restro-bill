@@ -7,6 +7,7 @@ const path = require("path"); // Add this line at the top of your file
 const Counter = require("./models/counter.model");
 const Order = require("./models/orderlist.model");
 const moment = require('moment');
+const { searchQueryParser } = require("../utils/search-query-parser");
 
 /**
  * @swagger
@@ -211,8 +212,104 @@ router.post("/orders", async (req, res) => {
  */
 router.get("/orders", async (req, res) => {
   try {
-    // Fetch orders and sort by createdAt in descending order
     const orders = await Order.find().sort({ createdAt: -1 }); // -1 for descending order (recent first)
+
+    if (orders.length === 0) {
+      return res.status(404).json({
+        message: "No orders found",
+      });
+    }
+
+    res.status(200).json(orders);
+  } catch (error) {
+    res.status(400).json({
+      message: "Error fetching orders",
+      error: error.message,
+    });
+  }
+});
+
+/**
+ * @swagger
+ * /api/orders-listing:
+ *   post:
+ *     summary: Retrieve filtered and sorted list of orders
+ *     description: Fetches orders from the system based on search criteria provided in the request body, and sorts them by creation date in descending order.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               search:
+ *                 type: string
+ *                 description: The search term to filter orders (e.g., by orderId, tableNumber, status, etc.).
+ *                 example: "displayId: 12345"
+ *     responses:
+ *       200:
+ *         description: A list of orders matching the search criteria.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   orderId:
+ *                     type: string
+ *                     description: The unique identifier for the order.
+ *                   displayId:
+ *                     type: string
+ *                     description: The display identifier for the order, visible to the user.
+ *                   tableNumber:
+ *                     type: string
+ *                     description: The table number associated with the order.
+ *                   status:
+ *                     type: string
+ *                     description: The current status of the order (e.g., "Pending", "Completed").
+ *                   createdAt:
+ *                     type: string
+ *                     format: date-time
+ *                     description: The date and time when the order was created.
+ *                   orderItems:
+ *                     type: array
+ *                     items:
+ *                       type: object
+ *                       properties:
+ *                         itemName:
+ *                           type: string
+ *                           description: The name of the item ordered.
+ *                         quantity:
+ *                           type: integer
+ *                           description: The quantity of the item ordered.
+ *                         price:
+ *                           type: number
+ *                           description: The price of a single item.
+ *       400:
+ *         description: Error occurred while fetching orders.
+ *       404:
+ *         description: No orders found matching the search criteria.
+ *       500:
+ *         description: Internal server error.
+ */
+router.post("/orders-listing", async (req, res) => {
+  try {
+    // Fetch orders and sort by createdAt in descending order
+    const {search}=req.body;
+    const searchPhrases = searchQueryParser(search);
+    console.log('search>>>>>>',searchPhrases)
+    let searchCriteria = {};
+    searchPhrases.forEach((phrase) => {
+      const [field, value] = phrase.split(':'); // Extract the field and value from the search term
+      if (field && value) {
+        // Use $regex to perform case-insensitive matching
+        searchCriteria[field] = value; // Add $regex for case-insensitive matching
+      }
+    });
+
+    console.log('MongoDB Search Criteria:', searchCriteria);
+    const orders = await Order.find(searchCriteria).sort({ createdAt: -1 }); // -1 for descending order (recent first)
 
     if (orders.length === 0) {
       return res.status(404).json({

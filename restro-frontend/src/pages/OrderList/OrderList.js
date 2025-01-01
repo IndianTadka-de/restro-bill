@@ -1,4 +1,4 @@
-import { Button, Table, Popconfirm, Dropdown, Menu } from "antd";
+import { Button, Table, Popconfirm, Dropdown, Menu, AutoComplete } from "antd";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
@@ -16,13 +16,41 @@ import "react-toastify/dist/ReactToastify.css"; // Make sure to import the style
 import * as XLSX from "xlsx"; // Import xlsx library for Excel functionality
 import "./OrderList.css";
 import { base_url } from "../../utils/apiList";
+import moment from "moment";
 
 function OrderList() {
   const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
+  const [filteredOrders, setFilteredOrders] = useState(orders);
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState(""); // For search term input
 
-  // Handle payment option selection
+  useEffect(() => {
+    setFilteredOrders(orders);
+  }, [orders]);
+
+  const handleSearchChange = (value) => {
+    setSearchTerm(value);
+  };
+
+  const handleSearchSelect = (value) => {
+    setSearchTerm(value);
+  };
+
+  // Function to handle API call when search button is clicked
+  const handleSearch = async () => {
+    try {
+      const response = await axios.post(`${base_url}/orders-listing`, {
+        search: searchTerm,
+      });
+      setOrders(response.data); // Update the orders state with the search results
+      setFilteredOrders(response.data);
+    } catch (error) {
+      console.error("Error fetching orders", error);
+      toast.error("Failed to fetch orders", { position: "top-right" });
+    }
+  };
+
   const handlePayment = async (record, paymentMethod) => {
     try {
       const response = await axios.put(
@@ -48,7 +76,6 @@ function OrderList() {
 
   const genrateOrder = async (record) => {
     try {
-      // Send GET request to your backend route
       const response = await axios.get(
         `${base_url}/generate-bill/${record.orderId}`,
         {
@@ -77,7 +104,6 @@ function OrderList() {
 
   const genrateOrderBill = async (record) => {
     try {
-      // Send GET request to your backend route
       const response = await axios.get(
         `${base_url}/generate-bill/${record.orderId}`,
         {
@@ -85,20 +111,16 @@ function OrderList() {
         }
       );
 
-      // Create a Blob URL for the PDF
       const blob = new Blob([response.data], { type: "application/pdf" });
       const url = window.URL.createObjectURL(blob);
 
-      // Open the PDF in a new browser tab
       const newWindow = window.open(url, "_blank");
       if (newWindow) {
         newWindow.onload = () => {
-          // Trigger the print dialog
           newWindow.print();
         };
       }
 
-      // Optionally revoke the Blob URL after some time
       setTimeout(() => {
         window.URL.revokeObjectURL(url);
       }, 10000);
@@ -111,14 +133,10 @@ function OrderList() {
   };
 
   const handleDownloadExcel = () => {
-    // Convert the orders to a format suitable for Excel
     const formattedOrders = orders.flatMap((order) => {
-      // Calculate the total order price
       const totalPrice = order.orderItems
         .reduce((sum, item) => sum + item.price * item.quantity, 0)
         .toFixed(2);
-
-      // Format each item of the order with its details in separate rows
       return order.orderItems.map((item) => ({
         "Order ID": order.orderId,
         "Table Number": order.tableNumber,
@@ -131,14 +149,9 @@ function OrderList() {
       }));
     });
 
-    // Create a new worksheet from the formatted data
     const ws = XLSX.utils.json_to_sheet(formattedOrders);
-
-    // Create a new workbook
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Orders");
-
-    // Trigger the download of the Excel file
     XLSX.writeFile(wb, "Order_List.xlsx");
   };
 
@@ -192,18 +205,14 @@ function OrderList() {
     {
       title: "OrderId",
       dataIndex: "displayId",
-      sorter: true,
     },
     {
       title: "Table Number",
       dataIndex: "tableNumber",
-      sorter: true,
     },
     {
       title: "Order Date",
       dataIndex: "createdAt",
-      sorter: true,
-      render: (text, record) => new Date(record.createdAt).toLocaleDateString(),
     },
     {
       title: "Order Price",
@@ -219,24 +228,24 @@ function OrderList() {
           <Button
             type="link"
             onClick={() => genrateOrder(record)}
-            icon={<DownloadOutlined />} // Eye icon for "View"
+            icon={<DownloadOutlined />}
           />
           <Button
             type="link"
             onClick={() => genrateOrderBill(record)}
-            icon={<PrinterOutlined />} // Eye icon for "View"
+            icon={<PrinterOutlined />}
           />
 
           <Button
             type="link"
             onClick={() => navigate(`/orderDetails/${record.orderId}`)}
-            icon={<EyeOutlined />} // Eye icon for "View"
+            icon={<EyeOutlined />}
           />
           {!record.paymentMethod && record.status !== "COMPLETED" && (
             <Button
               type="link"
               onClick={() => navigate(`/orderUpdate/${record.orderId}`)}
-              icon={<EditOutlined />} // Edit icon for "Edit"
+              icon={<EditOutlined />}
             />
           )}
 
@@ -246,11 +255,7 @@ function OrderList() {
             okText="Yes"
             cancelText="No"
           >
-            <Button
-              type="link"
-              danger
-              icon={<DeleteOutlined />} // Delete icon for "Delete"
-            />
+            <Button type="link" danger icon={<DeleteOutlined />} />
           </Popconfirm>
           {!record.paymentMethod && (
             <Dropdown
@@ -279,7 +284,7 @@ function OrderList() {
             >
               <Button
                 type="link"
-                icon={<PayCircleOutlined />} // Payment icon
+                icon={<PayCircleOutlined />}
                 disabled={record.paymentMethod}
               >
                 {record.paymentMethod}
@@ -291,7 +296,7 @@ function OrderList() {
             <Button
               type="link"
               onClick={() => handleStatusChange(record, "COMPLETED")}
-              icon={<CheckCircleOutlined />} // Icon for "Update Status"
+              icon={<CheckCircleOutlined />}
             >
               Complete
             </Button>
@@ -311,18 +316,17 @@ function OrderList() {
     },
   ];
 
+  const fetchOrders = async () => {
+    try {
+      const response = await axios.get(`${base_url}/orders`);
+      setOrders(response.data);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching orders", error);
+      setLoading(false);
+    }
+  };
   useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        const response = await axios.get(`${base_url}/orders`);
-        setOrders(response.data);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching orders", error);
-        setLoading(false);
-      }
-    };
-
     fetchOrders();
   }, []);
 
@@ -345,16 +349,69 @@ function OrderList() {
           Download Orders Excel
         </Button>
       </div>
+      <div className="search-box-container">
+        <AutoComplete
+          size="large"
+          style={{ flex: 1 }} // Use flex to make it responsive
+          options={searchSuggestions.map((suggestion) => ({
+            value: suggestion.value,
+            label: suggestion.label,
+          }))}
+          value={searchTerm}
+          onSelect={handleSearchSelect}
+          onChange={handleSearchChange}
+          placeholder="Search Orders"
+          className="search-input"
+        />
+        <Button type="primary" onClick={handleSearch} className="search-button">
+          Search
+        </Button>
+      </div>
+
       <div className="table-container">
         <Table
           columns={orderListColumn}
           rowKey="orderId"
-          dataSource={orders}
+          dataSource={filteredOrders}
           loading={loading}
+          pagination={true}
         />
       </div>
     </div>
   );
 }
+
+const searchSuggestions = [
+  {
+    id: "257a2c23-e29d-4e4d-b73d-25fb5cd06e36",
+    label: "View Order By OrderId",
+    value: "displayId: ",
+  },
+  {
+    id: "6c614790-f1d7-46c5-be4c-94e668dd9cfe",
+    label: "View Order By Table Number",
+    value: "tableNumber: ",
+  },
+  {
+    id: "b9b339e4-eeb5-4ac1-aa0d-4481149006da",
+    label: "View Pickup Order",
+    value: "pickupOrder: ",
+  },
+  {
+    id: "acf8330f-8ddc-4f91-8151-5db18566f99e",
+    label: "View Order By Order Date",
+    value: `orderDate: ${new Date()}`,
+  },
+  {
+    id: "18bbce31-f944-49d2-9522-5cf95f927e9c",
+    label: "View Order By Status",
+    value: "status: COMPLETED ",
+  },
+  {
+    id: "e4c289ff-9f07-4607-9d7a-f68632db2c14",
+    label: "View Order By Payment Method",
+    value: "paymentMethod: Cash",
+  },
+];
 
 export default OrderList;
