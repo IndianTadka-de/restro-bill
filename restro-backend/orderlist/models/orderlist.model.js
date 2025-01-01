@@ -13,12 +13,15 @@ const orderSchema = new mongoose.Schema({
          unique: true
     },
     tableNumber: {
-        type: Number,  // Table number for the order
-        required: true,
+        type: Number,
+        required: function() {
+            // Make 'tableNumber' required only if 'pickupOrder' is not true
+            return this.pickupOrder !== true;
+        },
     },
-    orderDate:{
-        type:Date,
-        required:true
+    pickupOrder: {
+        type: Boolean,
+        required: true,
     },
     status:{
         type:String,

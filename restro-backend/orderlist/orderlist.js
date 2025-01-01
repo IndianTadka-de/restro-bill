@@ -119,15 +119,22 @@ const moment = require('moment');
  *                   type: string
  *                   example: "Error creating order"
  */
-
 router.post("/orders", async (req, res) => {
   try {
     const {
       tableNumber,
       orderItems,
       orderDate,
+      pickupOrder = false, // Default to false if not provided
       status = "INPROGRESS",
     } = req.body;
+
+    // Validate if tableNumber is provided when pickupOrder is false
+    if (!pickupOrder && !tableNumber) {
+      return res.status(400).json({
+        message: "Table number is required unless it's a pickup order.",
+      });
+    }
 
     // Increment the counter value for 'orderId'
     const counter = await Counter.findByIdAndUpdate(
@@ -142,6 +149,7 @@ router.post("/orders", async (req, res) => {
       tableNumber,
       orderItems,
       orderDate,
+      pickupOrder,
       displayId,
       status,
     });
@@ -363,17 +371,27 @@ router.get("/orders/:orderId", async (req, res) => {
  *       404:
  *         description: Order not found
  */
+// Update Order API
 router.put("/orders/:orderId", async (req, res) => {
   try {
     const { orderId } = req.params;
-    const { tableNumber, orderDate, orderItems } = req.body;
+    const { tableNumber, orderDate, orderItems, pickupOrder } = req.body;
 
+    // Validate that at least one item is selected for updating the order
     if (!orderItems || orderItems.length === 0) {
       return res.status(400).json({
         message: "Please select at least one item to update the order.",
       });
     }
 
+    // If the order is a dine-in (pickupOrder = false), then tableNumber is required
+    if (pickupOrder === false && !tableNumber) {
+      return res.status(400).json({
+        message: "Table number is required for dine-in orders.",
+      });
+    }
+
+    // Fetch the existing order from the database
     const existingOrder = await Order.findOne({ orderId });
 
     if (!existingOrder) {
@@ -382,10 +400,13 @@ router.put("/orders/:orderId", async (req, res) => {
       });
     }
 
-    existingOrder.tableNumber = tableNumber;
+    // Update the order details
+    existingOrder.tableNumber = pickupOrder ? existingOrder.tableNumber : tableNumber;
     existingOrder.orderDate = orderDate;
     existingOrder.orderItems = orderItems;
+    existingOrder.pickupOrder = pickupOrder; // Ensure pickupOrder is updated
 
+    // Save the updated order to the database
     const updatedOrder = await existingOrder.save();
 
     res.status(200).json({
@@ -603,8 +624,14 @@ router.get("/generate-bill/:orderId", async (req, res) => {
   doc.font('Helvetica').text(moment(order.orderDate).format('YYYY/MM/DD HH:mm'),{align:"center"});
   doc.fontSize(10).text('________________________________')
   doc.moveDown(1);
-  doc.fontSize(12).text(`Table Number: ${order.tableNumber}`);
-  doc.moveDown(1);
+  if(!order.pickupOrder){
+    doc.fontSize(12).text(`Table Number: ${order.tableNumber}`);
+    doc.moveDown(1);
+  }else{
+    doc.fontSize(12).font("Helvetica-Bold").text(`Abholbestellung`,{align:"center"});
+    doc.moveDown(1);
+  }
+
 
   const itemX = 10;
   const priceX = 50;

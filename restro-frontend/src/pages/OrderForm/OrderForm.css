@@ -128,3 +128,73 @@
   background-color: #f5f5f5;
 }
 
+/* CSS for pickup-order-toggle */
+/* Ensures the switch ball is centered and has larger size */
+.ant-switch-checked {
+  background-color: #52c41a !important;
+}
+
+.ant-switch {
+  margin: 0;
+  border-radius: 20px;
+  height: 35px;
+  width: 70px;
+  font-size: 18px; /* Larger font size for better appearance */
+}
+
+/* Modify the ball inside the switch */
+.ant-switch-checked .ant-switch-handle {
+  width: 25px;
+  height: 25px;
+  margin-top: 5px; /* To ensure it is vertically centered */
+}
+
+.ant-switch-handle {
+  width: 25px;
+  height: 25px;
+}
+
+/* Align the switch properly */
+.pickup-order-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.pickup-order-label {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.pickup-order-text {
+  margin-left: 10px;
+  font-size: 14px;
+  color: #888;
+}
+
+/* Increase the size of the switch */
+.ant-switch {
+  width: 70px !important; /* Increase width */
+  height: 35px !important; /* Increase height */
+  border-radius: 20px !important; /* Rounded corners */
+}
+
+/* The handle of the switch (the white ball) */
+.ant-switch-handle {
+  width: 20px !important; /* Set size of the ball */
+  height: 20px !important; /* Set size of the ball */
+  margin-top: 5px !important; /* Vertically center the ball inside the switch */
+}
+
+/* Ensure the ball is vertically aligned at the center */
+.ant-switch-checked .ant-switch-handle {
+  margin-top: 5px !important; /* Adjust the ball's position when checked */
+}
+
+.ant-switch-checked {
+  background-color: #52c41a !important; /* Set the color when checked (e.g., green) */
+}
+
+
+
