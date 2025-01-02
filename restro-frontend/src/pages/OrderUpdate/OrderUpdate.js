@@ -19,6 +19,9 @@ export default function OrderUpdate() {
       setInitialData({
         tableNumber: data.tableNumber,
         orderDate: new Date(data.createdAt).toISOString().slice(0, 10),
+        pickupOrder:data.pickupOrder,
+        onlineOrder:data.onlineOrder,
+        address:data.address,
         orderItems: data.orderItems.map((item) => ({
           itemId: item.itemId,
           itemName: item.itemName,

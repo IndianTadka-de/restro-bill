@@ -1,4 +1,4 @@
-import { Button, Table, Popconfirm, Dropdown, Menu, AutoComplete } from "antd";
+import { Button, Table, Popconfirm, Dropdown, AutoComplete } from "antd";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
@@ -258,28 +258,25 @@ function OrderList() {
           </Popconfirm>
           {!record.paymentMethod && (
             <Dropdown
-              overlay={
-                <Menu>
-                  <Menu.Item
-                    key="1"
-                    onClick={() => handlePayment(record, "Cash")}
-                  >
-                    Cash
-                  </Menu.Item>
-                  <Menu.Item
-                    key="2"
-                    onClick={() => handlePayment(record, "Card")}
-                  >
-                    Card
-                  </Menu.Item>
-                  <Menu.Item
-                    key="3"
-                    onClick={() => handlePayment(record, "Paypal")}
-                  >
-                    Paypal
-                  </Menu.Item>
-                </Menu>
-              }
+              menu={{
+                items: [
+                  {
+                    key: "1",
+                    label: "Cash",
+                    onClick: () => handlePayment(record, "Cash"),
+                  },
+                  {
+                    key: "2",
+                    label: "Card",
+                    onClick: () => handlePayment(record, "Card"),
+                  },
+                  {
+                    key: "3",
+                    label: "Paypal",
+                    onClick: () => handlePayment(record, "Paypal"),
+                  },
+                ],
+              }}
             >
               <Button
                 type="link"

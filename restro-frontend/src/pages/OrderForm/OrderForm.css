@@ -173,6 +173,24 @@
   color: #888;
 }
 
+
+.online-order-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.online-order-label {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.online-order-text {
+  margin-left: 10px;
+  font-size: 14px;
+  color: #888;
+}
 /* Increase the size of the switch */
 .ant-switch {
   width: 70px !important; /* Increase width */
@@ -196,5 +214,11 @@
   background-color: #52c41a !important; /* Set the color when checked (e.g., green) */
 }
 
+.address-form-container{
+  max-width: 600px;
+  margin-bottom: 15px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  font-family: 'Arial', sans-serif;
+}
 
 

@@ -6,7 +6,7 @@ const fs = require("fs");
 const path = require("path"); // Add this line at the top of your file
 const Counter = require("./models/counter.model");
 const Order = require("./models/orderlist.model");
-const moment = require('moment');
+const moment = require("moment");
 const { searchQueryParser } = require("../utils/search-query-parser");
 
 /**
@@ -127,11 +127,13 @@ router.post("/orders", async (req, res) => {
       orderItems,
       orderDate,
       pickupOrder = false, // Default to false if not provided
+      onlineOrder = false,
+      address = {},
       status = "INPROGRESS",
     } = req.body;
 
     // Validate if tableNumber is provided when pickupOrder is false
-    if (!pickupOrder && !tableNumber) {
+    if (!pickupOrder && !onlineOrder && !tableNumber) {
       return res.status(400).json({
         message: "Table number is required unless it's a pickup order.",
       });
@@ -151,18 +153,24 @@ router.post("/orders", async (req, res) => {
       orderItems,
       orderDate,
       pickupOrder,
+      onlineOrder,
+      address,
       displayId,
       status,
     });
 
     const existingOrder = await Order.findOne({
-      tableNumber,
+      $and: [
+        { tableNumber: { $exists: true } }, // Check if tableNumber doesn't exist
+        { tableNumber: tableNumber }, // Check if tableNumber exists and matches
+      ],
       status: { $ne: "COMPLETED" },
     });
 
     if (existingOrder) {
       return res.status(400).json({
-        message: "An active order already exists for this table. Please update the existing order!",
+        message:
+          "An active order already exists for this table. Please update the existing order!",
       });
     }
 
@@ -296,19 +304,19 @@ router.get("/orders", async (req, res) => {
 router.post("/orders-listing", async (req, res) => {
   try {
     // Fetch orders and sort by createdAt in descending order
-    const {search}=req.body;
+    const { search } = req.body;
     const searchPhrases = searchQueryParser(search);
-    console.log('search>>>>>>',searchPhrases)
+    console.log("search>>>>>>", searchPhrases);
     let searchCriteria = {};
     searchPhrases.forEach((phrase) => {
-      const [field, value] = phrase.split(':'); // Extract the field and value from the search term
+      const [field, value] = phrase.split(":"); // Extract the field and value from the search term
       if (field && value) {
         // Use $regex to perform case-insensitive matching
         searchCriteria[field] = value; // Add $regex for case-insensitive matching
       }
     });
 
-    console.log('MongoDB Search Criteria:', searchCriteria);
+    console.log("MongoDB Search Criteria:", searchCriteria);
     const orders = await Order.find(searchCriteria).sort({ createdAt: -1 }); // -1 for descending order (recent first)
 
     if (orders.length === 0) {
@@ -325,7 +333,6 @@ router.post("/orders-listing", async (req, res) => {
     });
   }
 });
-
 
 /**
  * @swagger
@@ -415,7 +422,6 @@ router.get("/orders/:orderId", async (req, res) => {
   }
 });
 
-
 /**
  * @swagger
  * /api/orders/{orderId}:
@@ -469,11 +475,11 @@ router.get("/orders/:orderId", async (req, res) => {
  *       404:
  *         description: Order not found
  */
-// Update Order API
 router.put("/orders/:orderId", async (req, res) => {
   try {
     const { orderId } = req.params;
-    const { tableNumber, orderDate, orderItems, pickupOrder } = req.body;
+    const { tableNumber, orderDate, orderItems, pickupOrder, orderOnline } =
+      req.body;
 
     // Validate that at least one item is selected for updating the order
     if (!orderItems || orderItems.length === 0) {
@@ -483,7 +489,7 @@ router.put("/orders/:orderId", async (req, res) => {
     }
 
     // If the order is a dine-in (pickupOrder = false), then tableNumber is required
-    if (pickupOrder === false && !tableNumber) {
+    if (pickupOrder === false && orderOnline === false && !tableNumber) {
       return res.status(400).json({
         message: "Table number is required for dine-in orders.",
       });
@@ -499,10 +505,13 @@ router.put("/orders/:orderId", async (req, res) => {
     }
 
     // Update the order details
-    existingOrder.tableNumber = pickupOrder ? existingOrder.tableNumber : tableNumber;
+    existingOrder.tableNumber = pickupOrder
+      ? existingOrder.tableNumber
+      : tableNumber;
     existingOrder.orderDate = orderDate;
     existingOrder.orderItems = orderItems;
     existingOrder.pickupOrder = pickupOrder; // Ensure pickupOrder is updated
+    existingOrder.onlineOrder = orderOnline;
 
     // Save the updated order to the database
     const updatedOrder = await existingOrder.save();
@@ -518,7 +527,6 @@ router.put("/orders/:orderId", async (req, res) => {
     });
   }
 });
-
 
 /**
  * @swagger
@@ -608,7 +616,8 @@ router.put("/orders/:orderId/status", async (req, res) => {
 
     if (order.paymentMethod === undefined || order.paymentMethod === null) {
       return res.status(400).json({
-        message: "Order payment method is missing. Please add a payment method before completing the order.",
+        message:
+          "Order payment method is missing. Please add a payment method before completing the order.",
       });
     }
 
@@ -626,7 +635,6 @@ router.put("/orders/:orderId/status", async (req, res) => {
     });
   }
 });
-
 
 /**
  * @swagger
@@ -694,7 +702,6 @@ router.put("/orders/:orderId/paymentMethod", async (req, res) => {
   }
 });
 
-
 router.get("/generate-bill/:orderId", async (req, res) => {
   const orderId = req.params.orderId;
   const order = await Order.findOne({ orderId });
@@ -709,27 +716,42 @@ router.get("/generate-bill/:orderId", async (req, res) => {
 
   doc.pipe(stream);
 
-  doc.fontSize(18).font("Helvetica-Bold").text("Indian Tadka", { align: "center" });
-  doc.fontSize(10).font("Helvetica").text("Friedrichstraße 69, 66538 Neunkirchen", { align: "center" });
-  doc.fontSize(10).font("Helvetica").text("Tel.: +4915212628877", { align: "center" });
+  doc
+    .fontSize(18)
+    .font("Helvetica-Bold")
+    .text("Indian Tadka", { align: "center" });
+  doc
+    .fontSize(10)
+    .font("Helvetica")
+    .text("Friedrichstraße 69, 66538 Neunkirchen", { align: "center" });
+  doc
+    .fontSize(10)
+    .font("Helvetica")
+    .text("Tel.: +4915212628877", { align: "center" });
   doc.moveDown(0.5);
   doc
-  .fontSize(13)
-  .font("Helvetica-Bold")
-  .text(order.displayId,{align:"center"});
-  doc.moveDown(0.5)
+    .fontSize(13)
+    .font("Helvetica-Bold")
+    .text(order.displayId, { align: "center" });
+  doc.moveDown(0.5);
   //doc.text(order.orderDate);
-  doc.font('Helvetica').text(moment(order.orderDate).format('YYYY/MM/DD HH:mm'),{align:"center"});
-  doc.fontSize(10).text('________________________________')
+  doc
+    .font("Helvetica")
+    .text(moment(order.orderDate).format("YYYY/MM/DD HH:mm"), {
+      align: "center",
+    });
+  doc.fontSize(10).text("________________________________");
   doc.moveDown(1);
-  if(!order.pickupOrder){
+  if (!order.pickupOrder) {
     doc.fontSize(12).text(`Table Number: ${order.tableNumber}`);
     doc.moveDown(1);
-  }else{
-    doc.fontSize(12).font("Helvetica-Bold").text(`Abholbestellung`,{align:"center"});
+  } else {
+    doc
+      .fontSize(12)
+      .font("Helvetica-Bold")
+      .text(`Abholbestellung`, { align: "center" });
     doc.moveDown(1);
   }
-
 
   const itemX = 10;
   const priceX = 50;
@@ -750,12 +772,15 @@ router.get("/generate-bill/:orderId", async (req, res) => {
       const itemTotal = item.quantity * item.price;
       total += itemTotal;
 
-      doc.fontSize(8).font("Helvetica").text(
-        `${item.quantity} X ${item.itemName}(#${item?.itemId})`,
-        itemX,
-        doc.y,
-        { width: 100, ellipsis: true, continued: true }
-      );
+      doc
+        .fontSize(8)
+        .font("Helvetica")
+        .text(
+          `${item.quantity} X ${item.itemName}(#${item?.itemId})`,
+          itemX,
+          doc.y,
+          { width: 100, ellipsis: true, continued: true }
+        );
       // doc.text(item.quantity.toString(), qtyX , doc.y, { continued: true});
       doc.text(`€${itemTotal.toFixed(2)}`, priceX, doc.y, { align: "right" });
       //doc.moveDown();
@@ -807,16 +832,32 @@ router.post("/generate-bill-for-person", async (req, res) => {
   doc.pipe(stream);
 
   // Restaurant Header
-  doc.fontSize(18).font("Helvetica-Bold").text("Indian Tadka", { align: "center" });
-  doc.fontSize(10).font("Helvetica").text("Friedrichstraße 69, 66538 Neunkirchen", { align: "center" });
-  doc.fontSize(10).font("Helvetica").text("Tel.: +4915212628877", { align: "center" });
+  doc
+    .fontSize(18)
+    .font("Helvetica-Bold")
+    .text("Indian Tadka", { align: "center" });
+  doc
+    .fontSize(10)
+    .font("Helvetica")
+    .text("Friedrichstraße 69, 66538 Neunkirchen", { align: "center" });
+  doc
+    .fontSize(10)
+    .font("Helvetica")
+    .text("Tel.: +4915212628877", { align: "center" });
   doc.moveDown(0.5);
 
   // Order and Date
-  doc.fontSize(13).font("Helvetica-Bold").text(`Order ID: ${order.displayId}`, { align: "center" });
+  doc
+    .fontSize(13)
+    .font("Helvetica-Bold")
+    .text(`Order ID: ${order.displayId}`, { align: "center" });
   doc.moveDown(0.5);
-  doc.font('Helvetica').text(moment(order.orderDate).format('YYYY/MM/DD HH:mm'), { align: "center" });
-  doc.fontSize(10).text('________________________________');
+  doc
+    .font("Helvetica")
+    .text(moment(order.orderDate).format("YYYY/MM/DD HH:mm"), {
+      align: "center",
+    });
+  doc.fontSize(10).text("________________________________");
   doc.moveDown(1);
   doc.fontSize(12).text(`Table Number: ${order.tableNumber}`);
   doc.moveDown(1);
@@ -857,12 +898,15 @@ router.post("/generate-bill-for-person", async (req, res) => {
       const itemTotal = item.quantity * item.price;
       total += itemTotal;
 
-      doc.fontSize(8).font("Helvetica").text(
-        `${item.quantity} X ${item.itemName} (#${item.itemId})`,
-        itemX,
-        doc.y,
-        { width: 100, ellipsis: true, continued: true }
-      );
+      doc
+        .fontSize(8)
+        .font("Helvetica")
+        .text(
+          `${item.quantity} X ${item.itemName} (#${item.itemId})`,
+          itemX,
+          doc.y,
+          { width: 100, ellipsis: true, continued: true }
+        );
       doc.text(`€${itemTotal.toFixed(2)}`, priceX, doc.y, { align: "right" });
       doc.moveDown(0.2); // Move to the next line
     });
@@ -870,11 +914,17 @@ router.post("/generate-bill-for-person", async (req, res) => {
 
   // Total for this person
   doc.moveDown(1);
-  doc.fontSize(10).font("Helvetica-Bold").text(`Total: €${total.toFixed(2)}`, { align: "right" });
+  doc
+    .fontSize(10)
+    .font("Helvetica-Bold")
+    .text(`Total: €${total.toFixed(2)}`, { align: "right" });
   doc.moveDown(1);
 
   // Closing message
-  doc.fontSize(9).font("Helvetica-Bold").text("Vielen Dank für Ihre Bestellung!", { align: "center" });
+  doc
+    .fontSize(9)
+    .font("Helvetica-Bold")
+    .text("Vielen Dank für Ihre Bestellung!", { align: "center" });
 
   doc.end();
 
@@ -888,7 +938,6 @@ router.post("/generate-bill-for-person", async (req, res) => {
     });
   });
 });
-
 
 /**
  * @swagger
@@ -956,6 +1005,5 @@ router.get("/orders/exportData", async (req, res) => {
     });
   }
 });
-
 
 module.exports = router;

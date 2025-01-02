@@ -1,11 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Input, Button, Table, Col, Row, Switch } from "antd";
 import CounterButton from "../../components/CounterButton";
 import Modal from "../../components/Modal";
 import ItemList from "../../components/Itemslist";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeftOutlined, DeleteOutlined, CheckOutlined, CloseOutlined } from "@ant-design/icons"; // Icons for the toggle
+import {
+  ArrowLeftOutlined,
+  DeleteOutlined,
+  CheckOutlined,
+  CloseOutlined,
+} from "@ant-design/icons"; // Icons for the toggle
 import "./OrderForm.css";
+import AddressForm from "../../components/AddressForm";
 
 export default function OrderForm({
   title,
@@ -15,12 +21,25 @@ export default function OrderForm({
   formType,
   onStatusChange,
 }) {
-  const [tableNumber, setTableNumber] = useState(initialData?.tableNumber || "");
+  const [tableNumber, setTableNumber] = useState(
+    initialData?.tableNumber || ""
+  );
   const [orderItems, setOrderItems] = useState(initialData?.orderItems || []);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [orderDate, setOrderDate] = useState(getTodayDate());
-  const [pickupOrder, setPickupOrder] = useState(initialData?.pickupOrder || false); // State for pickupOrder
+  const [pickupOrder, setPickupOrder] = useState(
+    initialData?.pickupOrder || false
+  );
+  const [onlineOrder, setOnlineOrder] = useState(
+    initialData?.onlineOrder || false
+  );
   const [status] = useState("INPROGRESS");
+  const [address, setAddress] = useState({
+    postalCode: "",
+    place: "",
+    houseNumber: "",
+    street:""
+  });
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -29,6 +48,8 @@ export default function OrderForm({
       setTableNumber(initialData.tableNumber);
       setOrderItems(initialData.orderItems);
       setPickupOrder(initialData.pickupOrder || false); // Set initial value for pickupOrder
+      setOnlineOrder(initialData.onlineOrder || false); // Set initial value for onlineOrder
+      setAddress(initialData.address)
     }
   }, [initialData]);
 
@@ -61,16 +82,26 @@ export default function OrderForm({
   };
 
   const handleSubmit = () => {
-    const payload = { tableNumber, orderDate, orderItems, status, pickupOrder };
+    const payload = {
+      tableNumber,
+      orderDate,
+      orderItems,
+      status,
+      pickupOrder,
+      onlineOrder,
+      address, // Include the address if onlineOrder is true
+    };
     payload.orderDate = getCurrentTime(payload.orderDate);
-
-    // Ensure tableNumber is only included when pickupOrder is false
-    if (pickupOrder) {
-      delete payload.tableNumber;
+    if (pickupOrder || onlineOrder) {
+      delete payload.tableNumber; // Remove tableNumber if order is pickup or online
     }
 
     onSubmit(payload);
   };
+
+  const handleAddressChange = useCallback((newAddress) => {
+    setAddress(newAddress);
+  }, []);
 
   const columns = [
     { title: "Item Id", dataIndex: "itemId" },
@@ -85,10 +116,10 @@ export default function OrderForm({
         />
       ),
     },
-    { 
+    {
       title: "Price",
-       dataIndex: "price",
-       render: (_, record) => (
+      dataIndex: "price",
+      render: (_, record) => (
         <Input
           value={record.price}
           onChange={(e) => handlePriceChange(record, e.target.value)}
@@ -97,7 +128,7 @@ export default function OrderForm({
         />
       ),
     },
-    { 
+    {
       title: "Total Price",
       dataIndex: "totalPrice",
       render: (_, record) => (
@@ -142,6 +173,18 @@ export default function OrderForm({
     setTableNumber(""); // Reset table number
   };
 
+  const handleSwicthToggle = (payload, type) =>{
+    if(type === 'pickup'){
+      setPickupOrder(payload);
+      setOnlineOrder(!payload)
+    }
+
+    if(type === 'online'){
+      setPickupOrder(!payload);
+      setOnlineOrder(payload)
+    }
+  }
+
   return (
     <div className="order-form-container">
       {/* Header */}
@@ -152,13 +195,11 @@ export default function OrderForm({
         />
         <h2>{title}</h2>
       </div>
-
-      {/* Pickup Order Toggle */}
       <div className="pickup-order-toggle">
         <label className="pickup-order-label">Pickup Order</label>
-        <Switch 
-          checked={pickupOrder} 
-          onChange={(checked) => setPickupOrder(checked)} 
+        <Switch
+          checked={pickupOrder}
+          onChange={(checked) => handleSwicthToggle(checked,'pickup')}
           checkedChildren={<CheckOutlined />} // Added check icon when on
           unCheckedChildren={<CloseOutlined />} // Added close icon when off
           style={{
@@ -173,9 +214,25 @@ export default function OrderForm({
             fontSize: "18px", // Increased size of the text/icons
           }}
         />
-        <span className="pickup-order-text">
-          {pickupOrder ? "Pickup Order" : "Dine-in"}
-        </span>
+
+        <label className="online-order-label">Online Order</label>
+        <Switch
+          checked={onlineOrder}
+          onChange={(checked) => handleSwicthToggle(checked,'online')}
+          checkedChildren={<CheckOutlined />} // Added check icon when on
+          unCheckedChildren={<CloseOutlined />} // Added close icon when off
+          style={{
+            width: 70, // Increased width of the switch
+            height: 35, // Increased height of the switch
+            borderRadius: 20,
+            backgroundColor: onlineOrder ? "#52c41a" : "#f5222d", // Green for pickup, red for dine-in
+            padding: 5,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            fontSize: "18px", // Increased size of the text/icons
+          }}
+        />
       </div>
 
       {/* Order Date */}
@@ -189,9 +246,15 @@ export default function OrderForm({
         />
       </div>
       {/* Main Section: Table Grid and Items Table */}
+
+      {onlineOrder && (
+        <div className="address-form-container">
+          <AddressForm initialData={address} onAddressChange={handleAddressChange} />
+        </div>
+      )}
       <div className="main-content">
         {/* Table Number Selection */}
-        {!pickupOrder && (
+        {!pickupOrder && !onlineOrder && (
           <div className="table-selection-container">
             <h4 className="table-selection-label">Select Table Number</h4>
             <Row gutter={[12, 12]}>{generateTableGrid()}</Row>

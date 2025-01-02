@@ -134,21 +134,21 @@ const SplitBillApp = ({ orderItems, order }) => {
     }
   };
 
-  const addCategoryToPersonItems = (personItems, orderItems) => {
-    // Iterate through personItems and match itemId with orderItems
-    return personItems.map(personItem => {
-      const matchedItem = orderItems.find(orderItem => orderItem.itemId === personItem.itemId);
-      if (matchedItem) {
-        // If a match is found, add the category to the personItem
-        return {
-          ...personItem,    // Copy all properties from the original item
-          category: matchedItem.category,  // Add the category from orderItems
-        };
-      }
-      // If no match is found, return the original personItem (no category added)
-      return personItem;
-    });
-  };
+  // const addCategoryToPersonItems = (personItems, orderItems) => {
+  //   // Iterate through personItems and match itemId with orderItems
+  //   return personItems.map(personItem => {
+  //     const matchedItem = orderItems.find(orderItem => orderItem.itemId === personItem.itemId);
+  //     if (matchedItem) {
+  //       // If a match is found, add the category to the personItem
+  //       return {
+  //         ...personItem,    // Copy all properties from the original item
+  //         category: matchedItem.category,  // Add the category from orderItems
+  //       };
+  //     }
+  //     // If no match is found, return the original personItem (no category added)
+  //     return personItem;
+  //   });
+  // };
 
   const generateBillForPerson = async (orderId, personIndex, personItems, orderItems) => {
     // Function to add category to person items based on itemId

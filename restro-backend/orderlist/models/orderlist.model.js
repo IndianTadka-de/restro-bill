@@ -15,13 +15,34 @@ const orderSchema = new mongoose.Schema({
     tableNumber: {
         type: Number,
         required: function() {
-            // Make 'tableNumber' required only if 'pickupOrder' is not true
-            return this.pickupOrder !== true;
+            return !(this.pickupOrder === true || this.onlineOrder === true);
         },
     },
     pickupOrder: {
         type: Boolean,
         required: false,
+    },
+    onlineOrder: {
+        type: Boolean,
+        required: false,
+    },
+    address: {
+        place:{
+            type: String,
+            required: false,
+        },
+        houseNumber:{
+            type: String,
+            required: false,
+        },
+        postalCode:{
+            type: String,
+            required: false,
+        },
+        street:{
+            type: String,
+            required: false,
+        }
     },
     status:{
         type:String,
@@ -72,5 +93,5 @@ orderSchema.set('toJSON', {
 });
 
 // Create and export the model
-const Order = mongoose.model('Order', orderSchema);
+const Order = mongoose.model('OrderTest', orderSchema);
 module.exports = Order;
