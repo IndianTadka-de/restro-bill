@@ -908,7 +908,7 @@ export const ItemListData = [
   {
     itemName: "Fanta / Sprite 0,4",
     price: 4,
-    itemId: "251",
+    itemId: "251a",
     category: "Alkoholfreie Getränke ",
   },
   {
@@ -920,7 +920,7 @@ export const ItemListData = [
   {
     itemName: "CocaCola / CocaCola Zero 0,4",
     price: 4,
-    itemId: "253",
+    itemId: "253a",
     category: "Alkoholfreie Getränke ",
   },
   {
@@ -932,7 +932,7 @@ export const ItemListData = [
   {
     itemName: "Apfelsaftschorle 0,4",
     price: 4,
-    itemId: "255",
+    itemId: "255a",
     category: "Alkoholfreie Getränke ",
   },
   {
@@ -944,7 +944,7 @@ export const ItemListData = [
   {
     itemName: "Mineralwasser / Stilles Wasser 0,75",
     price: 5,
-    itemId: "257",
+    itemId: "257a",
     category: "Alkoholfreie Getränke ",
   },
   {
@@ -956,7 +956,7 @@ export const ItemListData = [
   {
     itemName: "Apfelsaft 0,4",
     price: 4.5,
-    itemId: "259",
+    itemId: "259a",
     category: "Alkoholfreie Getränke ",
   },
   {
@@ -1042,11 +1042,5 @@ export const ItemListData = [
     price: 3.5,
     itemId: "M13",
     category: "Mittagsmenü",
-  },
-  {
-    itemName: "lieferkosten",
-    price:1,
-    itemId: "1000",
-    category: "Delivery",
   },
 ];
