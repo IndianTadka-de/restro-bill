@@ -1043,4 +1043,10 @@ export const ItemListData = [
     itemId: "M13",
     category: "Mittagsmenü",
   },
+  {
+    itemName: "lieferkosten",
+    price:1,
+    itemId: "1000",
+    category: "Delivery",
+  },
 ];
