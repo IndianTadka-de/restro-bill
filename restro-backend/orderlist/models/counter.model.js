@@ -6,6 +6,6 @@ const counterSchema = new mongoose.Schema({
     seq: { type: Number, default: 0 }     // Current sequence value
 });
 
-const Counter = mongoose.model('CounterTest', counterSchema);
+const Counter = mongoose.model('Counter', counterSchema);
 
 module.exports = Counter;

@@ -8,8 +8,9 @@ const AddressForm = ({ initialData, onAddressChange }) => {
   const [streets, setStreets] = useState([]); // Store street names
   const [street, setSelectedStreet] = useState(""); // Selected street
   const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false); // To manage loading state for fetching streets
+ // To manage loading state for fetching streets
   const [loadData, setLoadData] = useState(false);
+  const [streetSuggestions, setStreetSuggestions] = useState([]); 
 
   // Set initial data if available
   useEffect(() => {
@@ -85,9 +86,20 @@ const AddressForm = ({ initialData, onAddressChange }) => {
   };
 
   const handleStreetChange = (e) => {
-    const selectedStreet = e.target.value;
-    setSelectedStreet(selectedStreet); // Update selected street
+    const query = e.target.value;
+    setSelectedStreet(query); // Update selected street value
+    // Filter the streets based on the input query
+    const filteredStreets = streets.filter((street) =>
+      street.toLowerCase().includes(query.toLowerCase())
+    );
+    setStreetSuggestions(filteredStreets);
   };
+
+  const handleStreetSelect = (street) => {
+    setSelectedStreet(street);
+    setStreetSuggestions([]); // Clear suggestions after selecting a street
+  };
+
 
   // Call onAddressChange to pass data back to parent
   useEffect(() => {
@@ -130,29 +142,28 @@ const AddressForm = ({ initialData, onAddressChange }) => {
         <label htmlFor="street" className="form-label">
           Street
         </label>
-        {loading ? (
-          <p>Loading streets...</p> // Show loading message while fetching
-        ) : (
-          <select
-            id="street"
-            value={street}
-            onChange={handleStreetChange}
-            className="form-input"
-          >
-            <option value="">Select a street</option>
-            {street ? (
-              <option value={street}>{street}</option>
-            ) : (
-              streets.map((street, index) => (
-                <option key={index} value={street}>
-                  {street}
-                </option>
-              ))
-            )}
-          </select>
+        <input
+          id="street"
+          type="text"
+          value={street}
+          onChange={handleStreetChange}
+          placeholder="Start typing street name"
+          className="form-input"
+        />
+        {streetSuggestions.length > 0 && (
+          <ul className="suggestions-list">
+            {streetSuggestions.map((suggestion, index) => (
+              <li
+                key={index}
+                onClick={() => handleStreetSelect(suggestion)}
+                className="suggestion-item"
+              >
+                {suggestion}
+              </li>
+            ))}
+          </ul>
         )}
       </div>
-
       <div className="form-group">
         <label htmlFor="houseNumber" className="form-label">
           House Number
