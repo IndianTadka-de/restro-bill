@@ -487,7 +487,7 @@ router.get("/orders/:orderId", async (req, res) => {
 router.put("/orders/:orderId", async (req, res) => {
   try {
     const { orderId } = req.params;
-    const { tableNumber, orderDate, orderItems, pickupOrder, orderOnline } =
+    const { tableNumber, orderDate, orderItems, pickupOrder, onlineOrder } =
       req.body;
 
     // Validate that at least one item is selected for updating the order
@@ -498,7 +498,7 @@ router.put("/orders/:orderId", async (req, res) => {
     }
 
     // If the order is a dine-in (pickupOrder = false), then tableNumber is required
-    if (pickupOrder === false && orderOnline === false && !tableNumber) {
+    if (pickupOrder === false && onlineOrder === false && !tableNumber) {
       return res.status(400).json({
         message: "Table number is required for dine-in orders.",
       });
@@ -520,7 +520,7 @@ router.put("/orders/:orderId", async (req, res) => {
     existingOrder.orderDate = orderDate;
     existingOrder.orderItems = orderItems;
     existingOrder.pickupOrder = pickupOrder; // Ensure pickupOrder is updated
-    existingOrder.onlineOrder = orderOnline;
+    existingOrder.onlineOrder = onlineOrder;
 
     // Save the updated order to the database
     const updatedOrder = await existingOrder.save();

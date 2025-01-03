@@ -38,7 +38,7 @@ export default function OrderForm({
     postalCode: "",
     place: "",
     houseNumber: "",
-    street:""
+    street: "",
   });
   const navigate = useNavigate();
 
@@ -49,7 +49,7 @@ export default function OrderForm({
       setOrderItems(initialData.orderItems);
       setPickupOrder(initialData.pickupOrder || false); // Set initial value for pickupOrder
       setOnlineOrder(initialData.onlineOrder || false); // Set initial value for onlineOrder
-      setAddress(initialData.address)
+      setAddress(initialData.address);
     }
   }, [initialData]);
 
@@ -173,17 +173,29 @@ export default function OrderForm({
     setTableNumber(""); // Reset table number
   };
 
-  const handleSwicthToggle = (payload, type) =>{
-    if(type === 'pickup'){
-      setPickupOrder(payload);
-      setOnlineOrder(!payload)
+  const handleSwicthToggle = (payload, type) => {
+    const orderTypes = {
+      pickup: setPickupOrder,
+      online: setOnlineOrder,
+    };
+  
+    // Toggle the selected type state
+    orderTypes[type](payload);
+  
+    // Toggle the other type based on the current selection
+    const otherType = type === "pickup" ? "online" : "pickup";
+    const otherState = type === "pickup" ? onlineOrder : pickupOrder;
+  
+    if (otherState) {
+      const otherOrderTypes = {
+        pickup: setPickupOrder,
+        online: setOnlineOrder,
+      };
+  
+      otherOrderTypes[otherType](!payload);
     }
-
-    if(type === 'online'){
-      setPickupOrder(!payload);
-      setOnlineOrder(payload)
-    }
-  }
+  };
+  
 
   return (
     <div className="order-form-container">
@@ -199,7 +211,7 @@ export default function OrderForm({
         <label className="pickup-order-label">Pickup Order</label>
         <Switch
           checked={pickupOrder}
-          onChange={(checked) => handleSwicthToggle(checked,'pickup')}
+          onChange={(checked) => handleSwicthToggle(checked, "pickup")}
           checkedChildren={<CheckOutlined />} // Added check icon when on
           unCheckedChildren={<CloseOutlined />} // Added close icon when off
           style={{
@@ -218,7 +230,7 @@ export default function OrderForm({
         <label className="online-order-label">Online Order</label>
         <Switch
           checked={onlineOrder}
-          onChange={(checked) => handleSwicthToggle(checked,'online')}
+          onChange={(checked) => handleSwicthToggle(checked, "online")}
           checkedChildren={<CheckOutlined />} // Added check icon when on
           unCheckedChildren={<CloseOutlined />} // Added close icon when off
           style={{
@@ -249,7 +261,10 @@ export default function OrderForm({
 
       {onlineOrder && (
         <div className="address-form-container">
-          <AddressForm initialData={address} onAddressChange={handleAddressChange} />
+          <AddressForm
+            initialData={address}
+            onAddressChange={handleAddressChange}
+          />
         </div>
       )}
       <div className="main-content">
