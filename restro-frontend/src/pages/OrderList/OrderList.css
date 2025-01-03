@@ -28,14 +28,20 @@
 }
 
 /* Place Order Button */
+/* Place Order Button */
 .place-order-btn-container {
   display: flex;
-  justify-content: flex-end; /* Align the button to the right */
-  margin-top: 20px; /* Add some spacing from the table */
+  justify-content: space-between; /* Space between buttons */
+  margin-top: 20px;
+  gap: 15px; /* Maintain gap between buttons */
+  width: 100%;
+  max-width: 700px; /* Optional: Limit max width for better alignment */
+  margin: 20px auto; /* Center buttons */
 }
 
-.place-order-btn {
-  background: #4caf50;
+/* Booking Order Button */
+.place-order-btn.booking-order-btn {
+  background-color: #4caf50; /* Green for Booking Order */
   color: white;
   border: none;
   padding: 15px 30px;
@@ -45,15 +51,60 @@
   transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 }
 
-.place-order-btn:hover {
+.place-order-btn.booking-order-btn:hover {
   transform: translateY(-5px);
   box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2);
 }
 
-.place-order-btn:active {
+.place-order-btn.booking-order-btn:active {
   transform: translateY(2px);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
+
+/* Place Order Button */
+.place-order-btn.place-order-btn {
+  background-color: #1890ff; /* Blue for Place Order */
+  color: white;
+  border: none;
+  padding: 15px 30px;
+  font-size: 1.2rem;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.place-order-btn.place-order-btn:hover {
+  transform: translateY(-5px);
+  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2);
+}
+
+.place-order-btn.place-order-btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Download Orders Excel Button */
+.download-excel-btn {
+  background-color: #ff9800; /* Orange for Download Orders Excel */
+  color: white;
+  border: none;
+  padding: 15px 30px;
+  font-size: 1.2rem;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.download-excel-btn:hover {
+  transform: translateY(-5px);
+  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2);
+}
+
+.download-excel-btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
 
 .search-box-container {
   display: flex;

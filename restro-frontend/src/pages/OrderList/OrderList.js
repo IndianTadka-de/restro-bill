@@ -16,6 +16,8 @@ import "react-toastify/dist/ReactToastify.css"; // Make sure to import the style
 import * as XLSX from "xlsx"; // Import xlsx library for Excel functionality
 import "./OrderList.css";
 import { base_url } from "../../utils/apiList";
+import BookingForm from "../../components/BookingForm";
+import Modal from "../../components/Modal";
 
 function OrderList() {
   const navigate = useNavigate();
@@ -23,6 +25,17 @@ function OrderList() {
   const [filteredOrders, setFilteredOrders] = useState(orders);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState(""); // For search term input
+  const [isBookingTable, setBookingTable] = useState(false);
+
+  const initialValues = {
+    bookingDate: new Date().toISOString().split("T")[0], // Today's date in the format YYYY-MM-DD
+    numberOfPeople: 0,
+    bookingName:"",
+    bookingTime: "",
+    phoneNumber: "",
+    hour: "",
+    minute: "",
+  };
 
   useEffect(() => {
     setFilteredOrders(orders);
@@ -199,19 +212,35 @@ function OrderList() {
       toast.error(error.response.data.message, { position: "top-right" });
     }
   };
-
+  const getOrderType = (record) => {
+    if (record.pickupOrder) {
+      return "PICKUP";
+    } else if (record.onlineOrder) {
+      return "ONLINE ORDER";
+    } else {
+      return "DINE-IN";
+    }
+  };
   const orderListColumn = [
     {
       title: "OrderId",
       dataIndex: "displayId",
     },
     {
+      title: "Order Type",
+      dataIndex: "orderType",
+      render: (_, record) => getOrderType(record),
+    },
+    {
       title: "Table Number",
       dataIndex: "tableNumber",
+      render: (_, record) => (record?.tableNumber ? record?.tableNumber : "-"),
     },
     {
       title: "Order Date",
-      dataIndex: "createdAt",
+      dataIndex: "orderDate",
+      render: (_, record) =>
+        new Date(record.createdAt).toISOString().split("T")[0],
     },
     {
       title: "Order Price",
@@ -326,10 +355,39 @@ function OrderList() {
     fetchOrders();
   }, []);
 
+  const handleBookingSubmit = async (payload) => {    
+    try {
+      delete payload.hour;
+      delete payload.minute;
+      const response = await axios.post(`${base_url}/booking`, {
+        ...payload
+      });
+      if (response?.status === 201) {
+        // Only trigger success toast on success
+        toast.success("Order Booking created successfully!", {
+          position: "top-right",
+        });
+        //navigate("/");  // Navigate to the main page or wherever you want
+      } 
+    } catch (error) {
+      toast.error(error?.response?.data?.message, {
+        position: "top-right",  // Correct position value
+      });
+    } finally {
+      setBookingTable(false);
+    }
+  };
+
   return (
     <div className="centered-container">
       <div className="list-page-heading">The Indian Tadka</div>
       <div className="place-order-btn-container">
+        <Button
+          className="place-order-btn"
+          onClick={() => setBookingTable(true)}
+        >
+          Booking Table
+        </Button>
         <Button
           className="place-order-btn"
           onClick={() => navigate("/orderCreate")}
@@ -373,9 +431,18 @@ function OrderList() {
           pagination={true}
         />
       </div>
+      {isBookingTable && (
+        <Modal onClose={() => setBookingTable(false)}>
+          <BookingForm
+            initialValues={initialValues}
+            handleFormSubit={handleBookingSubmit}
+          />
+        </Modal>
+      )}
     </div>
   );
 }
+
 
 const searchSuggestions = [
   {

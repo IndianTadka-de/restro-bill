@@ -125,6 +125,7 @@ body {
     border-color: #1890ff;
     outline: none;
   }
+
   
   @media (max-width: 768px) {
     .order-details-container {

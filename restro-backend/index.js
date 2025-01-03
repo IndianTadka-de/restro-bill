@@ -2,7 +2,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const cors = require('cors');
-const orderRoutes = require('./orderlist/orderlist'); // Import your routes
+const orderRoutes = require('./orderlist/orderlist'); // Import order routes
+const bookingRoutes = require('./booking/booking'); // Import booking routes
 const swaggerJsdoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
 
@@ -26,7 +27,7 @@ const swaggerOptions = {
             },
         ],
     },
-    apis: ['./orderlist/orderlist.js'], // Path to the Swagger JSDoc comments in your routes file
+    apis: ['./orderlist/orderlist.js', './booking/booking.js'], // Path to the Swagger JSDoc comments
 };
 
 // Initialize Swagger JSDoc
@@ -44,14 +45,15 @@ app.get('/', (req, res) => {
 app.use(express.json()); // Middleware to parse JSON request bodies
 app.use(cors()); // Middleware to enable CORS
 
-// Mount order routes with /api prefix
+// Mount the routes for orders and bookings with the /api prefix
 app.use('/api', orderRoutes); // All routes in orderRoutes will be prefixed with /api
+app.use('/api', bookingRoutes); // All routes in bookingRoutes will be prefixed with /api
 
 // MongoDB connection using Mongoose
-const MONGODB_URI='mongodb+srv://indiancusine:HVVcs8QBxPMCQxMx@cluster0.xtrfg.mongodb.net/Orders'
+const MONGODB_URI = 'mongodb+srv://indiancusine:HVVcs8QBxPMCQxMx@cluster0.xtrfg.mongodb.net/Orders';
 mongoose.connect(MONGODB_URI, {
-   // useNewUrlParser: true,
-    //useUnifiedTopology: true,
+    // useNewUrlParser: true,
+    // useUnifiedTopology: true,
 })
     .then(() => {
         console.log('Connected to MongoDB');
@@ -63,5 +65,5 @@ mongoose.connect(MONGODB_URI, {
 // Start the server
 const port = process.env.PORT || 8080;
 app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
+    console.log(`Server is running on port ${port}`);
 });

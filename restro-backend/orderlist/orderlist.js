@@ -13,6 +13,8 @@ const { searchQueryParser } = require("../utils/search-query-parser");
  * @swagger
  * /api/orders:
  *   post:
+ *     tags:
+ *       - Order
  *     summary: Create a new order
  *     description: Creates a new order with items in the system.
  *     requestBody:
@@ -188,11 +190,12 @@ router.post("/orders", async (req, res) => {
   }
 });
 
-
 /**
  * @swagger
  * /api/orders:
  *   get:
+ *     tags:
+ *       - Order
  *     summary: Get all orders
  *     description: Retrieves all orders from the system.
  *     responses:
@@ -241,6 +244,8 @@ router.get("/orders", async (req, res) => {
  * @swagger
  * /api/orders-listing:
  *   post:
+ *     tags:
+ *       - Order
  *     summary: Retrieve filtered and sorted list of orders
  *     description: Fetches orders from the system based on search criteria provided in the request body, and sorts them by creation date in descending order.
  *     requestBody:
@@ -338,6 +343,8 @@ router.post("/orders-listing", async (req, res) => {
  * @swagger
  * /api/orders/{orderId}:
  *   get:
+ *     tags:
+ *       - Order
  *     summary: Get a specific order by OrderId
  *     description: Retrieves a single order using its OrderId.
  *     parameters:
@@ -426,6 +433,8 @@ router.get("/orders/:orderId", async (req, res) => {
  * @swagger
  * /api/orders/{orderId}:
  *   put:
+ *     tags:
+ *       - Order
  *     summary: Update an existing order
  *     description: Updates an order's details, including table number, order date, and multiple items.
  *     parameters:
@@ -532,6 +541,8 @@ router.put("/orders/:orderId", async (req, res) => {
  * @swagger
  * /api/orders/{itemId}:
  *   delete:
+ *     tags:
+ *       - Order
  *     summary: Delete an order by ItemId
  *     description: Deletes an order using its ItemId.
  *     parameters:
@@ -573,6 +584,8 @@ router.delete("/orders/:orderId", async (req, res) => {
  * @swagger
  * /api/orders/{orderId}/status:
  *   put:
+ *     tags:
+ *       - Order
  *     summary: Update the status of an order
  *     description: Updates the status of an existing order. The status can either be 'INPROGRESS' or 'COMPLETED'.
  *     parameters:
@@ -640,6 +653,8 @@ router.put("/orders/:orderId/status", async (req, res) => {
  * @swagger
  * /api/orders/{orderId}/paymentMethod:
  *   put:
+ *     tags:
+ *       - Order
  *     summary: Update the paymentMethod of an order
  *     description: Updates the paymentMethod of an existing order. The paymentMethod type can either be 'CARD','CASH' and 'PAYPAL'.
  *     parameters:
@@ -947,6 +962,8 @@ router.post("/generate-bill-for-person", async (req, res) => {
  * @swagger
  * /api/orders/exportData:
  *   get:
+ *     tags:
+ *       - Order
  *     summary: Export all orders to Excel
  *     description: Generates an Excel file with all orders and their details.
  *     responses:
