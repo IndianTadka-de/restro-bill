@@ -742,16 +742,20 @@ router.get("/generate-bill/:orderId", async (req, res) => {
     });
   doc.fontSize(10).text("________________________________");
   doc.moveDown(1);
-  if (!order.pickupOrder) {
+  if (!(order.pickupOrder || order.onlineOrder)) {
     doc.fontSize(12).text(`Table Number: ${order.tableNumber}`);
     doc.moveDown(1);
-  } else {
+  } else if(order.pickupOrder){
     doc
       .fontSize(12)
       .font("Helvetica-Bold")
       .text(`Abholbestellung`, { align: "center" });
     doc.moveDown(1);
   }
+
+  doc.fontSize(12).text(order?.address?.street.toLowerCase());
+  doc.fontSize(12).text(order?.address?.postalCode +" " + order?.address?.place.split('/')[0].toLowerCase());
+  doc.moveDown(1);
 
   const itemX = 10;
   const priceX = 50;

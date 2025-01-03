@@ -18,6 +18,10 @@ const orderSchema = new mongoose.Schema({
             return !(this.pickupOrder === true || this.onlineOrder === true);
         },
     },
+    orderDate: {
+      type: Date,
+      required: true,
+    },
     pickupOrder: {
         type: Boolean,
         required: false,
