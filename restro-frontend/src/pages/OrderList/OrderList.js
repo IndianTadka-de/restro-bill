@@ -13,7 +13,6 @@ import {
 } from "@ant-design/icons"; // Import icons for status update
 import { toast } from "react-toastify"; // Import toast for notifications
 import "react-toastify/dist/ReactToastify.css"; // Make sure to import the styles
-import * as XLSX from "xlsx"; // Import xlsx library for Excel functionality
 import "./OrderList.css";
 import { base_url } from "../../utils/apiList";
 import BookingForm from "../../components/BookingForm";
@@ -26,6 +25,10 @@ function OrderList() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState(""); // For search term input
   const [isBookingTable, setBookingTable] = useState(false);
+  const [pagination, setPagination] = useState({
+    current: 1,  // Set default current page
+    pageSize: 10, // Default page size is 10
+  });
 
   const initialValues = {
     bookingDate: new Date().toISOString().split("T")[0], // Today's date in the format YYYY-MM-DD
@@ -144,29 +147,6 @@ function OrderList() {
     }
   };
 
-  const handleDownloadExcel = () => {
-    const formattedOrders = orders.flatMap((order) => {
-      const totalPrice = order.orderItems
-        .reduce((sum, item) => sum + item.price * item.quantity, 0)
-        .toFixed(2);
-      return order.orderItems.map((item) => ({
-        "Order ID": order.orderId,
-        "Table Number": order.tableNumber,
-        "Order Date": new Date(order.createdAt).toLocaleDateString(),
-        "Order Status": order.status,
-        "Order Total Price": `€${totalPrice}`,
-        "Item Name": item.itemName,
-        Quantity: item.quantity,
-        "Item Price": `€${(item.price * item.quantity).toFixed(2)}`,
-      }));
-    });
-
-    const ws = XLSX.utils.json_to_sheet(formattedOrders);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Orders");
-    XLSX.writeFile(wb, "Order_List.xlsx");
-  };
-
   const handleDeleteRow = async (record) => {
     try {
       const response = await axios.delete(
@@ -212,6 +192,7 @@ function OrderList() {
       toast.error(error.response.data.message, { position: "top-right" });
     }
   };
+
   const getOrderType = (record) => {
     if (record.pickupOrder) {
       return "PICKUP";
@@ -221,6 +202,7 @@ function OrderList() {
       return "DINE-IN";
     }
   };
+
   const orderListColumn = [
     {
       title: "OrderId",
@@ -355,54 +337,36 @@ function OrderList() {
     fetchOrders();
   }, []);
 
-  const handleBookingSubmit = async (payload) => {    
+  const handleBookingSubmit = async (payload) => {
     try {
       delete payload.hour;
       delete payload.minute;
       const response = await axios.post(`${base_url}/booking`, {
-        ...payload
+        ...payload,
       });
       if (response?.status === 201) {
-        // Only trigger success toast on success
         toast.success("Order Booking created successfully!", {
           position: "top-right",
         });
-        //navigate("/");  // Navigate to the main page or wherever you want
-      } 
+      }
     } catch (error) {
       toast.error(error?.response?.data?.message, {
-        position: "top-right",  // Correct position value
+        position: "top-right",
       });
     } finally {
       setBookingTable(false);
     }
   };
 
+  const handlePageChange = (page, pageSize) => {
+    setPagination({
+      current: page,
+      pageSize: pageSize,
+    });
+  };
+
   return (
     <div className="centered-container">
-      <div className="list-page-heading">The Indian Tadka</div>
-      <div className="place-order-btn-container">
-        <Button
-          className="place-order-btn"
-          onClick={() => setBookingTable(true)}
-        >
-          Booking Table
-        </Button>
-        <Button
-          className="place-order-btn"
-          onClick={() => navigate("/orderCreate")}
-        >
-          Place Order
-        </Button>
-        {/* Add the Excel Download Button */}
-        <Button
-          className="download-excel-btn"
-          icon={<DownloadOutlined />}
-          onClick={handleDownloadExcel}
-        >
-          Download Orders Excel
-        </Button>
-      </div>
       <div className="search-box-container">
         <AutoComplete
           size="large"
@@ -428,7 +392,22 @@ function OrderList() {
           rowKey="orderId"
           dataSource={filteredOrders}
           loading={loading}
-          pagination={true}
+          pagination={{
+            current: pagination.current,
+            pageSize: pagination.pageSize,
+            onChange: handlePageChange,
+            showSizeChanger: true,
+            pageSizeOptions: ["5", "8", "15","20"],
+             showTotal: (total, range) => `Showing ${range[0]} to ${range[1]} of ${total} orders`
+          //  showTotal: (total) => `${pagination.current} - ${pagination.pageSize} out of ${total} orders`,
+          }}
+          // pagination={{
+          //   ...pagination,
+          //   total: totalCount,
+          //   showTotal: (total, range) => `Showing ${range[0]} to ${range[1]} of ${total} entries`,
+          //   pageSizeOptions: [5, 10, 20],
+          //   showSizeChanger: true
+          // }}
         />
       </div>
       {isBookingTable && (
@@ -442,7 +421,6 @@ function OrderList() {
     </div>
   );
 }
-
 
 const searchSuggestions = [
   {

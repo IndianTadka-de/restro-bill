@@ -1,4 +1,16 @@
 /* General Table Styling */
+
+.centered-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  width: 100%;
+  max-width: 1200px; /* Maximum width */
+  margin: 0 auto; /* Center horizontally */
+}
+
 .table-container {
   width: 100%;
   margin-top: 20px;
@@ -6,6 +18,12 @@
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   background-color: white;
+  overflow-x: auto; /* Ensure horizontal scroll for smaller screens */
+}
+
+.table-container .ant-table {
+  width: 100%;
+  table-layout: auto; /* Ensures table columns resize dynamically */
 }
 
 .table-container .ant-table th {
@@ -27,85 +45,7 @@
   letter-spacing: 1px; /* Add some spacing for style */
 }
 
-/* Place Order Button */
-/* Place Order Button */
-.place-order-btn-container {
-  display: flex;
-  justify-content: space-between; /* Space between buttons */
-  margin-top: 20px;
-  gap: 15px; /* Maintain gap between buttons */
-  width: 100%;
-  max-width: 700px; /* Optional: Limit max width for better alignment */
-  margin: 20px auto; /* Center buttons */
-}
-
-/* Booking Order Button */
-.place-order-btn.booking-order-btn {
-  background-color: #4caf50; /* Green for Booking Order */
-  color: white;
-  border: none;
-  padding: 15px 30px;
-  font-size: 1.2rem;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-}
-
-.place-order-btn.booking-order-btn:hover {
-  transform: translateY(-5px);
-  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2);
-}
-
-.place-order-btn.booking-order-btn:active {
-  transform: translateY(2px);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-/* Place Order Button */
-.place-order-btn.place-order-btn {
-  background-color: #1890ff; /* Blue for Place Order */
-  color: white;
-  border: none;
-  padding: 15px 30px;
-  font-size: 1.2rem;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-}
-
-.place-order-btn.place-order-btn:hover {
-  transform: translateY(-5px);
-  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2);
-}
-
-.place-order-btn.place-order-btn:active {
-  transform: translateY(2px);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-/* Download Orders Excel Button */
-.download-excel-btn {
-  background-color: #ff9800; /* Orange for Download Orders Excel */
-  color: white;
-  border: none;
-  padding: 15px 30px;
-  font-size: 1.2rem;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-}
-
-.download-excel-btn:hover {
-  transform: translateY(-5px);
-  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2);
-}
-
-.download-excel-btn:active {
-  transform: translateY(2px);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-
+/* Search Box Styling */
 .search-box-container {
   display: flex;
   justify-content: center;
@@ -152,16 +92,87 @@
   background-color: #096dd9;
 }
 
+/* Media Queries for Responsiveness */
 @media (max-width: 768px) {
-  .search-box-container {
-    flex-direction: column; /* Stack vertically on smaller screens */
-    padding: 10px;
+  .table-container .ant-table th,
+  .table-container .ant-table td {
+    font-size: 0.9rem; /* Adjust font size for smaller screens */
+  }
+
+  .table-container {
+    padding: 0 10px;
+  }
+
+  /* Add horizontal scrolling for the table */
+  .table-container .ant-table {
+    overflow-x: auto;
+    display: block; /* Allow scrolling on the x-axis */
+    white-space: nowrap; /* Prevent text from wrapping inside cells */
+  }
+
+  /* Adjust the padding of table cells */
+  .table-container .ant-table td {
+    padding: 8px; /* Reduced padding for smaller screens */
+  }
+
+  .list-page-heading {
+    font-size: 1.8rem; /* Adjust heading size for smaller screens */
+  }
+
+  .place-order-btn-container {
+    flex-direction: column; /* Stack buttons vertically on smaller screens */
+    gap: 10px; /* Reduced gap */
     max-width: 100%;
   }
 
-  .search-button {
-    width: 100%;
-    margin-top: 10px;
+  .place-order-btn.booking-order-btn,
+  .place-order-btn.place-order-btn,
+  .download-excel-btn {
+    width: 100%; /* Buttons take full width */
+    font-size: 1rem; /* Slightly smaller font size */
+    padding: 12px; /* Slightly reduced padding */
   }
+}
+
+/* Mobile View (for very small screens) */
+@media (max-width: 480px) {
+  .table-container .ant-table th,
+  .table-container .ant-table td {
+    font-size: 0.8rem; /* Further reduce font size on very small screens */
+    padding: 6px; /* Reduce padding further */
+  }
+
+  /* Ensure the table takes up full width on small screens */
+  .table-container .ant-table {
+    width: 100%;
+  }
+
+  .table-container .ant-table td {
+    padding: 6px;
+  }
+
+  .list-page-heading {
+    font-size: 1.6rem; /* Smaller heading for very small screens */
+    padding: 0 10px; /* Adjust padding */
+  }
+
+  .search-input {
+    font-size: 14px; /* Smaller text size */
+  }
+
+  .search-button {
+    font-size: 14px; /* Smaller text size */
+  }
+
+  .place-order-btn.booking-order-btn,
+  .place-order-btn.place-order-btn,
+  .download-excel-btn {
+    font-size: 1rem; /* Adjust button text size */
+    padding: 10px; /* Reduce padding */
+  }
+}
+
+.table-container .ant-table td {
+  word-wrap: break-word;
 }
 

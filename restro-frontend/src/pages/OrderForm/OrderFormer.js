@@ -201,10 +201,6 @@ export default function OrderForm({
     <div className="order-form-container">
       {/* Header */}
       <div className="order-form-header">
-        <ArrowLeftOutlined
-          onClick={() => navigate("/")}
-          className="back-arrow"
-        />
         <h2>{title}</h2>
       </div>
       <div className="pickup-order-toggle">
@@ -267,7 +263,7 @@ export default function OrderForm({
           />
         </div>
       )}
-      <div className="main-content">
+      <div className="order-from-main-content">
         {/* Table Number Selection */}
         {!pickupOrder && !onlineOrder && (
           <div className="table-selection-container">
@@ -299,6 +295,7 @@ export default function OrderForm({
           columns={columns}
           dataSource={orderItems}
           rowKey="itemId"
+          scroll={{ x: 'max-content' }}
           className="order-items-table"
         />
       </div>
