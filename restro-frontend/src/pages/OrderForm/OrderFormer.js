@@ -3,9 +3,7 @@ import { Input, Button, Table, Col, Row, Switch } from "antd";
 import CounterButton from "../../components/CounterButton";
 import Modal from "../../components/Modal";
 import ItemList from "../../components/Itemslist";
-import { useNavigate } from "react-router-dom";
 import {
-  ArrowLeftOutlined,
   DeleteOutlined,
   CheckOutlined,
   CloseOutlined,
@@ -40,7 +38,6 @@ export default function OrderForm({
     houseNumber: "",
     street: "",
   });
-  const navigate = useNavigate();
 
   useEffect(() => {
     if (initialData && Object.keys(initialData).length > 0) {

@@ -50,6 +50,7 @@
 .content {
   flex-grow: 1;
   margin-left: 20px; /* Space between sidebar and content */
+  margin-top: 0%; /* Adjust the margin-top to move the content closer to the top */
   padding: 20px;
   background-color: #f4f6f8; /* Light background for content */
   border-radius: 8px;
@@ -62,6 +63,7 @@
   .content {
     padding: 15px;
     margin-left: 10px; /* Less space for mobile */
+    margin-top: 0%; /* Ensure margin-top stays consistent */
   }
 }
 
@@ -69,6 +71,7 @@
   .content {
     padding: 10px;
     margin-left: 5px; /* Even less space on smaller screens */
+    margin-top: 0%; /* Maintain the same margin-top for smaller screens */
   }
 }
 

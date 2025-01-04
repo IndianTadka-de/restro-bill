@@ -11,8 +11,9 @@ import "./App.css";
 function App() {
   return (
     <div className="main-content">
-      <div className="heading">The Indian Tadka</div>
       <Sidebar className="sidebar" />
+      <div className="heading">The Indian Tadka</div>
+      
       <div className="content">
         <Routes>
           <Route path="/" element={<OrderList />} />

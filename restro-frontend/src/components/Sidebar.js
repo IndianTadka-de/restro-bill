@@ -53,18 +53,18 @@ const Sidebar = () => {
   };
 
   const handleHomeButton = () => {
-    // toggleSidebar();
     navigate("/");
+    toggleSidebar();
   };
 
   const handleOrderButton = () => {
-    // toggleSidebar();
     navigate("/orderCreate");
+    toggleSidebar();
   };
 
   const handleReservation = () => {
-    // toggleSidebar();
     setReservation(true);
+    toggleSidebar();
   };
 
   return (
@@ -102,7 +102,7 @@ const Sidebar = () => {
         </Button>
 
         {reservation && (
-          <Modal onClose={() => setReservation(false)}>
+          <Modal onClose={() => setReservation(false)} size="small">
             <BookingForm initialValues={initialValues} handleFormSubit={handleBookingSubmit} />
           </Modal>
         )}

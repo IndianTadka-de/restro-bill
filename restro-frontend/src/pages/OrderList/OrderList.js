@@ -399,15 +399,7 @@ function OrderList() {
             showSizeChanger: true,
             pageSizeOptions: ["5", "8", "15","20"],
              showTotal: (total, range) => `Showing ${range[0]} to ${range[1]} of ${total} orders`
-          //  showTotal: (total) => `${pagination.current} - ${pagination.pageSize} out of ${total} orders`,
           }}
-          // pagination={{
-          //   ...pagination,
-          //   total: totalCount,
-          //   showTotal: (total, range) => `Showing ${range[0]} to ${range[1]} of ${total} entries`,
-          //   pageSizeOptions: [5, 10, 20],
-          //   showSizeChanger: true
-          // }}
         />
       </div>
       {isBookingTable && (
@@ -441,7 +433,7 @@ const searchSuggestions = [
   {
     id: "acf8330f-8ddc-4f91-8151-5db18566f99e",
     label: "View Order By Order Date",
-    value: `orderDate: ${new Date()}`,
+    value: `orderDate: ${new Date().toISOString().split("T")[0]}`,
   },
   {
     id: "18bbce31-f944-49d2-9522-5cf95f927e9c",
