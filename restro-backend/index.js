@@ -50,8 +50,7 @@ app.use('/api', orderRoutes); // All routes in orderRoutes will be prefixed with
 app.use('/api', bookingRoutes); // All routes in bookingRoutes will be prefixed with /api
 
 // MongoDB connection using Mongoose
-const MONGODB_URI = 'mongodb+srv://indiancusine:HVVcs8QBxPMCQxMx@cluster0.xtrfg.mongodb.net/Orders';
-mongoose.connect(MONGODB_URI, {
+mongoose.connect(process.env.MONGODB_URI, {
     // useNewUrlParser: true,
     // useUnifiedTopology: true,
 })

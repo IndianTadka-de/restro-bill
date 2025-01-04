@@ -504,6 +504,12 @@ export const ItemListData = [
     category: "Indische Spezialitäten Vegetarisch",
   },
   {
+    itemName: "Reis (Rice)",
+    price: 2.5,
+    itemId: "55b",
+    category: "Indische Spezialitäten Vegetarisch",
+  },
+  {
     itemName: "Mozzarella Sticks",
     price: 9.5,
     itemId: "110",
@@ -1042,5 +1048,11 @@ export const ItemListData = [
     price: 3.5,
     itemId: "M13",
     category: "Mittagsmenü",
+  },
+  {
+    itemName: "Liefer",
+    price: 1,
+    itemId: "0001",
+    category: "Delivery",
   },
 ];
