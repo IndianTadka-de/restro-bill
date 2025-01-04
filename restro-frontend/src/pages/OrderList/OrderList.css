@@ -1,11 +1,10 @@
 /* General Table Styling */
-
 .centered-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 20px;
+  padding: 60px;
   width: 100%;
   max-width: 1200px; /* Maximum width */
   margin: 0 auto; /* Center horizontally */
@@ -93,86 +92,114 @@
 }
 
 /* Media Queries for Responsiveness */
-@media (max-width: 768px) {
-  .table-container .ant-table th,
-  .table-container .ant-table td {
-    font-size: 0.9rem; /* Adjust font size for smaller screens */
-  }
 
+/* For Devices with screen widths between 768px and 1024px (e.g., Surface Book 7 in tablet mode or similar) */
+@media (max-width: 1024px) {
   .table-container {
-    padding: 0 10px;
+    padding: 0 15px; /* Reduce the padding to fit the table properly */
   }
 
-  /* Add horizontal scrolling for the table */
   .table-container .ant-table {
-    overflow-x: auto;
-    display: block; /* Allow scrolling on the x-axis */
-    white-space: nowrap; /* Prevent text from wrapping inside cells */
-  }
-
-  /* Adjust the padding of table cells */
-  .table-container .ant-table td {
-    padding: 8px; /* Reduced padding for smaller screens */
-  }
-
-  .list-page-heading {
-    font-size: 1.8rem; /* Adjust heading size for smaller screens */
-  }
-
-  .place-order-btn-container {
-    flex-direction: column; /* Stack buttons vertically on smaller screens */
-    gap: 10px; /* Reduced gap */
-    max-width: 100%;
-  }
-
-  .place-order-btn.booking-order-btn,
-  .place-order-btn.place-order-btn,
-  .download-excel-btn {
-    width: 100%; /* Buttons take full width */
-    font-size: 1rem; /* Slightly smaller font size */
-    padding: 12px; /* Slightly reduced padding */
-  }
-}
-
-/* Mobile View (for very small screens) */
-@media (max-width: 480px) {
-  .table-container .ant-table th,
-  .table-container .ant-table td {
-    font-size: 0.8rem; /* Further reduce font size on very small screens */
-    padding: 6px; /* Reduce padding further */
-  }
-
-  /* Ensure the table takes up full width on small screens */
-  .table-container .ant-table {
+    table-layout: fixed; /* Ensures that the table resizes properly */
     width: 100%;
   }
 
-  .table-container .ant-table td {
-    padding: 6px;
+  .table-container .ant-table td,
+  .table-container .ant-table th {
+    font-size: 1rem; /* Adjust the font size for readability */
+    padding: 10px; /* Adjust padding for smaller screens */
   }
 
   .list-page-heading {
-    font-size: 1.6rem; /* Smaller heading for very small screens */
-    padding: 0 10px; /* Adjust padding */
+    font-size: 2rem; /* Make the heading smaller for tablets */
+  }
+
+  /* Ensure search box doesn't stretch too much */
+  .search-box-container {
+    max-width: 100%; /* Allow it to take full width */
+    padding: 10px; /* Slight padding */
   }
 
   .search-input {
-    font-size: 14px; /* Smaller text size */
+    font-size: 14px; /* Adjust input font size */
   }
 
   .search-button {
-    font-size: 14px; /* Smaller text size */
+    font-size: 14px; /* Adjust button size */
+  }
+
+  /* Adjust button sizes and layouts for tablet-like screens */
+  .place-order-btn-container {
+    flex-direction: column; /* Stack buttons vertically on tablets */
+    gap: 10px;
   }
 
   .place-order-btn.booking-order-btn,
   .place-order-btn.place-order-btn,
   .download-excel-btn {
-    font-size: 1rem; /* Adjust button text size */
-    padding: 10px; /* Reduce padding */
+    width: 100%; /* Full width buttons */
+    font-size: 1rem;
+    padding: 12px;
+  }
+}
+
+/* Additional media query for devices smaller than 768px (smartphones) */
+@media (max-width: 768px) {
+  .table-container {
+    padding: 0 10px; /* Adjust table container padding */
+  }
+
+  .table-container .ant-table th,
+  .table-container .ant-table td {
+    font-size: 0.9rem; /* Slightly reduce font size */
+    padding: 8px; /* Reduce padding */
+  }
+
+  .list-page-heading {
+    font-size: 1.8rem;
+  }
+
+  .place-order-btn-container {
+    flex-direction: column; /* Stack buttons vertically */
+  }
+
+  .place-order-btn.booking-order-btn,
+  .place-order-btn.place-order-btn,
+  .download-excel-btn {
+    width: 100%;
+    font-size: 1rem;
+    padding: 12px;
+  }
+}
+
+/* For very small devices (e.g., phones) */
+@media (max-width: 480px) {
+  .table-container .ant-table th,
+  .table-container .ant-table td {
+    font-size: 0.8rem; /* Further reduce font size */
+    padding: 6px; /* Reduce padding */
+  }
+
+  .list-page-heading {
+    font-size: 1.6rem;
+  }
+
+  .search-input {
+    font-size: 14px;
+  }
+
+  .search-button {
+    font-size: 14px;
+  }
+
+  .place-order-btn.booking-order-btn,
+  .place-order-btn.place-order-btn,
+  .download-excel-btn {
+    font-size: 1rem;
+    padding: 10px;
   }
 }
 
 .table-container .ant-table td {
   word-wrap: break-word;
 }
-
