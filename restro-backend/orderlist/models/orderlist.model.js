@@ -46,6 +46,10 @@ const orderSchema = new mongoose.Schema({
         street:{
             type: String,
             required: false,
+        },
+        phoneNumber:{
+            type: String,
+            required: false,
         }
     },
     status:{

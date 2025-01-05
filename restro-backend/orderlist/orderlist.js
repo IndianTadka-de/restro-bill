@@ -792,7 +792,7 @@ router.get("/generate-bill/:orderId", async (req, res) => {
     doc.moveDown(1);
   }
 
-  doc.fontSize(12).text(order?.address?.street.toLowerCase());
+  doc.font("Helvetica-Bold").fontSize(12).text(order?.address?.street.toLowerCase());
   doc
     .fontSize(12)
     .text(
@@ -800,6 +800,7 @@ router.get("/generate-bill/:orderId", async (req, res) => {
         " " +
         order?.address?.place.split("/")[0].toLowerCase()
     );
+  doc.fontSize(12).text(order?.address?.phoneNumber);
   doc.moveDown(1);
 
   const itemX = 10;

@@ -3,12 +3,12 @@ import "./AddressForm.css";
 
 const AddressForm = ({ initialData, onAddressChange }) => {
   const [postalCode, setPostalCode] = useState("");
+  const [phoneNumber,setPhoneNumber] =useState("");
   const [houseNumber, setHouseNumber] = useState("");
   const [place, setPlace] = useState("");
   const [streets, setStreets] = useState([]); // Store street names
   const [street, setSelectedStreet] = useState(""); // Selected street
   const [error, setError] = useState(null);
- // To manage loading state for fetching streets
   const [loadData, setLoadData] = useState(false);
   const [streetSuggestions, setStreetSuggestions] = useState([]); 
 
@@ -19,6 +19,7 @@ const AddressForm = ({ initialData, onAddressChange }) => {
       setHouseNumber(initialData.houseNumber);
       setPlace(initialData.place);
       setSelectedStreet(initialData.street);
+      setPhoneNumber(initialData.phoneNumber)
       setLoadData(true);
     }
   }, [loadData, initialData]);
@@ -85,6 +86,10 @@ const AddressForm = ({ initialData, onAddressChange }) => {
     setHouseNumber(e.target.value); // Update house number value
   };
 
+  const handlePhoneNumberChange = (e) => {
+    setPhoneNumber(e.target.value); // Update house number value
+  };
+
   const handleStreetChange = (e) => {
     const query = e.target.value;
     setSelectedStreet(query); // Update selected street value
@@ -103,8 +108,8 @@ const AddressForm = ({ initialData, onAddressChange }) => {
 
   // Call onAddressChange to pass data back to parent
   useEffect(() => {
-    onAddressChange({ postalCode, place, houseNumber, street });
-  }, [postalCode, place, houseNumber, street, onAddressChange]);
+    onAddressChange({ postalCode, place, houseNumber, street,phoneNumber });
+  }, [postalCode, place, houseNumber, street, phoneNumber,onAddressChange]);
 
   return (
     <form className="address-form">
@@ -174,6 +179,19 @@ const AddressForm = ({ initialData, onAddressChange }) => {
           value={houseNumber}
           onChange={handleHouseNumberChange}
           placeholder="Enter house number"
+          className="form-input"
+        />
+      </div>
+      <div className="form-group">
+        <label htmlFor="phoneNumebr" className="form-label">
+          Phone Number
+        </label>
+        <input
+          id="phoneNumber"
+          type="text"
+          value={phoneNumber}
+          onChange={handlePhoneNumberChange}
+          placeholder="Enter phone number"
           className="form-input"
         />
       </div>
