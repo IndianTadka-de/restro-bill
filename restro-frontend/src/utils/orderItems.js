@@ -1044,6 +1044,12 @@ export const ItemListData = [
     category: "Mittagsmenü",
   },
   {
+    itemName: "Discount",
+    price: -1,
+    itemId: "0120",
+    category: "Rabatt"
+  },
+  {
     itemName: "salat (Mittagsmenü)",
     price: 3.5,
     itemId: "M13",
