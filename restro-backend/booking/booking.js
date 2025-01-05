@@ -3,12 +3,12 @@ const router = express.Router();
 const Booking = require("./model/booking.model");
 /**
  * @swagger
- * /api/booking:
+ * /api/reservations:
  *   post:
  *     tags:
- *       - Booking
- *     summary: Create a new Booking
- *     description: Creates a new booking with bookuing details.
+ *       - Reservations
+ *     summary: Create a new Reservations
+ *     description: Creates a new reservation with details.
  *     requestBody:
  *       required: true
  *       content:
@@ -37,7 +37,7 @@ const Booking = require("./model/booking.model");
 
  *     responses:
  *       201:
- *         description: Booking created successfully
+ *         description: Reservations created successfully
  *         content:
  *           application/json:
  *             schema:
@@ -45,7 +45,7 @@ const Booking = require("./model/booking.model");
  *               properties:
  *                 message:
  *                   type: string
- *                   example: "Booking created successfully"
+ *                   example: "Reservations created successfully"
  *                 order:
  *                   type: object
  *                   properties:
@@ -56,7 +56,7 @@ const Booking = require("./model/booking.model");
  *                       type: string
  *                       example: "true"
  *       400:
- *         description: Error creating order
+ *         description: Error creating reservation
  *         content:
  *           application/json:
  *             schema:
@@ -64,9 +64,9 @@ const Booking = require("./model/booking.model");
  *               properties:
  *                 message:
  *                   type: string
- *                   example: "Error creating order"
+ *                   example: "Error creating reservations"
  */
-router.post("/booking", async (req, res) => {
+router.post("/reservations", async (req, res) => {
   try {
     console.log('Step 1>>>>>>')
     const {
@@ -104,5 +104,62 @@ router.post("/booking", async (req, res) => {
     });
   }
 });
+
+/**
+ * @swagger
+ * /api/reservations:
+ *   get:
+ *     tags:
+ *       - Reservations
+ *     summary: Get all reservations
+ *     description: Retrieves all reservations from the system.
+ *     responses:
+ *       200:
+ *         description: A list of all reservations
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   bookingName:
+ *                     type: string
+ *                   bookingDate:
+ *                     type: date
+ *                   numberOfPeople:
+ *                     type: integer
+ *                   bookingTime:
+ *                     type: string
+ *                   phoneNumber:
+ *                     type: string
+ *       400:
+ *         description: Error fetching orders
+ */
+
+router.get("/reservations", async (req, res) => {
+  try {
+    const reservations = await Booking.find();
+
+    // Log the reservations to check if any data is being returned
+    console.log("Reservations: ", reservations);
+
+    if (reservations.length === 0) {
+      return res.status(404).json({
+        message: "No reservation found",
+      });
+    }
+
+    res.status(200).json(reservations);
+  } catch (error) {
+    console.error("Error fetching reservations: ", error);
+    res.status(400).json({
+      message: "Error fetching reservations",
+      error: error.message,
+    });
+  }
+});
+
+
 
 module.exports = router;

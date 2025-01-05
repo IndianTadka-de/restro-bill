@@ -1,11 +1,11 @@
 const mongoose = require("mongoose");
 const { v4: uuidv4 } = require("uuid");
 
-// Define the schema for the order
+// Define the schema for the booking
 const bookingSchema = new mongoose.Schema(
   {
     id: {
-      type: String, // GUID for OrderId
+      type: String, // GUID for Booking ID
       required: true,
       default: uuidv4, // Automatically generate a GUID if not provided
     },
@@ -36,13 +36,11 @@ const bookingSchema = new mongoose.Schema(
   }
 );
 
-// Remove _id from orderItems when querying
+// Remove _id if it's included in the response (optional)
 bookingSchema.set("toJSON", {
   transform: (doc, ret) => {
-    // Remove _id from each order item
-    ret.orderItems.forEach((item) => {
-      delete item._id;
-    });
+    // Optionally remove the _id field from the response
+    delete ret._id;
     return ret;
   },
 });

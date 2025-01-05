@@ -63,7 +63,7 @@ const Sidebar = () => {
   };
 
   const handleReservation = () => {
-    setReservation(true);
+    navigate("/booking"); 
     toggleSidebar();
   };
 

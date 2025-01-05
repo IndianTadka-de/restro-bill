@@ -308,21 +308,44 @@ router.get("/orders", async (req, res) => {
  */
 router.post("/orders-listing", async (req, res) => {
   try {
-    // Fetch orders and sort by createdAt in descending order
     const { search } = req.body;
     const searchPhrases = searchQueryParser(search);
-    console.log("search>>>>>>", searchPhrases);
+
     let searchCriteria = {};
+
     searchPhrases.forEach((phrase) => {
       const [field, value] = phrase.split(":"); // Extract the field and value from the search term
       if (field && value) {
-        // Use $regex to perform case-insensitive matching
-        searchCriteria[field] = value; // Add $regex for case-insensitive matching
+        // Check if the field is orderDate
+        if (field === "orderDate") {
+          // Convert the value to a Date object
+          const inputDate = new Date(value);
+          if (!isNaN(inputDate)) {
+            // Normalize the date to the start of the day (00:00:00.000)
+            const startDate = new Date(inputDate.setHours(0, 0, 0, 0)); // Start of the day (midnight)
+
+            // Normalize the date to the end of the day (23:59:59.999)
+            const endDate = new Date(inputDate.setHours(23, 59, 59, 999)); // Just before midnight of the next day
+
+            // Add the exact date range to the search criteria
+            searchCriteria.orderDate = {
+              $gte: startDate, // Start of the day (inclusive)
+              $lt: endDate     // Just before midnight of the next day (exclusive)
+            };
+          } else {
+            return res.status(400).json({
+              message: "Invalid date format",
+            });
+          }
+        } else {
+          // For other fields, perform case-insensitive regex matching
+          searchCriteria[field] = { $regex: value, $options: "i" }; 
+        }
       }
     });
 
-    console.log("MongoDB Search Criteria:", searchCriteria);
-    const orders = await Order.find(searchCriteria).sort({ createdAt: -1 }); // -1 for descending order (recent first)
+    // Fetch orders and sort by createdAt in descending order
+    const orders = await Order.find(searchCriteria).sort({ createdAt: -1 });
 
     if (orders.length === 0) {
       return res.status(404).json({
@@ -338,6 +361,7 @@ router.post("/orders-listing", async (req, res) => {
     });
   }
 });
+
 
 /**
  * @swagger
@@ -760,7 +784,7 @@ router.get("/generate-bill/:orderId", async (req, res) => {
   if (!(order.pickupOrder || order.onlineOrder)) {
     doc.fontSize(12).text(`Table Number: ${order.tableNumber}`);
     doc.moveDown(1);
-  } else if(order.pickupOrder){
+  } else if (order.pickupOrder) {
     doc
       .fontSize(12)
       .font("Helvetica-Bold")
@@ -769,7 +793,13 @@ router.get("/generate-bill/:orderId", async (req, res) => {
   }
 
   doc.fontSize(12).text(order?.address?.street.toLowerCase());
-  doc.fontSize(12).text(order?.address?.postalCode +" " + order?.address?.place.split('/')[0].toLowerCase());
+  doc
+    .fontSize(12)
+    .text(
+      order?.address?.postalCode +
+        " " +
+        order?.address?.place.split("/")[0].toLowerCase()
+    );
   doc.moveDown(1);
 
   const itemX = 10;
