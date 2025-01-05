@@ -27,6 +27,16 @@ h1 {
   flex-wrap: wrap; /* Ensures that the form fields wrap correctly when needed */
 }
 
+.booking-form-container {
+  position: relative; /* Make sure it's positioned properly */
+  z-index: 10;
+}
+
+/* Apply a higher z-index to the Ant Design dropdown */
+.ant-select-dropdown {
+  z-index: 9999; /* Make sure the dropdown appears above other modal content */
+}
+
 label {
   font-weight: bold;
   margin-bottom: 8px;
@@ -62,6 +72,7 @@ label {
   align-items: center;
   gap: 10px;
   height: 100%;
+  width: 80%;
 }
 
 .colon {
