@@ -41,7 +41,7 @@ const Bookings = () => {
     try {
       delete payload.hour;
       delete payload.minute;
-      const response = await axios.post(`${base_url}/booking`, {
+      const response = await axios.post(`${base_url}/reservations`, {
         ...payload,
       });
       if (response?.status === 201) {
