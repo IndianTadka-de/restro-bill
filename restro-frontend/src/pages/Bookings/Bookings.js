@@ -12,7 +12,7 @@ const Bookings = () => {
   const [isModalOpen, setModalOpen] = useState(false);
   const [reservations, setReservations] = useState([]);
   const [loading, setLoading] = useState(true);
-  //const [filteredOrders, setFilteredOrders] = useState(orders);
+
   const initialValues = {
     bookingDate: new Date().toISOString().split("T")[0], // Today's date in the format YYYY-MM-DD
     numberOfPeople: 0,
@@ -23,24 +23,28 @@ const Bookings = () => {
     minute: "",
   };
 
+  // Fetch reservations data
   const fetchReservations = async () => {
+    setLoading(true);
     try {
       const response = await axios.get(`${base_url}/reservations`);
       setReservations(response.data);
-      setLoading(false);
     } catch (error) {
-      console.error("Error fetching orders", error);
+      console.error("Error fetching reservations", error);
+    } finally {
       setLoading(false);
     }
   };
+
   useEffect(() => {
-    fetchReservations();
-  }, []);
+    fetchReservations(); // Fetch data when the component mounts
+  }, []); // Empty dependency array means this runs only on component mount
 
   const handleBookingSubmit = async (payload) => {
     try {
       delete payload.hour;
       delete payload.minute;
+
       const response = await axios.post(`${base_url}/reservations`, {
         ...payload,
       });
@@ -48,13 +52,15 @@ const Bookings = () => {
         toast.success("Order Booking created successfully!", {
           position: "top-right",
         });
+        // Trigger re-fetch after successfully creating a booking
+        fetchReservations();
       }
     } catch (error) {
       toast.error(error?.response?.data?.message, {
         position: "top-right",
       });
     } finally {
-      setModalOpen(false);
+      setModalOpen(false); // Close the modal after submission
     }
   };
 

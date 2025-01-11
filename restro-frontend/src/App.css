@@ -49,9 +49,8 @@
 /* Content area */
 .content {
   flex-grow: 1;
-  margin-left: 20px; /* Space between sidebar and content */
+  margin-left: 8%; /* Space between sidebar and content */
   margin-top: 0%; /* Adjust the margin-top to move the content closer to the top */
-  padding: 20px;
   background-color: #f4f6f8; /* Light background for content */
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);

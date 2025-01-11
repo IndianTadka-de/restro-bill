@@ -68,7 +68,6 @@ const Booking = require("./model/booking.model");
  */
 router.post("/reservations", async (req, res) => {
   try {
-    console.log('Step 1>>>>>>')
     const {
       bookingDate,
       bookingName,
@@ -77,7 +76,6 @@ router.post("/reservations", async (req, res) => {
       phoneNumber,
     } = req.body;
 
-    console.log('Step 2>>>>>>')
     const newBooking = new Booking({
       bookingDate,
       bookingName,
@@ -85,8 +83,6 @@ router.post("/reservations", async (req, res) => {
       bookingTime,
       phoneNumber,
     });
-
-    console.log('Step 3>>>>>>',newBooking)
 
     await newBooking.save();
 

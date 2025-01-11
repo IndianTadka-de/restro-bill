@@ -141,9 +141,14 @@
 
 /* Action Buttons */
 .action-buttons {
+  position: relative;
+  bottom: 5%; /* Move the buttons 5% above the bottom */
+  left: 50%;
+  transform: translateX(-50%); /* Center horizontally */
   display: flex;
-  justify-content: flex-end;
-  gap: 10px;
+  gap: 20px;
+  justify-content: center;
+  margin-bottom: 20px;
 }
 
 /* Customize Table */

@@ -12,6 +12,7 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import { base_url } from "../utils/apiList";
 import { FaHome } from "react-icons/fa";
+import { MdMenuBook } from "react-icons/md";
 
 const Sidebar = () => {
   const navigate = useNavigate();
@@ -67,6 +68,11 @@ const Sidebar = () => {
     toggleSidebar();
   };
 
+  const handleMenu = () => {
+    navigate("/menu"); 
+    toggleSidebar();
+  };
+
   return (
     <div>
       <div className="hamburger-icon" onClick={toggleSidebar}>
@@ -100,7 +106,9 @@ const Sidebar = () => {
         >
           <span className="sidebar-text">Download</span>
         </Button>
-
+        <Button className="sidebar-btn" icon={<MdMenuBook />} onClick={() => handleMenu()}>
+          <span className="sidebar-text">Menu</span>
+        </Button>
         {reservation && (
           <Modal onClose={() => setReservation(false)} size="small">
             <BookingForm initialValues={initialValues} handleFormSubit={handleBookingSubmit} />

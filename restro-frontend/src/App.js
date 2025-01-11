@@ -8,6 +8,7 @@ import OrderDetails from "./pages/OrderDetails/OrderDetails";
 import Sidebar from "./components/Sidebar";
 import "./App.css";
 import Bookings from "./pages/Bookings/Bookings";
+import Menu from "./pages/Menu/Menu";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
           <Route path="/orderUpdate/:id" element={<OrderUpdate />} />
           <Route path="/orderDetails/:id" element={<OrderDetails />} />
           <Route path="/booking" element={<Bookings />} />
+          <Route path="/menu" element={<Menu />} />
         </Routes>
       </div>
       <ToastContainer

@@ -4,6 +4,7 @@ const dotenv = require('dotenv');
 const cors = require('cors');
 const orderRoutes = require('./orderlist/orderlist'); // Import order routes
 const bookingRoutes = require('./booking/booking'); // Import booking routes
+const menuRoutes = require('./menu/menu');
 const swaggerJsdoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
 
@@ -27,7 +28,7 @@ const swaggerOptions = {
             },
         ],
     },
-    apis: ['./orderlist/orderlist.js', './booking/booking.js'], // Path to the Swagger JSDoc comments
+    apis: ['./orderlist/orderlist.js', './booking/booking.js','./menu/menu.js'], // Path to the Swagger JSDoc comments
 };
 
 // Initialize Swagger JSDoc
@@ -48,6 +49,7 @@ app.use(cors()); // Middleware to enable CORS
 // Mount the routes for orders and bookings with the /api prefix
 app.use('/api', orderRoutes); // All routes in orderRoutes will be prefixed with /api
 app.use('/api', bookingRoutes); // All routes in bookingRoutes will be prefixed with /api
+app.use('/api', menuRoutes); // All routes in bookingRoutes will be prefixed with /api
 
 // MongoDB connection using Mongoose
 mongoose.connect(process.env.MONGODB_URI, {
