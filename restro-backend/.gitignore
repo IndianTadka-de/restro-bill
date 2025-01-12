@@ -5,10 +5,11 @@
 /.pnp
 .pnp.js
 
+# environament
+.env
 
 # production
 /build
 /dist
-
 .vercel
 

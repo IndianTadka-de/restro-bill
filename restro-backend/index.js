@@ -24,11 +24,11 @@ const swaggerOptions = {
         },
         servers: [
             {
-                url: `http://localhost:${process.env.PORT || 8080}`, // The base URL
+                url: `http://localhost:${process.env.PORT || 3000}`, // Use dynamic port or fallback to 3000
             },
         ],
     },
-    apis: ['./orderlist/orderlist.js', './booking/booking.js','./menu/menu.js'], // Path to the Swagger JSDoc comments
+    apis: ['./orderlist/orderlist.js', './booking/booking.js', './menu/menu.js'], // Path to the Swagger JSDoc comments
 };
 
 // Initialize Swagger JSDoc
@@ -64,7 +64,7 @@ mongoose.connect(process.env.MONGODB_URI, {
     });
 
 // Start the server
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 3000; // Let Vercel handle the dynamic port
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });

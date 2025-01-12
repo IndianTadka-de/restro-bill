@@ -2,9 +2,12 @@
     "name": "restro-bill-backend",
     "version": "1.0.0",
     "main": "index.js",
+    "engines": {
+        "node": "14.x"
+    },
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
-        "build": "babel index.js -d dist"
+        "start": "node index.js",
+        "test": "echo \"Error: no test specified\" && exit 1"
     },
     "keywords": [],
     "author": "",
@@ -23,10 +26,5 @@
         "swagger-ui-express": "^5.0.1",
         "uuid": "^11.0.3",
         "xlsx": "^0.18.5"
-    },
-    "devDependencies": {
-        "@babel/cli": "^7.26.4",
-        "@babel/core": "^7.26.0",
-        "@babel/preset-env": "^7.26.0"
     }
 }
