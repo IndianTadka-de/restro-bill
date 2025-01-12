@@ -2,9 +2,9 @@ const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const cors = require('cors');
-const orderRoutes = require('./orderlist/orderlist'); // Import order routes
-const bookingRoutes = require('./booking/booking'); // Import booking routes
-const menuRoutes = require('./menu/menu');
+const orderRoutes = require('./src/orderlist/orderlist'); // Import order routes
+const bookingRoutes = require('./src/booking/booking'); // Import booking routes
+const menuRoutes = require('./src/menu/menu');
 const swaggerJsdoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
 
