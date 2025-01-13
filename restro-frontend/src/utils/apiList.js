@@ -1,5 +1,5 @@
 
-export const base_url = process.env.REACT_APP_PROD_API;
+export const base_url = process.env.REACT_APP_API_BASE_URL;
 
 
 export const orderList = 'orders';
