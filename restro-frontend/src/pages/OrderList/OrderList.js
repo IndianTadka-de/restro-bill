@@ -1,6 +1,6 @@
 import { Button, Table, Popconfirm, Dropdown, AutoComplete } from "antd";
 import { useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import {
   EyeOutlined,
@@ -26,14 +26,16 @@ function OrderList() {
   const [searchTerm, setSearchTerm] = useState(""); // For search term input
   const [isBookingTable, setBookingTable] = useState(false);
   const [pagination, setPagination] = useState({
-    current: 1,  // Set default current page
-    pageSize: 10, // Default page size is 10
+    currentPage: 1, // Set default current page
+    pageSize: 8, // Default page size is 10
   });
+  const [totalCount, setTotalCount] = useState(0);
+  const [pageChange, setPageChange] = useState(false);
 
   const initialValues = {
     bookingDate: new Date().toISOString().split("T")[0], // Today's date in the format YYYY-MM-DD
     numberOfPeople: 0,
-    bookingName:"",
+    bookingName: "",
     bookingTime: "",
     phoneNumber: "",
     hour: "",
@@ -53,18 +55,31 @@ function OrderList() {
   };
 
   // Function to handle API call when search button is clicked
-  const handleSearch = async () => {
+  const handleSearch = useCallback(async () => {
     try {
-      const response = await axios.post(`${base_url}/orders-listing`, {
-        search: searchTerm,
-      });
-      setOrders(response.data); // Update the orders state with the search results
-      setFilteredOrders(response.data);
+      const response = await axios.post(
+        `${base_url}/orders-listing`, 
+        { search: searchTerm },
+        {
+          params: {
+            currentPage: pagination.currentPage,
+            pageSize: pagination.pageSize,
+          },
+        }
+      );
+  
+      setOrders(response.data.orders);
+      setTotalCount(response.data.pagination.totalCount);
+      setFilteredOrders(response.data.orders);
+      setLoading(false);
     } catch (error) {
       console.error("Error fetching orders", error);
+      setLoading(false);
       toast.error("Failed to fetch orders", { position: "top-right" });
     }
-  };
+  }, [searchTerm, pagination.currentPage, pagination.pageSize]); // Dependencies for the memoized function
+  
+  
 
   const handlePayment = async (record, paymentMethod) => {
     try {
@@ -323,19 +338,30 @@ function OrderList() {
     },
   ];
 
-  const fetchOrders = async () => {
+  const fetchOrders = useCallback(async () => {
     try {
-      const response = await axios.get(`${base_url}/orders`);
-      setOrders(response.data);
+      const response = await axios.get(`${base_url}/orders`, {
+        params: {
+          currentPage: pagination.currentPage,
+          pageSize: pagination.pageSize,
+        },
+      });
+      setOrders(response.data.orders);
+      setTotalCount(response.data.pagination.totalCount);
       setLoading(false);
     } catch (error) {
       console.error("Error fetching orders", error);
       setLoading(false);
     }
-  };
+  }, [pagination.currentPage, pagination.pageSize]); // Use only pagination values as dependencies
+  
   useEffect(() => {
-    fetchOrders();
-  }, []);
+    if (searchTerm !== "") {
+      handleSearch();
+    } else {
+      fetchOrders();
+    }
+  }, [pageChange, searchTerm, fetchOrders, handleSearch]);
 
   const handleBookingSubmit = async (payload) => {
     try {
@@ -358,11 +384,14 @@ function OrderList() {
     }
   };
 
-  const handlePageChange = (page, pageSize) => {
-    setPagination({
-      current: page,
-      pageSize: pageSize,
-    });
+  const handlePageChange = ({ pageSize, current }) => {
+    if (pagination.pageSize !== pageSize || pagination.current !== current) {
+      setPageChange(true);
+    }
+    setPagination(prev => ({
+      currentPage: current,    // Update current page
+      pageSize: pageSize,      // Update page size
+    }));
   };
 
   return (
@@ -392,13 +421,15 @@ function OrderList() {
           rowKey="orderId"
           dataSource={filteredOrders}
           loading={loading}
+          onChange={handlePageChange} // Use the handler to update pagination
           pagination={{
-            current: pagination.current,
+            current: pagination.currentPage,
             pageSize: pagination.pageSize,
-            onChange: handlePageChange,
             showSizeChanger: true,
-            pageSizeOptions: ["5", "8", "15","20"],
-             showTotal: (total, range) => `Showing ${range[0]} to ${range[1]} of ${total} orders`
+            pageSizeOptions: ["5", "8", "15", "20"],
+            total: totalCount,
+            showTotal: (total, range) =>
+              `Showing ${range[0]} to ${range[1]} of ${total} orders`,
           }}
         />
       </div>

@@ -196,34 +196,76 @@ router.post("/orders", async (req, res) => {
  *   get:
  *     tags:
  *       - Order
- *     summary: Get all orders
- *     description: Retrieves all orders from the system.
+ *     summary: Get all orders with pagination
+ *     description: Retrieves paginated orders from the system.
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         description: The page number to retrieve.
+ *         required: false
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *       - in: query
+ *         name: pageSize
+ *         description: The number of orders per page.
+ *         required: false
+ *         schema:
+ *           type: integer
+ *           default: 8
  *     responses:
  *       200:
- *         description: A list of all orders
+ *         description: A list of orders with pagination details
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 type: object
- *                 properties:
- *                   itemName:
- *                     type: string
- *                   category:
- *                     type: string
- *                   quantity:
- *                     type: integer
- *                   price:
- *                     type: number
- *                   _id:
- *                     type: string
+ *               type: object
+ *               properties:
+ *                 orders:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       itemName:
+ *                         type: string
+ *                       category:
+ *                         type: string
+ *                       quantity:
+ *                         type: integer
+ *                       price:
+ *                         type: number
+ *                       _id:
+ *                         type: string
+ *                 pagination:
+ *                   type: object
+ *                   properties:
+ *                     totalCount:
+ *                       type: integer
+ *                     currentPage:
+ *                       type: integer
+ *                     pageSize:
+ *                       type: integer
  *       400:
  *         description: Error fetching orders
  */
 router.get("/orders", async (req, res) => {
   try {
-    const orders = await Order.find().sort({ createdAt: -1 }); // -1 for descending order (recent first)
+    // Extract page and pageSize from query parameters
+    const currentPage = parseInt(req.query.currentPage); // Default to 1 if no page is provided
+    const pageSize = parseInt(req.query.pageSize); // Default to 8 if no pageSize is provided
+
+    // Calculate skip and limit
+    const skip = (currentPage - 1) * pageSize;
+    const limit = pageSize;
+
+    // Fetch the paginated orders from the database
+    const orders = await Order.find()
+      .sort({ createdAt: -1 }) // Sorting by creation date, descending
+      .skip(skip) // Skip the previous pages' orders
+      .limit(limit); // Limit the number of orders to the page size
+
+    // Get the total count of orders to calculate pagination metadata
+    const totalCount = await Order.countDocuments();
 
     if (orders.length === 0) {
       return res.status(404).json({
@@ -231,7 +273,18 @@ router.get("/orders", async (req, res) => {
       });
     }
 
-    res.status(200).json(orders);
+    // Prepare pagination metadata
+    const pagination = {
+      totalCount,
+      currentPage,
+      pageSize,
+    };
+
+    // Send the paginated response
+    res.status(200).json({
+      orders,
+      pagination,
+    });
   } catch (error) {
     res.status(400).json({
       message: "Error fetching orders",
@@ -330,7 +383,7 @@ router.post("/orders-listing", async (req, res) => {
             // Add the exact date range to the search criteria
             searchCriteria.orderDate = {
               $gte: startDate, // Start of the day (inclusive)
-              $lt: endDate     // Just before midnight of the next day (exclusive)
+              $lt: endDate, // Just before midnight of the next day (exclusive)
             };
           } else {
             return res.status(400).json({
@@ -339,13 +392,26 @@ router.post("/orders-listing", async (req, res) => {
           }
         } else {
           // For other fields, perform case-insensitive regex matching
-          searchCriteria[field] = { $regex: value, $options: "i" }; 
+          searchCriteria[field] = { $regex: value, $options: "i" };
         }
       }
     });
 
-    // Fetch orders and sort by createdAt in descending order
-    const orders = await Order.find(searchCriteria).sort({ createdAt: -1 });
+    // Extract page and pageSize from query parameters
+    const currentPage = parseInt(req.query.currentPage); // Default to 1 if no page is provided
+    const pageSize = parseInt(req.query.pageSize); // Default to 8 if no pageSize is provided
+
+    // Calculate skip and limit
+    const skip = (currentPage - 1) * pageSize;
+    const limit = pageSize;
+
+    // Fetch the paginated orders from the database
+    const orders = await Order.find(searchCriteria)
+      .sort({ createdAt: -1 }) // Sorting by creation date, descending
+      .skip(skip) // Skip the previous pages' orders
+      .limit(limit); // Limit the number of orders to the page size
+
+      const totalCount = await Order.countDocuments(searchCriteria);
 
     if (orders.length === 0) {
       return res.status(404).json({
@@ -353,7 +419,18 @@ router.post("/orders-listing", async (req, res) => {
       });
     }
 
-    res.status(200).json(orders);
+       // Prepare pagination metadata
+       const pagination = {
+        totalCount,
+        currentPage,
+        pageSize,
+      };
+  
+      // Send the paginated response
+      res.status(200).json({
+        orders,
+        pagination,
+      });
   } catch (error) {
     res.status(400).json({
       message: "Error fetching orders",
@@ -361,7 +438,6 @@ router.post("/orders-listing", async (req, res) => {
     });
   }
 });
-
 
 /**
  * @swagger
@@ -792,7 +868,10 @@ router.get("/generate-bill/:orderId", async (req, res) => {
     doc.moveDown(1);
   }
 
-  doc.font("Helvetica-Bold").fontSize(12).text(order?.address?.street.toLowerCase());
+  doc
+    .font("Helvetica-Bold")
+    .fontSize(12)
+    .text(order?.address?.street.toLowerCase());
   doc
     .fontSize(12)
     .text(
