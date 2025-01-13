@@ -14,20 +14,25 @@ export default function OrderUpdate() {
 
   const fetchOrderData = async (orderId) => {
     try {
-      const response = await fetch(`${base_url}/orders/${orderId}`);
-      const data = await response.json();
+      // Use axios to make the GET request
+      const response = await axios.get(`${base_url}/orders/${orderId}`);
+      
+      // Assuming the response data structure is the same as in the original fetch request
+      const data = response.data;
+      
+      // Set initial data with the API response
       setInitialData({
         tableNumber: data.tableNumber,
         orderDate: new Date(data.createdAt).toISOString().slice(0, 10),
-        pickupOrder:data.pickupOrder,
-        onlineOrder:data.onlineOrder,
-        address:data.address,
+        pickupOrder: data.pickupOrder,
+        onlineOrder: data.onlineOrder,
+        address: data.address,
         orderItems: data.orderItems.map((item) => ({
           itemId: item.itemId,
           itemName: item.itemName,
           quantity: item.quantity,
           price: item.price,
-          category:item.category
+          category: item.category
         })),
       });
     } catch (error) {
