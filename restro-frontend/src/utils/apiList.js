@@ -1,4 +1,6 @@
-export const base_url = 'https://restro-bill.onrender.com/api';
+
+export const base_url = process.env.REACT_APP_PROD_API;
+
 
 export const orderList = 'orders';
 export const orderUpdate='';

@@ -1,25 +1,15 @@
 import React, { useEffect, useState } from "react";
 import "./Menu.css";
 import { Button, Table } from "antd";
-import Modal from "../../components/Modal";
 // import { toast } from "react-toastify";
 import axios from "axios";
 import { base_url } from "../../utils/apiList";
 import { MdAddChart } from "react-icons/md";
-import MenuItemForm from "../../components/MenuItem";
+
 
 const Menu = () => {
-  const [isModalOpen, setModalOpen] = useState(false);
   const [menu, setMenu] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  const initialValues = {
-    itemId: "",
-    itemName: "",
-    price: 0,
-    category: "",
-  };
-
   // Fetch reservations data
   const fetchMenu = async () => {
     setLoading(true);
@@ -76,15 +66,15 @@ const Menu = () => {
     { title: "Category", dataIndex: "category" },
   ];
 
-  const handleMenuItemSubmit = (payload) => {
-    console.log('payload....',payload)
-    setModalOpen(false)
-  };
+  // const handleMenuItemSubmit = (payload) => {
+  //   console.log('payload....',payload)
+  //   setModalOpen(false)
+  // };
 
   return (
     <div className="menu-container">
       <div className="create-menu-button">
-        <Button icon={<MdAddChart />} onClick={() => setModalOpen(true)} block>
+        <Button icon={<MdAddChart />}  block>
           Create Item
         </Button>
       </div>
@@ -96,14 +86,14 @@ const Menu = () => {
         scroll={{ x: "max-content" }}
         className="menu-table"
       />
-      {isModalOpen && (
+      {/* {isModalOpen && (
         <Modal onClose={() => setModalOpen(false)} size="small">
           <MenuItemForm
             initialValues={initialValues}
             handleFormSubit={handleMenuItemSubmit}
           />
         </Modal>
-      )}
+      )} */}
     </div>
   );
 };

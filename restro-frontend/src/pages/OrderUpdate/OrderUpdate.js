@@ -37,7 +37,7 @@ export default function OrderUpdate() {
 
   useEffect(() => {
     fetchOrderData(id);
-  }, []);
+  }, [id]);
 
   const handleSubmit = async (payload) => {
     try {
