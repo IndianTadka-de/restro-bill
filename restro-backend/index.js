@@ -28,7 +28,7 @@ const swaggerOptions = {
             },
         ],
     },
-    apis: ['./orderlist/orderlist.js', './booking/booking.js','./menu/menu.js'], // Path to the Swagger JSDoc comments
+    apis: ['./src/orderlist/orderlist.js', './src/booking/booking.js','./src/menu/menu.js'], // Path to the Swagger JSDoc comments
 };
 
 // Initialize Swagger JSDoc
@@ -45,12 +45,7 @@ app.get('/', (req, res) => {
 // Middleware
 app.use(express.json()); // Middleware to parse JSON request bodies
 // app.use(cors()); // Middleware to enable CORS
-app.use(cors)
-//     ({
-//     origin: ['https://admindashboard.indiantadka.eu','http://localhost:3000'], // Allow your production domain
-//     methods: ['GET', 'POST', 'PUT'],
-//     allowedHeaders: ['Content-Type', 'Authorization'],
-//   }));
+app.use(cors);
 
 // Mount the routes for orders and bookings with the /api prefix
 app.use('/api', orderRoutes); // All routes in orderRoutes will be prefixed with /api
