@@ -44,7 +44,12 @@ app.get('/', (req, res) => {
 
 // Middleware
 app.use(express.json()); // Middleware to parse JSON request bodies
-app.use(cors()); // Middleware to enable CORS
+// app.use(cors()); // Middleware to enable CORS
+app.use(cors({
+    origin: 'https://admindashboard.indiantadka.eu', // Allow your production domain
+    methods: ['GET', 'POST', 'PUT'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  }));
 
 // Mount the routes for orders and bookings with the /api prefix
 app.use('/api', orderRoutes); // All routes in orderRoutes will be prefixed with /api
