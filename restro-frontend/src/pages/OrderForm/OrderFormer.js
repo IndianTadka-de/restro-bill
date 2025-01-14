@@ -7,9 +7,11 @@ import {
   DeleteOutlined,
   CheckOutlined,
   CloseOutlined,
+  PlusOutlined,
 } from "@ant-design/icons"; // Icons for the toggle
 import "./OrderForm.css";
 import AddressForm from "../../components/AddressForm";
+import ManualItemForm from "../../components/ManualItemForm";
 
 export default function OrderForm({
   title,
@@ -23,6 +25,7 @@ export default function OrderForm({
     initialData?.tableNumber || ""
   );
   const [orderItems, setOrderItems] = useState(initialData?.orderItems || []);
+  const [isManualItemModalOpen, setIsManualItemModalOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [orderDate, setOrderDate] = useState(getTodayDate());
   const [pickupOrder, setPickupOrder] = useState(
@@ -37,8 +40,10 @@ export default function OrderForm({
     place: "",
     houseNumber: "",
     street: "",
-    phoneNumebr:""
+    phoneNumebr: "",
   });
+
+  const nextItemId = `I${(orderItems.length + 1).toString().padStart(3, "0")}`;
 
   useEffect(() => {
     if (initialData && Object.keys(initialData).length > 0) {
@@ -50,6 +55,18 @@ export default function OrderForm({
       setAddress(initialData.address);
     }
   }, [initialData]);
+
+  const handleAddManualItem = (itemName, price) => {
+    const newItem = {
+      itemId: nextItemId,
+      itemName: itemName,
+      price: parseFloat(price),
+      category: "Add-Ons", // Default category
+      quantity: 1,
+    };
+    setOrderItems((prevItems) => [...prevItems, newItem]);
+    setIsManualItemModalOpen(false); // Close modal
+  };
 
   const handleAddItem = (item) => {
     setOrderItems((prev) =>
@@ -176,20 +193,20 @@ export default function OrderForm({
       pickup: setPickupOrder,
       online: setOnlineOrder,
     };
-  
+
     // Toggle the selected type state
     orderTypes[type](payload);
-  
+
     // Toggle the other type based on the current selection
     const otherType = type === "pickup" ? "online" : "pickup";
     const otherState = type === "pickup" ? onlineOrder : pickupOrder;
-  
+
     if (otherState) {
       const otherOrderTypes = {
         pickup: setPickupOrder,
         online: setOnlineOrder,
       };
-  
+
       otherOrderTypes[otherType](!payload);
     }
   };
@@ -253,15 +270,17 @@ export default function OrderForm({
       </div>
       {/* Main Section: Table Grid and Items Table */}
 
-      {onlineOrder && (
-        <div className="address-form-container">
-          <AddressForm
-            initialData={address}
-            onAddressChange={handleAddressChange}
-          />
-        </div>
-      )}
+      {/* Action Buttons */}
+
       <div className="order-from-main-content">
+        {onlineOrder && (
+          <div className="address-form-container">
+            <AddressForm
+              initialData={address}
+              onAddressChange={handleAddressChange}
+            />
+          </div>
+        )}
         {/* Table Number Selection */}
         {!pickupOrder && !onlineOrder && (
           <div className="table-selection-container">
@@ -288,24 +307,37 @@ export default function OrderForm({
           </div>
         )}
 
-        {/* Items Table */}
-        <Table
-          columns={columns}
-          dataSource={orderItems}
-          rowKey="itemId"
-          scroll={{ x: 'max-content' }}
-          className="order-items-table"
-        />
-      </div>
+        <div className="table-container">
+          {/* Action Buttons (Positioned at Top-Right) */}
+          <div className="action-buttons-container">
+            <Button
+              type="primary"
+              icon={<PlusOutlined />}
+              onClick={() => setIsManualItemModalOpen(true)}
+            >
+              Add Item Manually
+            </Button>
+            <Button type="primary" onClick={() => setIsModalOpen(true)}>
+              Add Item
+            </Button>
+            <Button
+              type="primary"
+              onClick={handleSubmit}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "Submitting..." : "Submit"}
+            </Button>
+          </div>
 
-      {/* Action Buttons */}
-      <div className="action-buttons">
-        <Button type="primary" onClick={() => setIsModalOpen(true)}>
-          Add Item
-        </Button>
-        <Button type="primary" onClick={handleSubmit} disabled={isSubmitting}>
-          {isSubmitting ? "Submitting..." : "Submit"}
-        </Button>
+          {/* Order Items Table */}
+          <Table
+            columns={columns}
+            dataSource={orderItems}
+            rowKey="itemId"
+            scroll={{ x: "max-content" }}
+            className="order-items-table"
+          />
+        </div>
       </div>
 
       {isModalOpen && (
@@ -314,6 +346,15 @@ export default function OrderForm({
             data={orderItems}
             handleAddToPayload={handleAddItem}
             handleRemoveFromPayload={handleRemovePayload}
+          />
+        </Modal>
+      )}
+      {isManualItemModalOpen && (
+        <Modal onClose={() => setIsManualItemModalOpen(false)} size="medium">
+          <ManualItemForm
+            nextItemId={nextItemId}
+            onAddItem={handleAddManualItem}
+            onCancel={() => setIsManualItemModalOpen(false)}
           />
         </Modal>
       )}
