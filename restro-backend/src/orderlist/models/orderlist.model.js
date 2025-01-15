@@ -19,7 +19,7 @@ const orderSchema = new mongoose.Schema({
         },
     },
     orderDate: {
-      type: Date,
+      type: String,
       required: true,
     },
     pickupOrder: {
