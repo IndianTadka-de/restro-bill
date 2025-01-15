@@ -106,7 +106,6 @@ export default function OrderForm({
       onlineOrder,
       address, // Include the address if onlineOrder is true
     };
-    payload.orderDate = getCurrentTime(payload.orderDate);
     if (pickupOrder || onlineOrder) {
       delete payload.tableNumber; // Remove tableNumber if order is pickup or online
     }

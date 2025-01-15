@@ -13,6 +13,7 @@ import axios from "axios";
 import { base_url } from "../utils/apiList";
 import { FaHome } from "react-icons/fa";
 import { MdMenuBook } from "react-icons/md";
+import { TbReport } from "react-icons/tb";
 
 const Sidebar = () => {
   const navigate = useNavigate();
@@ -73,6 +74,11 @@ const Sidebar = () => {
     toggleSidebar();
   };
 
+  const handleReport = () => {
+    navigate("/report"); 
+    toggleSidebar();
+  };
+
   return (
     <div>
       <div className="hamburger-icon" onClick={toggleSidebar}>
@@ -108,6 +114,9 @@ const Sidebar = () => {
         </Button>
         <Button className="sidebar-btn" icon={<MdMenuBook />} onClick={() => handleMenu()}>
           <span className="sidebar-text">Menu</span>
+        </Button>
+        <Button className="sidebar-btn" icon={<TbReport />} onClick={() => handleReport()}>
+          <span className="sidebar-text">Report</span>
         </Button>
         {reservation && (
           <Modal onClose={() => setReservation(false)} size="small">

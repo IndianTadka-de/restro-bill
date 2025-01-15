@@ -373,7 +373,6 @@ router.post("/orders-listing", async (req, res) => {
 
     const skip = (currentPage - 1) * pageSize;
     const limit = pageSize;
-    
     // Fetch the paginated orders from the database
     const orders = await Order.find(additionalFilter)
       .sort({ createdAt: -1 }) // Sorting by creation date, descending

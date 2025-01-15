@@ -82,11 +82,13 @@
 .Toastify__toast {
   border-radius: 6px;
   padding: 10px 20px;
-  background-color: #2ecc71; /* Green background for success messages */
+  color: #2ecc71; /* Green background for success messages */
+  background-color: white;
 }
 
 .Toastify__toast--error {
-  background-color: #e74c3c; /* Red background for error messages */
+  color: #e74c3c; ;
+  background-color: white; /* Red background for error messages */
 }
 
 .Toastify__toast--info {
@@ -94,7 +96,8 @@
 }
 
 .Toastify__toast--warning {
-  background-color: #f39c12; /* Yellow background for warning messages */
+  color:#f39c12 ;
+  background-color: white; /* Yellow background for warning messages */
 }
 
 /* Adjust for smaller screens */
