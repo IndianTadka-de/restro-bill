@@ -892,6 +892,7 @@ router.get("/generate-bill/:orderId", async (req, res) => {
     .fontSize(9)
     .font("Helvetica-Bold")
     .text("Vielen Dank für Ihre Bestellung!", { align: "center" });
+    console.log('Reached at ENd::::::::::::::::::::::::::::::::')
 
   doc.end();  // Finish the PDF stream
 });
