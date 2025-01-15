@@ -818,126 +818,106 @@ router.put("/orders/:orderId/paymentMethod", async (req, res) => {
 });
 
 router.get("/generate-bill/:orderId", async (req, res) => {
-  const orderId = req.params.orderId;
-  const order = await Order.findOne({ orderId });
+  try {
+    const orderId = req.params.orderId;
+    const order = await Order.findOne({ orderId });
 
-  if (!order) {
-    return res.status(404).json({ error: "Order not found" });
-  }
-  const doc = new PDFDocument({ size: [204, 841.89], margin: 10 });
-  const fileName = `bill_${order.displayId}.pdf`;
-  const filePath = path.join(__dirname, fileName);
-  const stream = fs.createWriteStream(filePath);
-
-  doc.pipe(stream);
-
-  doc
-    .fontSize(18)
-    .font("Helvetica-Bold")
-    .text("Indian Tadka", { align: "center" });
-  doc
-    .fontSize(10)
-    .font("Helvetica")
-    .text("Friedrichstraße 69, 66538 Neunkirchen", { align: "center" });
-  doc
-    .fontSize(10)
-    .font("Helvetica")
-    .text("Tel.: +4915212628877", { align: "center" });
-  doc.moveDown(0.5);
-  doc
-    .fontSize(13)
-    .font("Helvetica-Bold")
-    .text(order.displayId, { align: "center" });
-  doc.moveDown(0.5);
-  //doc.text(order.orderDate);
-  doc
-    .font("Helvetica")
-    .text(moment(order.orderDate).format("YYYY/MM/DD HH:mm"), {
-      align: "center",
-    });
-  doc.fontSize(10).text("________________________________");
-  doc.moveDown(1);
-  if (!(order.pickupOrder || order.onlineOrder)) {
-    doc.fontSize(12).text(`Table Number: ${order.tableNumber}`);
-    doc.moveDown(1);
-  } else if (order.pickupOrder) {
-    doc
-      .fontSize(12)
-      .font("Helvetica-Bold")
-      .text(`Abholbestellung`, { align: "center" });
-    doc.moveDown(1);
-  }
-
-  doc
-    .font("Helvetica-Bold")
-    .fontSize(12)
-    .text(order?.address?.street.toLowerCase());
-  doc
-    .fontSize(12)
-    .text(
-      order?.address?.postalCode +
-        " " +
-        order?.address?.place.split("/")[0].toLowerCase()
-    );
-  doc.fontSize(12).text(order?.address?.phoneNumber);
-  doc.moveDown(1);
-
-  const itemX = 10;
-  const priceX = 50;
-
-  let total = 0;
-  const itemByCategory = order.orderItems.reduce((acc, item) => {
-    if (!acc[item.category]) {
-      acc[item.category] = [];
+    if (!order) {
+      return res.status(404).json({ error: "Order not found" });
     }
-    acc[item.category].push(item);
-    return acc;
-  }, {});
-  Object.keys(itemByCategory).forEach((category) => {
-    doc.fontSize(10).font("Helvetica-Bold").text(category);
-    doc.moveDown(0.2);
 
-    itemByCategory[category].forEach((item) => {
-      const itemTotal = item.quantity * item.price;
-      total += itemTotal;
+    console.log('Order found:', order); // Debugging: Check if order data is correct.
 
-      doc
-        .fontSize(8)
-        .font("Helvetica")
-        .text(
-          `${item.quantity} X ${item.itemName}(#${item?.itemId})`,
-          itemX,
-          doc.y,
-          { width: 100, ellipsis: true, continued: true }
-        );
-      // doc.text(item.quantity.toString(), qtyX , doc.y, { continued: true});
-      doc.text(`€${itemTotal.toFixed(2)}`, priceX, doc.y, { align: "right" });
-      //doc.moveDown();
+    const doc = new PDFDocument({ size: [204, 841.89], margin: 10 });
+
+    // Use PassThrough stream to capture the PDF content
+    const passThrough = new PassThrough();
+    const buffers = [];
+
+    // Pipe the document into the PassThrough stream
+    doc.pipe(passThrough);
+
+    // Collect data in the buffer as it's written to the PassThrough stream
+    passThrough.on('data', (chunk) => {
+      console.log('Data chunk received'); // Debugging: Check if chunks are being received.
+      buffers.push(chunk);
     });
-  });
 
-  doc.moveDown(1);
-  doc
-    .fontSize(10)
-    .font("Helvetica-Bold")
-    .text(`Total: €${total.toFixed(2)}`, { align: "right" });
-  doc.moveDown(1);
+    // When the stream ends, concatenate the buffer and send it as a response
+    passThrough.on('end', () => {
+      console.log('Stream ended, preparing to send response'); // Debugging: Check if stream ends correctly.
+      const pdfBuffer = Buffer.concat(buffers);
 
-  doc
-    .fontSize(9)
-    .font("Helvetica-Bold")
-    .text("Vielen Dank für Ihre Bestellung!", { align: "center" });
+      // Set response headers for PDF download
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename=bill_${order.displayId}.pdf`);
+      res.send(pdfBuffer); // Send the PDF buffer directly to the client
+    });
 
-  doc.end();
+    // Generate the PDF content
+    doc.fontSize(18).font("Helvetica-Bold").text("Indian Tadka", { align: "center" });
+    doc.fontSize(10).font("Helvetica").text("Friedrichstraße 69, 66538 Neunkirchen", { align: "center" });
+    doc.fontSize(10).font("Helvetica").text("Tel.: +4915212628877", { align: "center" });
+    doc.moveDown(0.5);
+    doc.fontSize(13).font("Helvetica-Bold").text(order.displayId, { align: "center" });
+    doc.moveDown(0.5);
+    doc.font("Helvetica").text(moment(order.createdAt).format("YYYY/MM/DD HH:mm"), { align: "center" });
+    doc.fontSize(10).text("________________________________");
+    doc.moveDown(1);
 
-  stream.on("finish", () => {
-    res.download(filePath, fileName, (err) => {
-      if (err) {
-        console.error("Error downloading the file:", err);
+    // Order Type and Table Number
+    if (!(order.pickupOrder || order.onlineOrder)) {
+      doc.fontSize(12).text(`Table Number: ${order.tableNumber}`);
+      doc.moveDown(1);
+    } else if (order.pickupOrder) {
+      doc.fontSize(12).font("Helvetica-Bold").text(`Abholbestellung`, { align: "center" });
+      doc.moveDown(1);
+    }
+
+    // Address Information
+    doc.font("Helvetica-Bold").fontSize(12).text(order?.address?.street.toLowerCase());
+    doc.fontSize(12).text(`${order?.address?.postalCode} ${order?.address?.place.split("/")[0].toLowerCase()}`);
+    doc.fontSize(12).text(order?.address?.phoneNumber);
+    doc.moveDown(1);
+
+    // Item Details
+    const itemX = 10;
+    const priceX = 50;
+    let total = 0;
+    const itemByCategory = order.orderItems.reduce((acc, item) => {
+      if (!acc[item.category]) {
+        acc[item.category] = [];
       }
-      fs.unlinkSync(filePath);
+      acc[item.category].push(item);
+      return acc;
+    }, {});
+
+    Object.keys(itemByCategory).forEach((category) => {
+      doc.fontSize(10).font("Helvetica-Bold").text(category);
+      doc.moveDown(0.2);
+      itemByCategory[category].forEach((item) => {
+        const itemTotal = item.quantity * item.price;
+        total += itemTotal;
+
+        doc.fontSize(8).font("Helvetica").text(`${item.quantity} X ${item.itemName}(#${item?.itemId})`, itemX, doc.y, { width: 100, ellipsis: true, continued: true });
+        doc.text(`€${itemTotal.toFixed(2)}`, priceX, doc.y, { align: "right" });
+      });
     });
-  });
+
+    // Total Section
+    doc.moveDown(1);
+    doc.fontSize(10).font("Helvetica-Bold").text(`Total: €${total.toFixed(2)}`, { align: "right" });
+    doc.moveDown(1);
+
+    // Footer
+    doc.fontSize(9).font("Helvetica-Bold").text("Vielen Dank für Ihre Bestellung!", { align: "center" });
+
+    doc.end(); // End the PDF document
+
+  } catch (error) {
+    console.error("Error generating bill:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
 });
 
 router.post("/generate-bill-for-person", async (req, res) => {
