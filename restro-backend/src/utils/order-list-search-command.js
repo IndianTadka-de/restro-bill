@@ -5,7 +5,10 @@ const moment = require("moment");
     filterName:"paymentMethod",
     conditions: (value) => new RegExp(value, 'i'),
   },
-
+  orderType: {
+    filterName: "orderType",
+    conditions: (value) => value
+  },
   orderDate: {
     filterName: "orderDate",
     conditions: (value) => value
@@ -54,8 +57,7 @@ const moment = require("moment");
       // Convert the start and end dates to ISO strings or Date objects (ensure correct date format)
       const start = moment(startDate).format("YYYY-MM-DD"); // Formatting as string 'YYYY-MM-DD'
       const end = moment(endDate).format("YYYY-MM-DD"); // Formatting as string 'YYYY-MM-DD'
-      console.log('start>>>>',start)
-      console.log('end>>>>>',end)
+
       // Return the MongoDB query using $gte and $lte for the range
       return { $gte: start, $lte: end };
     },

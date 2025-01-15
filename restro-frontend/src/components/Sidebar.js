@@ -3,7 +3,6 @@ import { Button } from "antd";
 import { useNavigate } from "react-router-dom";
 import { MdRestaurant } from "react-icons/md";
 import { FiCalendar } from "react-icons/fi";
-import { ImFolderDownload } from "react-icons/im";
 import { FaBars, FaTimes } from "react-icons/fa"; // Hamburger menu
 import "./Sidebar.css";
 import BookingForm from "./BookingForm";
@@ -102,15 +101,6 @@ const Sidebar = () => {
         </Button>
         <Button className="sidebar-btn" icon={<FiCalendar />} onClick={() => handleReservation()}>
           <span className="sidebar-text">Reservation</span>
-        </Button>
-        <Button
-          className="sidebar-btn"
-          icon={<ImFolderDownload />}
-          onClick={() => {
-            console.log("Download Excel Button Clicked");
-          }}
-        >
-          <span className="sidebar-text">Download</span>
         </Button>
         <Button className="sidebar-btn" icon={<MdMenuBook />} onClick={() => handleMenu()}>
           <span className="sidebar-text">Menu</span>

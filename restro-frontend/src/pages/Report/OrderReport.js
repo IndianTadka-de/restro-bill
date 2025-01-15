@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Button, Row, Col, Table, message, DatePicker, Tabs } from "antd";
+import { Button, Row, Col, Table, DatePicker, Tabs } from "antd";
 import moment from "moment";
 import axios from "axios";
 import "./OrderReport.css";
 import { base_url } from "../../utils/apiList";
 import { toast } from "react-toastify";
+import { getOrderType } from "../../utils/orderType";
 
 const { RangePicker } = DatePicker;
 
@@ -28,6 +29,11 @@ const OrderReport = () => {
     if (selectedFilters.paymentMethod) {
       search.push(`paymentMethod: ${selectedFilters.paymentMethod}`);
     }
+
+    if (selectedFilters.orderType) {
+      search.push(`orderType:${selectedFilters.orderType}`);
+    }
+
     if (selectedFilters.today) {
       search.push(`today:${selectedFilters.today}`);
     }
@@ -140,6 +146,13 @@ const OrderReport = () => {
     }));
   };
 
+  const handleOrderTypeChange = (type) => {
+    setSelectedFilters((prevState) => ({
+      ...prevState,
+      orderType: type || undefined,
+    }));
+  };
+
   const handlePageChange = ({ pageSize, current }) => {
     if (pagination.pageSize !== pageSize || pagination.current !== current) {
       setPageChange(true);
@@ -152,7 +165,7 @@ const OrderReport = () => {
 
   const disabledDate = (current) => {
     // Disable all dates after today (future dates)
-    return current && current > moment().endOf('day');
+    return current && current > moment().endOf("day");
   };
 
   const calculateTotalPrice = () => {
@@ -179,6 +192,12 @@ const OrderReport = () => {
       title: "Payment Type",
       dataIndex: "paymentMethod",
       key: "paymentMethod",
+    },
+    {
+      title: "Order Type",
+      dataIndex: "orderType",
+      key: "orderType",
+      render: (_, record) => getOrderType(record.orderType),
     },
     {
       title: "Order Price ",
@@ -215,6 +234,7 @@ const OrderReport = () => {
       label: "Card",
     },
   ];
+
   return (
     <div className="order-report-container">
       <Row gutter={[16, 16]}>
@@ -271,6 +291,45 @@ const OrderReport = () => {
           </Button.Group>
         </Col>
       </Row>
+      <Row gutter={[16, 16]} className="order-type-row">
+        <Col span={24} className="filter-buttons">
+          <Button.Group>
+            <Button
+              type={
+                selectedFilters.orderType === "dine_in" ? "primary" : "default"
+              }
+              onClick={() => handleOrderTypeChange("dine_in")}
+              className={
+                selectedFilters?.orderType === "dine_in" ? "selected" : ""
+              }
+            >
+              DINE-IN
+            </Button>
+            <Button
+              type={
+                selectedFilters.orderType === "pickup" ? "primary" : "default"
+              }
+              onClick={() => handleOrderTypeChange("pickup")}
+              className={
+                selectedFilters?.orderType === "pickup" ? "selected" : ""
+              }
+            >
+              PICKUP
+            </Button>
+            <Button
+              type={
+                selectedFilters.orderType === "online" ? "primary" : "default"
+              }
+              onClick={() => handleOrderTypeChange("online")}
+              className={
+                selectedFilters?.orderType === "online" ? "selected" : ""
+              }
+            >
+              ONLINE ORDER
+            </Button>
+          </Button.Group>
+        </Col>
+      </Row>
 
       <Row gutter={[16, 16]} className="custom-date-row">
         <Col span={24}>
@@ -287,11 +346,10 @@ const OrderReport = () => {
             allowClear
             disabledDate={disabledDate}
             placeholder={["Start Date", "End Date"]}
-              dropdownClassName="single-month-picker"
+            dropdownClassName="single-month-picker"
           />
         </Col>
       </Row>
-
       <Row gutter={[16, 16]} className="payment-tabs-row">
         <Col span={24}>
           <Tabs
@@ -302,7 +360,8 @@ const OrderReport = () => {
           />
         </Col>
       </Row>
-      <Row gutter={[16, 16]}>
+
+      <Row gutter={[16, 16]} className="total-order">
         <Col span={24}>
           <div
             style={{ textAlign: "right", fontSize: "16px", fontWeight: "bold" }}
@@ -323,7 +382,6 @@ const OrderReport = () => {
           pageSize: pagination.pageSize,
           total: totalCount,
           showSizeChanger: true,
-          total: totalCount,
           pageSizeOptions: ["5", "8", "15", "20"], // Page size options
           showTotal: (total, range) =>
             `Showing ${range[0]} to ${range[1]} of ${total} orders`,

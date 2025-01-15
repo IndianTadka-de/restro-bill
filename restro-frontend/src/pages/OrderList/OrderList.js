@@ -17,6 +17,7 @@ import "./OrderList.css";
 import { base_url } from "../../utils/apiList";
 import BookingForm from "../../components/BookingForm";
 import Modal from "../../components/Modal";
+import { getOrderType } from "../../utils/orderType";
 
 function OrderList() {
   const navigate = useNavigate();
@@ -205,16 +206,6 @@ function OrderList() {
       }
     } catch (error) {
       toast.error(error.response.data.message, { position: "top-right" });
-    }
-  };
-
-  const getOrderType = (record) => {
-    if (record.pickupOrder) {
-      return "PICKUP";
-    } else if (record.onlineOrder) {
-      return "ONLINE ORDER";
-    } else {
-      return "DINE-IN";
     }
   };
 

@@ -37,7 +37,6 @@
 
 /* Add a selected class that will highlight the selected filter button */
 .filter-buttons .ant-btn.selected {
- /* Blue color for selected state */
   color: black;
   border-color: #1890ff;
 }
@@ -61,15 +60,42 @@
 .payment-tabs-row {
   margin-bottom: 30px;
 }
+.total-order{
+  margin-bottom: 30px;
+}
+
+.order-type-tabs-row {
+  margin-bottom: 30px;
+}
 
 .payment-tabs-row .ant-tabs {
+  width: 100%;
+  border-radius: 10px;
+  transition: transform 0.3s ease-out;
+  padding: 8px;
+}
+.total-order .ant-tabs{
+  width: 100%;
   border-radius: 10px;
   background-color: #fff;
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease-out;
+  padding: 8px;
+}
+
+.order-type-tabs-row .ant-tabs {
+  border-radius: 10px;
+  background-color: #fff;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease-out;
+  padding: 8px;
 }
 
 .payment-tabs-row .ant-tabs:hover {
+  transform: scale(1.03);
+}
+
+.order-type-tabs-row .ant-tabs:hover {
   transform: scale(1.03);
 }
 
@@ -124,6 +150,40 @@
   display: none; /* Hides the second month panel */
 }
 
+/* Align payment method and order type in a single row */
+.payment-order-row {
+  display: flex;
+  justify-content: center; /* Distribute the space evenly */
+  gap: 20px; /* Add space between payment method and order type */
+  margin-bottom: 30px;
+  align-items: center; /* Vertically align them in the center */
+}
+
+/* Ensure that both payment method and order type have consistent styling */
+.payment-order-row .payment-method,
+.payment-order-row .order-type {
+  flex: 1; /* Makes both sections take equal space */
+  text-align: center; /* Center the content inside */
+  background-color: #fff;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease-out;
+}
+
+.payment-order-row .payment-method:hover,
+.payment-order-row .order-type:hover {
+  transform: scale(1.03);
+}
+
+.payment-order-row .payment-method {
+  background-color: #e6f7ff;
+}
+
+.payment-order-row .order-type {
+  background-color: #f7e6ff;
+}
+
 /* Media Queries for Tablet */
 @media (max-width: 1024px) {
   /* Container padding for tablets */
@@ -145,7 +205,9 @@
   }
 
   .custom-date-row,
-  .payment-tabs-row {
+  .payment-tabs-row,
+  .order-type-tabs-row
+  .total-order {
     text-align: center;
   }
 
@@ -175,6 +237,17 @@
   .ant-pagination-total-text {
     margin-right: 0; /* No margin for smaller screens */
   }
+
+  /* Stack payment method and order type vertically on tablets */
+  .payment-order-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .payment-order-row .payment-method,
+  .payment-order-row .order-type {
+    margin-bottom: 15px; /* Add space between them */
+  }
 }
 
 /* Media Queries for smaller tablets or mobile */
@@ -191,7 +264,9 @@
   }
 
   .custom-date-row,
-  .payment-tabs-row {
+  .payment-tabs-row,
+  .order-type-tabs-row 
+  .total-order{
     text-align: center;
   }
 

@@ -366,7 +366,3 @@ const getTodayDate = () => {
   return today.toISOString().split("T")[0];
 };
 
-const getCurrentTime = (date) => {
-  const now = new Date();
-  return `${date}T${now.toTimeString().split(" ")[0]}`;
-};
