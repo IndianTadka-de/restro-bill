@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Button, Row, Col, Table, DatePicker, Tabs } from "antd";
+import { Button, Row, Col, Table, DatePicker } from "antd";
 import moment from "moment";
 import axios from "axios";
 import "./OrderReport.css";
@@ -10,9 +10,7 @@ import { getOrderType } from "../../utils/orderType";
 const { RangePicker } = DatePicker;
 
 const OrderReport = () => {
-  const [selectedFilters, setSelectedFilters] = useState({
-    paymentMethod: "Cash",
-  });
+  const [selectedFilters, setSelectedFilters] = useState({});
   const [orders, setOrders] = useState([]);
   const [pagination, setPagination] = useState({
     currentPage: 1, // Set default current page
@@ -82,75 +80,88 @@ const OrderReport = () => {
     fetchOrders();
   }, [pageChange, fetchOrders]);
 
-  const handleDateFilterChange = (filter) => {
-    const today = new Date().toISOString().split("T")[0];
-
-    // Reset all date filters before applying the new filter
+  const toggleFilter = (filterKey, value) => {
     setSelectedFilters((prevState) => {
-      let newFilters = {
-        ...prevState,
-        paymentMethod: prevState.paymentMethod, // Keep paymentMethod unchanged
-        today: undefined, // Clear today filter
-        currentWeek: undefined, // Clear currentWeek filter
-        currentMonth: undefined, // Clear currentMonth filter
-        currentYear: undefined, // Clear currentYear filter
-        dateRange: undefined, // Clear custom date range
-      };
+      const newFilters = { ...prevState };
 
-      // Apply the selected filter
-      if (filter === "today") {
-        newFilters.today = today; // Apply today filter
-        newFilters.dateRange = undefined;
-      } else if (filter === "currentWeek") {
-        newFilters.dateRange = undefined;
-        newFilters.currentWeek = today; // Apply current week filter
-      } else if (filter === "currentMonth") {
-        newFilters.dateRange = undefined;
-        newFilters.currentMonth = today; // Apply current month filter
-      } else if (filter === "currentYear") {
-        newFilters.dateRange = undefined;
-        newFilters.currentYear = today; // Apply current year filter
+      // If the new value is selected, apply the filter, else remove it
+      if (newFilters[filterKey] === value) {
+        delete newFilters[filterKey]; // Deselect
+      } else {
+        newFilters[filterKey] = value; // Select
+      }
+
+      // Clear conflicting date filters when applying a date-based filter
+      if (
+        ["today", "currentWeek", "currentMonth", "currentYear"].includes(
+          filterKey
+        )
+      ) {
+        // Clear other date-related filters when one is selected
+        ["today", "currentWeek", "currentMonth", "currentYear"].forEach(
+          (key) => {
+            if (key !== filterKey) {
+              delete newFilters[key]; // Remove any conflicting date filter
+            }
+          }
+        );
+      }
+
+      // Clear the custom date range when applying a date-based filter
+      if (
+        ["today", "currentWeek", "currentMonth", "currentYear"].includes(
+          filterKey
+        )
+      ) {
+        delete newFilters.dateRange; // Clear custom date range if any
       }
 
       return newFilters;
     });
   };
 
+  const handleDateFilterChange = (filter) => {
+    const today = new Date().toISOString().split("T")[0];
+
+    // Call the reusable toggle function with the appropriate filter key and value
+    if (filter === "today") toggleFilter("today", today);
+    else if (filter === "currentWeek") toggleFilter("currentWeek", today);
+    else if (filter === "currentMonth") toggleFilter("currentMonth", today);
+    else if (filter === "currentYear") toggleFilter("currentYear", today);
+  };
+
+  // Handle custom date filter change
   const handleCustomDateChange = (dates) => {
     if (dates && dates.length === 2) {
-      // If dates are selected, store them as date range
-      const startDate = dates[0].format("YYYY-MM-DD"); // Start date formatted as "YYYY-MM-DD"
-      const endDate = dates[1].format("YYYY-MM-DD"); // End date formatted as "YYYY-MM-DD"
+      const startDate = dates[0].format("YYYY-MM-DD");
+      const endDate = dates[1].format("YYYY-MM-DD");
 
+      // Clear conflicting date filters using toggleFilter
+      ["today", "currentWeek", "currentMonth", "currentYear"].forEach((key) => {
+        toggleFilter(key, undefined); // Remove conflicting date filters
+      });
+
+      // Apply custom date range
       setSelectedFilters((prevState) => ({
         ...prevState,
-        today: undefined, // Clear today filter
-        currentWeek: undefined, // Clear currentWeek filter
-        currentMonth: undefined, // Clear currentMonth filter
-        currentYear: undefined, // Clear currentYear filter
-        dateRange: [startDate, endDate], // Store only date part in selectedFilters
+        dateRange: [startDate, endDate],
       }));
     } else {
-      // If the date range is cleared (dates are null or empty), remove dateRange filter
+      // Clear custom date range using toggleFilter
       setSelectedFilters((prevState) => ({
         ...prevState,
-        dateRange: undefined, // Remove dateRange filter
+        dateRange: undefined,
       }));
     }
   };
 
-  const handlePaymentMethodChange = (method) => {
-    setSelectedFilters((prevState) => ({
-      ...prevState,
-      paymentMethod: method,
-    }));
+  const handleOrderTypeChange = (type) => {
+    toggleFilter("orderType", type); // Toggle the orderType filter
   };
 
-  const handleOrderTypeChange = (type) => {
-    setSelectedFilters((prevState) => ({
-      ...prevState,
-      orderType: type || undefined,
-    }));
+  // Handle payment method filter change
+  const handlePaymentMethodChange = (method) => {
+    toggleFilter("paymentMethod", method); // Toggle the paymentMethod filter
   };
 
   const handlePageChange = ({ pageSize, current }) => {
@@ -330,6 +341,26 @@ const OrderReport = () => {
           </Button.Group>
         </Col>
       </Row>
+      <Row gutter={[16, 16]} className="payment-method-row">
+        <Col span={24} className="filter-buttons">
+          <Button.Group>
+            {items.map(({ key, label }) => (
+              <Button
+                key={key}
+                type={
+                  selectedFilters.paymentMethod === key ? "primary" : "default"
+                }
+                onClick={() => handlePaymentMethodChange(key)}
+                className={
+                  selectedFilters.paymentMethod === key ? "selected" : ""
+                }
+              >
+                {label}
+              </Button>
+            ))}
+          </Button.Group>
+        </Col>
+      </Row>
 
       <Row gutter={[16, 16]} className="custom-date-row">
         <Col span={24}>
@@ -346,21 +377,10 @@ const OrderReport = () => {
             allowClear
             disabledDate={disabledDate}
             placeholder={["Start Date", "End Date"]}
-            dropdownClassName="single-month-picker"
+            popupClassName="single-month-picker"
           />
         </Col>
       </Row>
-      <Row gutter={[16, 16]} className="payment-tabs-row">
-        <Col span={24}>
-          <Tabs
-            defaultActiveKey="Cash"
-            onChange={handlePaymentMethodChange}
-            centered
-            items={items}
-          />
-        </Col>
-      </Row>
-
       <Row gutter={[16, 16]} className="total-order">
         <Col span={24}>
           <div

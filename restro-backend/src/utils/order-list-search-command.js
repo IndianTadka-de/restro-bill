@@ -49,15 +49,13 @@ const moment = require("moment");
   dateRange: {
     filterName: "orderDate",
     conditions: (value) => {
-      // The value is a string in the format "2025-01-09T18:30:00.000Z TO 2025-01-11T18:29:59.999Z"
-      
+ 
       // Split the value to get start and end date parts
       const [startDate, endDate] = value.split(" TO ");
+    
+      const start = moment(startDate).format("YYYY-MM-DD"); 
+      const end = moment(endDate).format("YYYY-MM-DD"); 
       
-      // Convert the start and end dates to ISO strings or Date objects (ensure correct date format)
-      const start = moment(startDate).format("YYYY-MM-DD"); // Formatting as string 'YYYY-MM-DD'
-      const end = moment(endDate).format("YYYY-MM-DD"); // Formatting as string 'YYYY-MM-DD'
-
       // Return the MongoDB query using $gte and $lte for the range
       return { $gte: start, $lte: end };
     },

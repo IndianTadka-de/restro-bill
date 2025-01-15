@@ -40,8 +40,7 @@ const getFilters = async (command, value) => {
   const condition = searchCommand.conditions
     ? searchCommand.conditions(value)
     : value;
-console.log('filterName>>>>>',command,filterName)
-console.log('condition>>>>>',condition)
+
   return { [filterName]: condition };
 };
 
