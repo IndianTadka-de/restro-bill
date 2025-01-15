@@ -101,5 +101,5 @@ orderSchema.set('toJSON', {
 });
 
 // Create and export the model
-const Order = mongoose.model('OrderTest', orderSchema);
+const Order = mongoose.model('Order', orderSchema);
 module.exports = Order;
