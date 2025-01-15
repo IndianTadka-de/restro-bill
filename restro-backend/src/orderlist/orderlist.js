@@ -897,6 +897,7 @@ router.get("/generate-bill/:orderId", async (req, res) => {
 });
 
 
+
 router.post("/generate-bill-for-person", async (req, res) => {
   const { orderId, personIndex, personItems } = req.body; // Receive the orderId, personIndex, and personItems as payload
   const order = await Order.findOne({ orderId });

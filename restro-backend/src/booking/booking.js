@@ -137,9 +137,6 @@ router.get("/reservations", async (req, res) => {
   try {
     const reservations = await Booking.find();
 
-    // Log the reservations to check if any data is being returned
-    console.log("Reservations: ", reservations);
-
     if (reservations.length === 0) {
       return res.status(404).json({
         message: "No reservation found",
