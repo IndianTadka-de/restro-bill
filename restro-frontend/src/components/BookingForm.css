@@ -147,6 +147,7 @@ label {
 
   .booking-form-container {
     padding: 15px; /* Smaller padding for mobile */
+    max-width: 80%;
   }
 
   .form-input,

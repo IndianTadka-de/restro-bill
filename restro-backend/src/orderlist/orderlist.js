@@ -379,7 +379,19 @@ router.post("/orders-listing", async (req, res) => {
       .skip(skip) // Skip the previous pages' orders
       .limit(limit); // Limit the number of orders to the page size
 
-      const totalCount = await Order.countDocuments(additionalFilter);
+    // Fetch all orders that match the filter for total price calculation
+    const allMatchingOrders = await Order.find(additionalFilter);
+
+    // Calculate the total price of all matching orders
+    const totalPrice = allMatchingOrders.reduce((sum, order) => {
+      const orderTotal = order.orderItems.reduce(
+        (orderSum, item) => orderSum + item.price * item.quantity,
+        0
+      );
+      return sum + orderTotal;
+    }, 0);
+
+    const totalCount = await Order.countDocuments(additionalFilter);
 
     if (orders.length === 0) {
       return res.status(404).json({
@@ -398,6 +410,7 @@ router.post("/orders-listing", async (req, res) => {
       res.status(200).json({
         orders,
         pagination,
+        totalPrice,
       });
   } catch (error) {
     res.status(400).json({
