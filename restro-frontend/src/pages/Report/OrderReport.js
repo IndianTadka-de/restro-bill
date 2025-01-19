@@ -10,6 +10,7 @@ import { getOrderType } from "../../utils/orderType";
 const { RangePicker } = DatePicker;
 
 const OrderReport = () => {
+  const [totalFilteredPrice, setTotalFilteredPrice] = useState(0);
   const [selectedFilters, setSelectedFilters] = useState({});
   const [orders, setOrders] = useState([]);
   const [pagination, setPagination] = useState({
@@ -64,8 +65,10 @@ const OrderReport = () => {
       );
       setOrders(response.data.orders);
       setTotalCount(response.data.pagination.totalCount);
+      setTotalFilteredPrice(response.data.totalPrice); // Update total filtered price
     } catch (error) {
       setOrders([]);
+      setTotalFilteredPrice(0); // Reset total price on error
       toast.error(error?.response?.data?.message, {
         position: "top-right", // Correct position value
       });
@@ -383,10 +386,9 @@ const OrderReport = () => {
       </Row>
       <Row gutter={[16, 16]} className="total-order">
         <Col span={24}>
-          <div
-            style={{ textAlign: "right", fontSize: "16px", fontWeight: "bold" }}
-          >
-            Total Price: €{calculateTotalPrice()}
+          <div className="total-order-container">
+            <span>Total Price: €{totalFilteredPrice.toFixed(2)}</span>
+            <span>Page Total: €{calculateTotalPrice()}</span>
           </div>
         </Col>
       </Row>
