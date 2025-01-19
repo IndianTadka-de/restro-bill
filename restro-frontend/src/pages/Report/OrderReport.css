@@ -63,7 +63,13 @@
 .total-order{
   margin-bottom: 30px;
 }
-
+.total-order-container {
+  display: flex; /* Enable Flexbox layout */
+  justify-content: space-between; /* Place elements on opposite sides of the container */
+  align-items: center; /* Vertically align items in the center */
+  font-size: 16px; /* Set font size */
+  font-weight: bold; /* Make text bold */
+}
 .order-type-tabs-row {
   margin-bottom: 30px;
 }
