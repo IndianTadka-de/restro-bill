@@ -14,6 +14,12 @@ const Menu = () => {
   const [menu, setMenu] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setModalOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
+
+  const handleEdit = (item) => {
+    setSelectedItem(item);
+    setModalOpen(true);
+  };
 
   const initialValues = {
     itemId: "",
@@ -92,11 +98,50 @@ const Menu = () => {
       setModalOpen(false); // Close the modal after submission
     }
   };
+
+  const handleDeleteItem = async (itemId) => {
+    try {
+      const confirmDelete = window.confirm("Are you sure you want to delete this item?");
+      if (!confirmDelete) return;
+
+      const response = await axios.delete(`${base_url}/menu/${itemId}`);
+      if (response.status === 200) {
+        toast.success("Menu item deleted successfully!", {
+          position: "top-right",
+        });
+        fetchMenu();
+      }
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Error deleting menu item", {
+        position: "top-right",
+      });
+    }
+  };
+  
+  const handleMenuItemUpdate = async (updatedItem) => {
+    try {
+      const response = await axios.put(`${base_url}/menu/${updatedItem.itemId}`, updatedItem);
+      if (response?.status === 200) {
+        toast.success("Menu item updated successfully!", {
+          position: "top-right",
+        });
+        fetchMenu(); // Refresh the menu list
+      }
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Error updating menu item", {
+        position: "top-right",
+      });
+    } finally {
+      setModalOpen(false);
+      setSelectedItem(null);
+    }
+  };
+
   const menuColumns = [
     {
       title: "Item Id",
       dataIndex: "itemId",
-      render: (_, record) => record.itemId, // Display the serial number (starting from 1)
+      render: (_, record) => record.itemId,
     },
     { title: "Item Name", dataIndex: "itemName" },
     {
@@ -105,7 +150,28 @@ const Menu = () => {
       render: (_, record) => record.price + " €",
     },
     { title: "Category", dataIndex: "category" },
+    {
+      title: "Actions",
+      render: (_, record) => (
+        <div style={{ display: "flex", gap: "10px" }}>
+          <Button
+            onClick={() => handleEdit(record)}
+            type="primary"
+          >
+            Edit
+          </Button>
+          <Button
+            onClick={() => handleDeleteItem(record.itemId)}
+            danger
+          >
+            Delete
+          </Button>
+        </div>
+      ),
+    },
   ];
+  
+  
 
   // const handleMenuItemSubmit = (payload) => {
   //   console.log('payload....',payload)
@@ -137,6 +203,15 @@ const Menu = () => {
           />
         </Modal>
       )} 
+      {isModalOpen && (
+        <Modal onClose={() => setModalOpen(false)} size="small">
+          <CreateItemForm
+            initialValues={selectedItem || initialValues} // Pre-fill if editing
+            handleFormSubmit={selectedItem ? handleMenuItemUpdate : handleFormSubmit}
+          />
+        </Modal>
+      )}
+
     </div>
   );
 };

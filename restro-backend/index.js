@@ -48,7 +48,7 @@ app.use(express.json()); // Middleware to parse JSON request bodies
 app.use(cors
     ({
     origin: ['https://admindashboard.indiantadka.eu','http://localhost:3000'], // Allow your production domain
-    methods: ['GET', 'POST', 'PUT'],
+    methods: ['GET', 'POST', 'PUT','DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
   }));
 
