@@ -5,11 +5,22 @@ import { Button, Table } from "antd";
 import axios from "axios";
 import { base_url } from "../../utils/apiList";
 import { MdAddChart } from "react-icons/md";
+import Modal from "../../components/Modal";
+import CreateItemForm from "../../components/CreateItemForm"; // Form component for menu items
+import { toast } from "react-toastify";
 
 
 const Menu = () => {
   const [menu, setMenu] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isModalOpen, setModalOpen] = useState(false);
+
+  const initialValues = {
+    itemId: "",
+    itemName: "",
+    price: "",
+    category: "",
+  };
   // Fetch reservations data
   const fetchMenu = async () => {
     setLoading(true);
@@ -50,7 +61,37 @@ const Menu = () => {
   //     setModalOpen(false); // Close the modal after submission
   //   }
   // };
+  const handleFormSubmit = async (values) => {
+    try {
 
+      const getresponse = await axios.get(`${base_url}/menu`);
+      const existingItem = getresponse.data.find((item) => item.itemId === values.itemId);
+
+      if (existingItem) {
+        toast.error(`Item ID ${values.itemId} already exists. Please use a unique ID.`, {
+          position: "top-right",
+        });
+        return; // Exit the function if itemId is not unique
+      }
+      const payload = {
+        menuItems: [values], // Backend expects an array of items
+      };
+      const response = await axios.post(`${base_url}/menu`, payload);
+      if (response?.status === 201) {
+        toast.success("Menu item created successfully!", {
+          position: "top-right",
+        });
+        // Trigger re-fetch after successfully creating an item
+        fetchMenu();
+      }
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Error creating menu item", {
+        position: "top-right",
+      });
+    } finally {
+      setModalOpen(false); // Close the modal after submission
+    }
+  };
   const menuColumns = [
     {
       title: "Item Id",
@@ -74,7 +115,9 @@ const Menu = () => {
   return (
     <div className="menu-container">
       <div className="create-menu-button">
-        <Button icon={<MdAddChart />}  block>
+        <Button icon={<MdAddChart />}
+         onClick={() => setModalOpen(true)}
+        block>
           Create Item
         </Button>
       </div>
@@ -86,14 +129,14 @@ const Menu = () => {
         scroll={{ x: "max-content" }}
         className="menu-table"
       />
-      {/* {isModalOpen && (
+      {isModalOpen && (
         <Modal onClose={() => setModalOpen(false)} size="small">
-          <MenuItemForm
+          <CreateItemForm
             initialValues={initialValues}
-            handleFormSubit={handleMenuItemSubmit}
+            handleFormSubmit={handleFormSubmit}
           />
         </Modal>
-      )} */}
+      )} 
     </div>
   );
 };
