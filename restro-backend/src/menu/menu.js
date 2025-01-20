@@ -77,6 +77,13 @@ router.post("/menu", async (req, res) => {
     for (let item of menuItems) {
       const { itemId, itemName, price, category } = item;
 
+    const existingItem = await Menu.findOne({ itemId });
+      if (existingItem) {
+        return res.status(400).json({
+          message: `Item ID ${itemId} already exists. Please use a unique ID.`,
+        });
+      }  
+
       // Create a new menu item object
       const newMenuItem = new Menu({
         itemId,
