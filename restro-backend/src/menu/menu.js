@@ -157,4 +157,174 @@ router.get("/menu", async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /api/menu/{itemId}:
+ *   delete:
+ *     tags:
+ *       - Menu
+ *     summary: Delete a menu item by ID
+ *     description: Deletes a menu item from the database using its unique item ID.
+ *     parameters:
+ *       - in: path
+ *         name: itemId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The unique ID of the menu item to delete
+ *         example: "1001"
+ *     responses:
+ *       200:
+ *         description: Menu item deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Menu item deleted successfully"
+ *       404:
+ *         description: Menu item not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Menu item not found"
+ *       400:
+ *         description: Error deleting menu item
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Error deleting menu item"
+ */
+router.delete("/menu/:itemId", async (req, res) => {
+  try {
+    const { itemId } = req.params;
+
+    // Check if the item exists
+    const existingItem = await Menu.findOne({ itemId });
+    if (!existingItem) {
+      return res.status(404).json({
+        message: `Menu item with ID ${itemId} not found.`,
+      });
+    }
+
+    // Delete the item
+    await Menu.deleteOne({ itemId });
+
+    res.status(200).json({
+      message: "Menu item deleted successfully",
+    });
+  } catch (error) {
+    res.status(400).json({
+      message: "Error deleting menu item",
+      error: error.message,
+    });
+  }
+});
+
+/**
+ * @swagger
+ * /api/menu/{itemId}:
+ *   put:
+ *     tags:
+ *       - Menu
+ *     summary: Update a Menu Item
+ *     description: Updates the details of a specific menu item by its `itemId`.
+ *     parameters:
+ *       - in: path
+ *         name: itemId
+ *         required: true
+ *         description: The ID of the menu item to update.
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - itemName
+ *               - price
+ *               - category
+ *             properties:
+ *               itemName:
+ *                 type: string
+ *                 example: "Updated Burger"
+ *               price:
+ *                 type: number
+ *                 example: 7.99
+ *               category:
+ *                 type: string
+ *                 example: "Main Course"
+ *     responses:
+ *       200:
+ *         description: Menu item updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Menu item updated successfully"
+ *       404:
+ *         description: Menu item not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Menu item not found"
+ *       400:
+ *         description: Error updating menu item
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Error updating menu item"
+ */
+router.put("/menu/:itemId", async (req, res) => {
+  try {
+    const { itemId } = req.params;
+    const { itemName, price, category } = req.body;
+
+    // Find the menu item by ID and update it
+    const updatedItem = await Menu.findOneAndUpdate(
+      { itemId },
+      { itemName, price, category },
+      { new: true } // Return the updated document
+    );
+
+    if (!updatedItem) {
+      return res.status(404).json({ message: "Menu item not found" });
+    }
+
+    res.status(200).json({
+      message: "Menu item updated successfully",
+      menuItem: updatedItem,
+    });
+  } catch (error) {
+    res.status(400).json({
+      message: "Error updating menu item",
+      error: error.message,
+    });
+  }
+});
+
+
 module.exports = router;
