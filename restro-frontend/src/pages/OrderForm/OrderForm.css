@@ -252,7 +252,7 @@
 /* Landscape Mode (Horizontal View) - Microsoft Surface Book Pro 7 */
 @media (max-width: 2000px) and (min-width: 1200px) {
   .order-form-container {
-    padding-left: 100px;
+    padding-left: 15px;
   }
 
   .order-form-header h2 {

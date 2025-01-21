@@ -7,6 +7,8 @@ import BookingForm from "../../components/BookingForm";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { base_url } from "../../utils/apiList";
+import moment from "moment";
+
 
 const Bookings = () => {
   const [isModalOpen, setModalOpen] = useState(false);
@@ -64,6 +66,26 @@ const Bookings = () => {
     }
   };
 
+  const handleDelete = async (id) => {
+    try {
+      const confirmDelete = window.confirm("Are you sure you want to delete this item?");
+      if (!confirmDelete) return;
+
+      const response = await axios.delete(`${base_url}/reservations/${id}`);
+      if (response?.status === 200) {
+        toast.success("Reservation deleted successfully!", {
+          position: "top-right",
+        });
+        fetchReservations(); // Re-fetch reservations after deletion
+      }
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Error deleting reservation", {
+        position: "top-right",
+      });
+    }
+  };
+  
+
   const bookingColumns = [
     {
       title: "Booking Id",
@@ -79,6 +101,30 @@ const Bookings = () => {
     { title: "Number Of People", dataIndex: "numberOfPeople" },
     { title: "Booking Time", dataIndex: "bookingTime" },
     { title: "Phone Number", dataIndex: "phoneNumber" },
+    {
+      title: "Days Left",
+      key: "daysLeft",
+      render: (_, record) => {
+        const today = moment().startOf("day");
+        const bookingDate = moment(record.bookingDate).startOf("day");
+        const daysLeft = bookingDate.diff(today, "days");
+
+        // Return the calculated value or indicate the booking has passed
+        return daysLeft >= 0 ? `${daysLeft} days` : "Passed";
+      },
+    },
+    {
+      title: "Actions",
+      key: "actions",
+      render: (_, record) => (
+        <Button
+          danger
+          onClick={() => handleDelete(record.id)} // Use the reservation's ID
+        >
+          Delete
+        </Button>
+      ),
+    },
   ];
 
   return (
