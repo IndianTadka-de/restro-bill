@@ -135,7 +135,8 @@ router.post("/reservations", async (req, res) => {
 
 router.get("/reservations", async (req, res) => {
   try {
-    const reservations = await Booking.find();
+    const reservations = await Booking.find()
+    .sort({ bookingDate: -1 }) ;
 
     if (reservations.length === 0) {
       return res.status(404).json({
@@ -152,6 +153,62 @@ router.get("/reservations", async (req, res) => {
     });
   }
 });
+
+/**
+ * @swagger
+ * /api/reservations/{id}:
+ *   delete:
+ *     tags:
+ *       - Reservations
+ *     summary: Delete a reservation
+ *     description: Deletes a reservation by its ID.
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: The ID of the reservation to delete.
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Reservation deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Reservation deleted successfully"
+ *       404:
+ *         description: Reservation not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Reservation not found"
+ */
+
+router.delete("/reservations/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Find and delete the reservation
+    const deletedReservation = await Booking.findOneAndDelete({ id });
+
+    if (!deletedReservation) {
+      return res.status(404).json({ message: "Reservation not found" });
+    }
+
+    res.status(200).json({ message: "Reservation deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Error deleting reservation", error });
+  }
+});
+
 
 
 

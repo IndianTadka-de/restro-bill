@@ -1,7 +1,7 @@
 /* General Styles for the Booking Container and Button */
 .booking-container {
   max-width: 1200px; /* Limiting the max width for better readability */
-  padding-left: 15%;
+  padding-left: 5%;
   box-sizing: border-box;
 }
 
@@ -9,6 +9,7 @@
 .create-booking-button {
   width: 20%;
   margin-bottom: 20px;
+  margin-top: 2%;
   transition: all 0.3s ease;
   position: relative;
 }
