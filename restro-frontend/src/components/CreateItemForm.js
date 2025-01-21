@@ -18,7 +18,6 @@ const CreateItemForm = ({ initialValues, handleFormSubmit }) => {
       .max(50, "Item Name cannot exceed 50 characters"),
     price: Yup.number()
       .required("Price is required")
-      .positive("Price must be positive")
       .max(10000, "Price cannot exceed 10,000"),
     category: Yup.string().required("Category is required"),
   });
