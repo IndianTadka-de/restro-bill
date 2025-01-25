@@ -2,8 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Input, List, Button, Row, Col } from "antd";
 import { PlusOutlined, CheckOutlined } from "@ant-design/icons";
 import "./Itemslist.css";
-import axios from "axios";
-import { base_url } from "../utils/apiList";
+import axiosInstance from "../utils/AxiosInstance";
 
 const ItemList = ({ data, handleAddToPayload, handleRemoveFromPayload }) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -11,7 +10,7 @@ const ItemList = ({ data, handleAddToPayload, handleRemoveFromPayload }) => {
   // Fetch reservations data
   const fetchMenu = async () => {
     try {
-      const response = await axios.get(`${base_url}/menu`);
+      const response = await axiosInstance.get(`/menu`);
       setMenu(response.data);
     } catch (error) {
       console.error("Error fetching menu", error);

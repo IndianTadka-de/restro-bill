@@ -18,6 +18,7 @@ import { base_url } from "../../utils/apiList";
 import BookingForm from "../../components/BookingForm";
 import Modal from "../../components/Modal";
 import { getOrderType } from "../../utils/orderType";
+import axiosInstance from "../../utils/AxiosInstance";
 
 function OrderList() {
   const navigate = useNavigate();
@@ -58,8 +59,8 @@ function OrderList() {
   // Function to handle API call when search button is clicked
   const handleSearch = useCallback(async () => {
     try {
-      const response = await axios.post(
-        `${base_url}/orders-listing`, 
+      const response = await axiosInstance.post(
+        `/orders-listing`, 
         { search: searchTerm },
         {
           params: {
@@ -84,8 +85,8 @@ function OrderList() {
 
   const handlePayment = async (record, paymentMethod) => {
     try {
-      const response = await axios.put(
-        `${base_url}/orders/${record.orderId}/paymentMethod`,
+      const response = await axiosInstance.put(
+        `/orders/${record.orderId}/paymentMethod`,
         { paymentMethod }
       );
       if (response.status === 200) {
@@ -165,8 +166,8 @@ function OrderList() {
 
   const handleDeleteRow = async (record) => {
     try {
-      const response = await axios.delete(
-        `${base_url}/orders/${record.orderId}`
+      const response = await axiosInstance.delete(
+        `/orders/${record.orderId}`
       );
       if (response.status === 200) {
         setOrders((prev) =>
@@ -188,8 +189,8 @@ function OrderList() {
 
   const handleStatusChange = async (record, status) => {
     try {
-      const response = await axios.put(
-        `${base_url}/orders/${record.orderId}/status`,
+      const response = await axiosInstance.put(
+        `/orders/${record.orderId}/status`,
         { status }
       );
       if (response.status === 200) {
@@ -331,7 +332,7 @@ function OrderList() {
 
   const fetchOrders = useCallback(async () => {
     try {
-      const response = await axios.get(`${base_url}/orders`, {
+      const response = await axiosInstance.get(`/orders`, {
         params: {
           currentPage: pagination.currentPage,
           pageSize: pagination.pageSize,
@@ -358,7 +359,7 @@ function OrderList() {
     try {
       delete payload.hour;
       delete payload.minute;
-      const response = await axios.post(`${base_url}/booking`, {
+      const response = await axiosInstance.post(`/booking`, {
         ...payload,
       });
       if (response?.status === 201) {

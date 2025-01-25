@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Menu = require("./model/menu.model");
+const { authMiddleware } = require("../auth/auth");
 
 /**
  * @swagger
@@ -10,6 +11,8 @@ const Menu = require("./model/menu.model");
  *       - Menu
  *     summary: Create one or more Menu Items
  *     description: Creates one or more menu items with details like item name, price, and category.
+ *     security:
+ *       - bearerAuth: [] 
  *     requestBody:
  *       required: true
  *       content:
@@ -63,7 +66,7 @@ const Menu = require("./model/menu.model");
  *                   type: string
  *                   example: "Error creating menu items"
  */
-router.post("/menu", async (req, res) => {
+router.post("/menu", authMiddleware,async (req, res) => {
   try {
     const { menuItems } = req.body;  // Extract the array of menu items from the request body
 
@@ -116,6 +119,8 @@ router.post("/menu", async (req, res) => {
  *       - Menu
  *     summary: Get all Menu Item
  *     description: Retrieves all menu items from the system.
+ *     security:
+ *       - bearerAuth: [] 
  *     responses:
  *       200:
  *         description: A list of all menu item
@@ -138,7 +143,7 @@ router.post("/menu", async (req, res) => {
  *         description: Error fetching orders
  */
 
-router.get("/menu", async (req, res) => {
+router.get("/menu",authMiddleware ,async (req, res) => {
   try {
     const menu = await Menu.find();
     if (menu.length === 0) {
@@ -165,6 +170,8 @@ router.get("/menu", async (req, res) => {
  *       - Menu
  *     summary: Delete a menu item by ID
  *     description: Deletes a menu item from the database using its unique item ID.
+ *     security:
+ *       - bearerAuth: [] 
  *     parameters:
  *       - in: path
  *         name: itemId
@@ -205,7 +212,7 @@ router.get("/menu", async (req, res) => {
  *                   type: string
  *                   example: "Error deleting menu item"
  */
-router.delete("/menu/:itemId", async (req, res) => {
+router.delete("/menu/:itemId",authMiddleware,async (req, res) => {
   try {
     const { itemId } = req.params;
 
@@ -239,6 +246,8 @@ router.delete("/menu/:itemId", async (req, res) => {
  *       - Menu
  *     summary: Update a Menu Item
  *     description: Updates the details of a specific menu item by its `itemId`.
+ *     security:
+ *       - bearerAuth: [] 
  *     parameters:
  *       - in: path
  *         name: itemId
@@ -298,7 +307,7 @@ router.delete("/menu/:itemId", async (req, res) => {
  *                   type: string
  *                   example: "Error updating menu item"
  */
-router.put("/menu/:itemId", async (req, res) => {
+router.put("/menu/:itemId", authMiddleware ,async (req, res) => {
   try {
     const { itemId } = req.params;
     const { itemName, price, category } = req.body;

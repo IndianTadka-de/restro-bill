@@ -3,8 +3,7 @@ import { useNavigate } from "react-router-dom";
 import OrderForm from "../OrderForm/OrderFormer";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"; // Make sure to import the styles
-import { base_url } from "../../utils/apiList";
-import axios from "axios";
+import axiosInstance from "../../utils/AxiosInstance";
 
 export default function OrderCreate() {
   const navigate = useNavigate();
@@ -14,7 +13,7 @@ export default function OrderCreate() {
     try {
       setIsSubmitting(true);
 
-      const response = await axios.post(`${base_url}/orders`, {
+      const response = await axiosInstance.post(`/orders`, {
         ...payload
       });
       if (response?.status === 201) {

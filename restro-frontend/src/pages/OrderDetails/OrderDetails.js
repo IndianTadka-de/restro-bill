@@ -14,7 +14,18 @@ export default function OrderDetails() {
 
   const fetchOrderData = async (orderId) => {
     try {
-      const response = await fetch(`${base_url}/orders/${orderId}`);
+      const token = localStorage.getItem("access_token"); 
+      const response = await fetch(`${base_url}/orders/${orderId}`,{
+        method: "GET", // Optional as GET is default
+        headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`, // Add the Bearer token here
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
       const data = await response.json();
       setOrderData(data);
     } catch (error) {

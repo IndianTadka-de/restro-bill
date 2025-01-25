@@ -9,6 +9,7 @@ const Order = require("./models/orderlist.model");
 const moment = require("moment");
 const { searchQueryParser } = require("../utils/search-query-parser");
 const { getConditions } = require("../utils/helper/helper-search");
+const { authMiddleware } = require("../auth/auth");
 
 /**
  * @swagger
@@ -18,6 +19,8 @@ const { getConditions } = require("../utils/helper/helper-search");
  *       - Order
  *     summary: Create a new order
  *     description: Creates a new order with items in the system.
+ *     security:
+ *       - bearerAuth: [] 
  *     requestBody:
  *       required: true
  *       content:
@@ -123,7 +126,7 @@ const { getConditions } = require("../utils/helper/helper-search");
  *                   type: string
  *                   example: "Error creating order"
  */
-router.post("/orders", async (req, res) => {
+router.post("/orders", authMiddleware ,async (req, res) => {
   try {
     const {
       tableNumber,
@@ -199,6 +202,8 @@ router.post("/orders", async (req, res) => {
  *       - Order
  *     summary: Get all orders with pagination
  *     description: Retrieves paginated orders from the system.
+ *     security:
+ *       - bearerAuth: [] # This requires Bearer Token
  *     parameters:
  *       - in: query
  *         name: page
@@ -249,7 +254,7 @@ router.post("/orders", async (req, res) => {
  *       400:
  *         description: Error fetching orders
  */
-router.get("/orders", async (req, res) => {
+router.get("/orders",authMiddleware, async (req, res) => {
   try {
     // Extract page and pageSize from query parameters
     const currentPage = parseInt(req.query.currentPage); // Default to 1 if no page is provided
@@ -302,6 +307,8 @@ router.get("/orders", async (req, res) => {
  *       - Order
  *     summary: Retrieve filtered and sorted list of orders
  *     description: Fetches orders from the system based on search criteria provided in the request body, and sorts them by creation date in descending order.
+ *     security:
+ *       - bearerAuth: [] 
  *     requestBody:
  *       required: true
  *       content:
@@ -360,7 +367,7 @@ router.get("/orders", async (req, res) => {
  *       500:
  *         description: Internal server error.
  */
-router.post("/orders-listing", async (req, res) => {
+router.post("/orders-listing", authMiddleware,async (req, res) => {
   try {
     const { search } = req.body;
     const searchPhrases = searchQueryParser(search);
@@ -428,6 +435,8 @@ router.post("/orders-listing", async (req, res) => {
  *       - Order
  *     summary: Get a specific order by OrderId
  *     description: Retrieves a single order using its OrderId.
+ *     security:
+ *       - bearerAuth: [] 
  *     parameters:
  *       - name: orderId
  *         in: path
@@ -491,7 +500,7 @@ router.post("/orders-listing", async (req, res) => {
  *                   type: string
  *                   example: Order not found
  */
-router.get("/orders/:orderId", async (req, res) => {
+router.get("/orders/:orderId", authMiddleware ,async (req, res) => {
   try {
     const order = await Order.findOne({ orderId: req.params.orderId });
 
@@ -518,6 +527,8 @@ router.get("/orders/:orderId", async (req, res) => {
  *       - Order
  *     summary: Update an existing order
  *     description: Updates an order's details, including table number, order date, and multiple items.
+ *     security:
+ *       - bearerAuth: [] 
  *     parameters:
  *       - name: orderId
  *         in: path
@@ -565,7 +576,7 @@ router.get("/orders/:orderId", async (req, res) => {
  *       404:
  *         description: Order not found
  */
-router.put("/orders/:orderId", async (req, res) => {
+router.put("/orders/:orderId", authMiddleware ,async (req, res) => {
   try {
     const { orderId } = req.params;
     const { tableNumber, orderDate, orderItems, pickupOrder, onlineOrder } =
@@ -626,6 +637,8 @@ router.put("/orders/:orderId", async (req, res) => {
  *       - Order
  *     summary: Delete an order by ItemId
  *     description: Deletes an order using its ItemId.
+ *     security:
+ *       - bearerAuth: [] 
  *     parameters:
  *       - name: itemId
  *         in: path
@@ -639,7 +652,7 @@ router.put("/orders/:orderId", async (req, res) => {
  *       404:
  *         description: Order not found
  */
-router.delete("/orders/:orderId", async (req, res) => {
+router.delete("/orders/:orderId", authMiddleware ,async (req, res) => {
   try {
     const deletedOrder = await Order.findOneAndDelete({
       orderId: req.params.orderId,
@@ -669,6 +682,8 @@ router.delete("/orders/:orderId", async (req, res) => {
  *       - Order
  *     summary: Update the status of an order
  *     description: Updates the status of an existing order. The status can either be 'INPROGRESS' or 'COMPLETED'.
+ *     security:
+ *       - bearerAuth: [] 
  *     parameters:
  *       - name: orderId
  *         in: path
@@ -695,7 +710,7 @@ router.delete("/orders/:orderId", async (req, res) => {
  *       404:
  *         description: Order not found
  */
-router.put("/orders/:orderId/status", async (req, res) => {
+router.put("/orders/:orderId/status", authMiddleware ,async (req, res) => {
   try {
     const { orderId } = req.params;
     const { status } = req.body;
@@ -738,6 +753,8 @@ router.put("/orders/:orderId/status", async (req, res) => {
  *       - Order
  *     summary: Update the paymentMethod of an order
  *     description: Updates the paymentMethod of an existing order. The paymentMethod type can either be 'CARD','CASH' and 'PAYPAL'.
+ *     security:
+ *       - bearerAuth: [] 
  *     parameters:
  *       - name: orderId
  *         in: path
@@ -764,7 +781,7 @@ router.put("/orders/:orderId/status", async (req, res) => {
  *       404:
  *         description: Order not found
  */
-router.put("/orders/:orderId/paymentMethod", async (req, res) => {
+router.put("/orders/:orderId/paymentMethod",authMiddleware ,async (req, res) => {
   try {
     const { orderId } = req.params;
     const { paymentMethod } = req.body;

@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Booking = require("./model/booking.model");
+const { authMiddleware } = require("../auth/auth");
 /**
  * @swagger
  * /api/reservations:
@@ -9,6 +10,8 @@ const Booking = require("./model/booking.model");
  *       - Reservations
  *     summary: Create a new Reservations
  *     description: Creates a new reservation with details.
+ *     security:
+ *       - bearerAuth: [] 
  *     requestBody:
  *       required: true
  *       content:
@@ -66,7 +69,7 @@ const Booking = require("./model/booking.model");
  *                   type: string
  *                   example: "Error creating reservations"
  */
-router.post("/reservations", async (req, res) => {
+router.post("/reservations", authMiddleware ,async (req, res) => {
   try {
     const {
       bookingDate,
@@ -75,6 +78,17 @@ router.post("/reservations", async (req, res) => {
       bookingTime,
       phoneNumber,
     } = req.body;
+
+    // Combine bookingDate and bookingTime into a single Date object
+    const bookingDateTime = new Date(`${bookingDate}T${bookingTime}`);
+    const now = new Date();
+
+    // Validation: Check if the booking date and time is in the past
+    if (bookingDateTime < now) {
+      return res.status(400).json({
+        message: "Error: Booking date and time cannot be in the past",
+      });
+    }
 
     const newBooking = new Booking({
       bookingDate,
@@ -109,6 +123,8 @@ router.post("/reservations", async (req, res) => {
  *       - Reservations
  *     summary: Get all reservations
  *     description: Retrieves all reservations from the system.
+ *     security:
+ *       - bearerAuth: [] 
  *     responses:
  *       200:
  *         description: A list of all reservations
@@ -133,7 +149,7 @@ router.post("/reservations", async (req, res) => {
  *         description: Error fetching orders
  */
 
-router.get("/reservations", async (req, res) => {
+router.get("/reservations", authMiddleware ,async (req, res) => {
   try {
     const reservations = await Booking.find()
     .sort({ bookingDate: -1 }) ;
@@ -162,6 +178,8 @@ router.get("/reservations", async (req, res) => {
  *       - Reservations
  *     summary: Delete a reservation
  *     description: Deletes a reservation by its ID.
+ *     security:
+ *       - bearerAuth: [] 
  *     parameters:
  *       - name: id
  *         in: path
@@ -192,7 +210,7 @@ router.get("/reservations", async (req, res) => {
  *                   example: "Reservation not found"
  */
 
-router.delete("/reservations/:id", async (req, res) => {
+router.delete("/reservations/:id", authMiddleware ,async (req, res) => {
   try {
     const { id } = req.params;
 

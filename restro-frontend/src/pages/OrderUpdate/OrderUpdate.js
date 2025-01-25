@@ -4,7 +4,7 @@ import OrderForm from "../OrderForm/OrderFormer";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { base_url } from "../../utils/apiList";
-import axios from "axios";
+import axiosInstance from "../../utils/AxiosInstance";
 
 export default function OrderUpdate() {
   const { id } = useParams();
@@ -15,7 +15,7 @@ export default function OrderUpdate() {
   const fetchOrderData = async (orderId) => {
     try {
       // Use axios to make the GET request
-      const response = await axios.get(`${base_url}/orders/${orderId}`);
+      const response = await axiosInstance.get(`/orders/${orderId}`);
       
       // Assuming the response data structure is the same as in the original fetch request
       const data = response.data;
@@ -47,7 +47,7 @@ export default function OrderUpdate() {
   const handleSubmit = async (payload) => {
     try {
       setIsSubmitting(true);
-      const response = await axios.put(`${base_url}/orders/${id}`, {...payload})
+      const response = await axiosInstance.put(`/orders/${id}`, {...payload})
 
       if (response.status === 200) {
         toast.success("Order updated successfully!", {
