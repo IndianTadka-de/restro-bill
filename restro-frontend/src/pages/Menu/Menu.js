@@ -1,20 +1,23 @@
 import React, { useEffect, useState } from "react";
 import "./Menu.css";
-import { Button, Table } from "antd";
+import { Button, Input, Select, Table } from "antd";
 // import { toast } from "react-toastify";
-import axios from "axios";
-import { base_url } from "../../utils/apiList";
 import { MdAddChart } from "react-icons/md";
 import Modal from "../../components/Modal";
 import CreateItemForm from "../../components/CreateItemForm"; // Form component for menu items
 import { toast } from "react-toastify";
+import axiosInstance from "../../utils/AxiosInstance";
 
+const { Option } = Select;
 
 const Menu = () => {
   const [menu, setMenu] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
+  const [filteredMenu, setFilteredMenu] = useState([]); 
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
 
   const handleEdit = (item) => {
     setSelectedItem(item);
@@ -31,8 +34,9 @@ const Menu = () => {
   const fetchMenu = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`${base_url}/menu`);
+      const response = await axiosInstance.get(`/menu`);
       setMenu(response.data);
+      setFilteredMenu(response.data);
     } catch (error) {
       console.error("Error fetching menu", error);
     } finally {
@@ -70,7 +74,7 @@ const Menu = () => {
   const handleFormSubmit = async (values) => {
     try {
 
-      const getresponse = await axios.get(`${base_url}/menu`);
+      const getresponse = await axiosInstance.get(`/menu`);
       const existingItem = getresponse.data.find((item) => item.itemId === values.itemId);
 
       if (existingItem) {
@@ -82,7 +86,7 @@ const Menu = () => {
       const payload = {
         menuItems: [values], // Backend expects an array of items
       };
-      const response = await axios.post(`${base_url}/menu`, payload);
+      const response = await axiosInstance.post(`/menu`, payload);
       if (response?.status === 201) {
         toast.success("Menu item created successfully!", {
           position: "top-right",
@@ -104,7 +108,7 @@ const Menu = () => {
       const confirmDelete = window.confirm("Are you sure you want to delete this item?");
       if (!confirmDelete) return;
 
-      const response = await axios.delete(`${base_url}/menu/${itemId}`);
+      const response = await axiosInstance.delete(`/menu/${itemId}`);
       if (response.status === 200) {
         toast.success("Menu item deleted successfully!", {
           position: "top-right",
@@ -120,7 +124,7 @@ const Menu = () => {
   
   const handleMenuItemUpdate = async (updatedItem) => {
     try {
-      const response = await axios.put(`${base_url}/menu/${updatedItem.itemId}`, updatedItem);
+      const response = await axiosInstance.put(`/menu/${updatedItem.itemId}`, updatedItem);
       if (response?.status === 200) {
         toast.success("Menu item updated successfully!", {
           position: "top-right",
@@ -135,6 +139,38 @@ const Menu = () => {
       setModalOpen(false);
       setSelectedItem(null);
     }
+  };
+
+  useEffect(() => {
+    if (!searchTerm && !selectedCategory) {
+      // If no filters are applied, show the full menu
+      setFilteredMenu(menu);
+    } else {
+    let filtered = menu;
+
+    if (searchTerm) {
+      filtered = filtered.filter((item) =>
+        item.itemName.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    if (selectedCategory) {
+      filtered = filtered.filter((item) => item.category === selectedCategory);
+    }
+
+    setFilteredMenu(filtered);
+
+}}, [searchTerm, selectedCategory, menu]);
+
+  // Get unique categories for the dropdown
+  const categories = [...new Set(menu.map((item) => item.category))];
+
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const handleCategoryChange = (value) => {
+    setSelectedCategory(value);
   };
 
   const menuColumns = [
@@ -180,16 +216,39 @@ const Menu = () => {
 
   return (
     <div className="menu-container">
-      <div className="create-menu-button">
-        <Button icon={<MdAddChart />}
-         onClick={() => setModalOpen(true)}
-        block>
-          Create Item
-        </Button>
-      </div>
+      <div className="menu-search">
+          <Input
+            placeholder="Search items..."
+            className="search-input-menu"
+            value={searchTerm}
+            onChange={handleSearch}
+            style={{ width: "300px" }}
+          />
+          <Select
+            placeholder="Filter by category"
+            className="select-input-category"
+            style={{ width: "200px" }}
+            value={selectedCategory}
+            onChange={handleCategoryChange}
+            allowClear
+          >
+            {categories.map((category) => (
+              <Option key={category} value={category}>
+                {category}
+              </Option>
+            ))}
+          </Select>
+          <div className="create-menu-button">
+            <Button icon={<MdAddChart />}
+            onClick={() => setModalOpen(true)}
+            block>
+              Create Item
+            </Button>
+          </div>
+      </div>  
       <Table
         columns={menuColumns}
-        dataSource={menu} // Provide your data source here
+        dataSource={filteredMenu} // Provide your data source here
         loading={loading}
         rowKey="itemId"
         scroll={{ x: "max-content" }}

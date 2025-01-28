@@ -5,9 +5,8 @@ import { FileAddOutlined } from "@ant-design/icons";
 import Modal from "../../components/Modal";
 import BookingForm from "../../components/BookingForm";
 import { toast } from "react-toastify";
-import axios from "axios";
-import { base_url } from "../../utils/apiList";
 import moment from "moment";
+import axiosInstance from "../../utils/AxiosInstance";
 
 
 const Bookings = () => {
@@ -29,7 +28,7 @@ const Bookings = () => {
   const fetchReservations = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`${base_url}/reservations`);
+      const response = await axiosInstance.get(`/reservations`);
       setReservations(response.data);
     } catch (error) {
       console.error("Error fetching reservations", error);
@@ -47,7 +46,7 @@ const Bookings = () => {
       delete payload.hour;
       delete payload.minute;
 
-      const response = await axios.post(`${base_url}/reservations`, {
+      const response = await axiosInstance.post(`/reservations`, {
         ...payload,
       });
       if (response?.status === 201) {
@@ -71,7 +70,7 @@ const Bookings = () => {
       const confirmDelete = window.confirm("Are you sure you want to delete this item?");
       if (!confirmDelete) return;
 
-      const response = await axios.delete(`${base_url}/reservations/${id}`);
+      const response = await axiosInstance.delete(`/reservations/${id}`);
       if (response?.status === 200) {
         toast.success("Reservation deleted successfully!", {
           position: "top-right",
@@ -104,13 +103,20 @@ const Bookings = () => {
     {
       title: "Days Left",
       key: "daysLeft",
+      className: "days-left-column",
       render: (_, record) => {
         const today = moment().startOf("day");
         const bookingDate = moment(record.bookingDate).startOf("day");
         const daysLeft = bookingDate.diff(today, "days");
 
         // Return the calculated value or indicate the booking has passed
-        return daysLeft >= 0 ? `${daysLeft} days` : "Passed";
+        if (daysLeft > 0) {
+          return `${daysLeft} days`;
+        } else if (daysLeft === 0) {
+          return "Today";
+        } else {
+          return "Passed";
+        }
       },
     },
     {

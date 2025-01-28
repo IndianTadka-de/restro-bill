@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Button, Row, Col, Table, DatePicker } from "antd";
 import moment from "moment";
-import axios from "axios";
 import "./OrderReport.css";
-import { base_url } from "../../utils/apiList";
 import { toast } from "react-toastify";
 import { getOrderType } from "../../utils/orderType";
+import axiosInstance from "../../utils/AxiosInstance";
 
 const { RangePicker } = DatePicker;
 
@@ -51,8 +50,8 @@ const OrderReport = () => {
     }
 
     try {
-      const response = await axios.post(
-        `${base_url}/orders-listing`,
+      const response = await axiosInstance.post(
+        `/orders-listing`,
         {
           search: search.join(" AND "),
         },

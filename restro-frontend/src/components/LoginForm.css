@@ -1,0 +1,28 @@
+.login-box{
+    margin: auto;
+}
+
+.login-subtitle{
+    margin: auto;
+}
+
+.center-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px; /* Spacing between the line and the text */
+  }
+  
+  .line {
+    flex: 1; /* Make the line grow to fill available space */
+    height: 1px;
+    background-color: #d9d9d9;
+    border: none;
+  }
+  
+  .center-text {
+    font-size: 14px;
+    color: #bfbfbf; /* Adjust to your text color preference */
+    margin: 0; /* Remove default margin */
+  }
+  

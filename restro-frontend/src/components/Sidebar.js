@@ -13,8 +13,9 @@ import { base_url } from "../utils/apiList";
 import { FaHome } from "react-icons/fa";
 import { MdMenuBook } from "react-icons/md";
 import { TbReport } from "react-icons/tb";
+import { RiLogoutBoxLine } from "react-icons/ri";
 
-const Sidebar = () => {
+const Sidebar = ({onLogout}) => {
   const navigate = useNavigate();
   const [reservation, setReservation] = useState(false);
   const [sidebarVisible, setSidebarVisible] = useState(false);
@@ -52,6 +53,7 @@ const Sidebar = () => {
       setReservation(false);
     }
   };
+
 
   const handleHomeButton = () => {
     navigate("/");
@@ -107,6 +109,9 @@ const Sidebar = () => {
         </Button>
         <Button className="sidebar-btn" icon={<TbReport />} onClick={() => handleReport()}>
           <span className="sidebar-text">Report</span>
+        </Button>
+        <Button className="sidebar-btn logout-btn" icon={<RiLogoutBoxLine />} onClick={onLogout}>
+          <span className="sidebar-text">Logout</span>
         </Button>
         {reservation && (
           <Modal onClose={() => setReservation(false)} size="small">

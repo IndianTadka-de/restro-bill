@@ -42,6 +42,9 @@
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
 
+.days-left-column{
+  font-weight: bold;
+}
 /* Styles for the Booking Table */
 .booking-table {
   width: 100%;
