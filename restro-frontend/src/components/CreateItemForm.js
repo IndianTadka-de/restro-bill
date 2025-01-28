@@ -10,8 +10,7 @@ const CreateItemForm = ({ initialValues, handleFormSubmit }) => {
   // Validation Schema using Yup
   const validationSchema = Yup.object({
     itemId: Yup.string()
-      .required("Item ID is required")
-      .matches(/^[0-9]+$/, "Item ID must be numeric"),
+      .required("Item ID is required"),
     itemName: Yup.string()
       .required("Item Name is required")
       .min(2, "Item Name must be at least 2 characters")
@@ -102,22 +101,23 @@ const CreateItemForm = ({ initialValues, handleFormSubmit }) => {
                 <Option value="Suppen">Suppen</Option>
                 <Option value="Indische Vorspeisen">Indische Vorspeisen</Option>
                 <Option value="Salate">Salate</Option>
-                <Option value="TandooriSpecialties">Tandoori Spezialitäten</Option>
-                <Option value="ChickenSpecialties">Indische Hähnchenspezialitäten</Option>
-                <Option value="FishSpecialties">Fischspezialitäten</Option>
-                <Option value="LambSpecialties">Lammspezialitäten</Option>
-                <Option value="BiryaniSpecialties">Biryani Basmati-Reis-Spezialitäten</Option>
-                <Option value="VegetarianSpecialties">Indische Spezialitäten Vegetarisch</Option>
-                <Option value="KidsMenu">Kinder Menü</Option>
-                <Option value="DessertMenu">Dessert-Menü</Option>
+                <Option value="Tandoori Spezialitäten">Tandoori Spezialitäten</Option>
+                <Option value="Indische Hähnchenspezialitäten">Indische Hähnchenspezialitäten</Option>
+                <Option value="Fischspezialitäten">Fischspezialitäten</Option>
+                <Option value="Lammspezialitäten">Lammspezialitäten</Option>
+                <Option value="Biryani Basmati-Reis-Spezialitäten">Biryani Basmati-Reis-Spezialitäten</Option>
+                <Option value="Indische Spezialitäten Vegetarisch">Indische Spezialitäten Vegetarisch</Option>
+                <Option value="Kinder Menü">Kinder Menü</Option>
+                <Option value="Dessert-Menü">Dessert-Menü</Option>
                 <Option value="Aperitif">Aperitif</Option>
-                <Option value="NonAlcoholicBeverages">Alkoholfreie Getränke</Option>
-                <Option value="Beers">Biere</Option>
-                <Option value="IndianColdDrinks">Indische Kaltgetränke</Option>
-                <Option value="Spirits">Spirituosen / Liköre</Option>
+                <Option value="Alkoholfreie Getränke">Alkoholfreie Getränke</Option>
+                <Option value="Biere">Biere</Option>
+                <Option value="Indische Kaltgetränke">Indische Kaltgetränke</Option>
+                <Option value="Spirituosen / Liköre">Spirituosen / Liköre</Option>
                 <Option value="Whisky">Whisky</Option>
-                <Option value="HotBeverages">Warme Getränke</Option>
-                <Option value="LunchMenu">Mittagsmenü</Option>
+                <Option value="Warme Getränke">Warme Getränke</Option>
+                <Option value="Weine">Weine</Option>
+                <Option value="Mittagsmenü">Mittagsmenü</Option>
               </Select>
               <ErrorMessage
                 name="category"

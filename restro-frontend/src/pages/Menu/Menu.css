@@ -8,11 +8,35 @@
 /* Create Booking Button */
 .create-menu-button {
   width: 20%;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   margin-top: 20px;
   transition: all 0.3s ease;
   position: relative;
 }
+
+.menu-search{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+  margin-top: 20px;
+  gap: 20px;
+}
+
+.search-input-menu{
+  width: 300px;
+  height: 40px;
+  border-radius: 5px;
+  margin: 10px;
+  border: 1px solid #d9d9d9;
+}
+
+.select-input-category{
+  width: 300px;
+  height: 40px;
+  border-radius: 5px;
+}
+
 
 .create-menu-button:hover {
   transform: scale(1.05); /* Slight scale effect on hover */

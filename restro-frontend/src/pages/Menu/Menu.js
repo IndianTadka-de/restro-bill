@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./Menu.css";
-import { Button, Table } from "antd";
+import { Button, Input, Select, Table } from "antd";
 // import { toast } from "react-toastify";
 import { MdAddChart } from "react-icons/md";
 import Modal from "../../components/Modal";
@@ -8,12 +8,16 @@ import CreateItemForm from "../../components/CreateItemForm"; // Form component 
 import { toast } from "react-toastify";
 import axiosInstance from "../../utils/AxiosInstance";
 
+const { Option } = Select;
 
 const Menu = () => {
   const [menu, setMenu] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
+  const [filteredMenu, setFilteredMenu] = useState([]); 
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
 
   const handleEdit = (item) => {
     setSelectedItem(item);
@@ -32,6 +36,7 @@ const Menu = () => {
     try {
       const response = await axiosInstance.get(`/menu`);
       setMenu(response.data);
+      setFilteredMenu(response.data);
     } catch (error) {
       console.error("Error fetching menu", error);
     } finally {
@@ -136,6 +141,38 @@ const Menu = () => {
     }
   };
 
+  useEffect(() => {
+    if (!searchTerm && !selectedCategory) {
+      // If no filters are applied, show the full menu
+      setFilteredMenu(menu);
+    } else {
+    let filtered = menu;
+
+    if (searchTerm) {
+      filtered = filtered.filter((item) =>
+        item.itemName.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    if (selectedCategory) {
+      filtered = filtered.filter((item) => item.category === selectedCategory);
+    }
+
+    setFilteredMenu(filtered);
+
+}}, [searchTerm, selectedCategory, menu]);
+
+  // Get unique categories for the dropdown
+  const categories = [...new Set(menu.map((item) => item.category))];
+
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const handleCategoryChange = (value) => {
+    setSelectedCategory(value);
+  };
+
   const menuColumns = [
     {
       title: "Item Id",
@@ -179,16 +216,39 @@ const Menu = () => {
 
   return (
     <div className="menu-container">
-      <div className="create-menu-button">
-        <Button icon={<MdAddChart />}
-         onClick={() => setModalOpen(true)}
-        block>
-          Create Item
-        </Button>
-      </div>
+      <div className="menu-search">
+          <Input
+            placeholder="Search items..."
+            className="search-input-menu"
+            value={searchTerm}
+            onChange={handleSearch}
+            style={{ width: "300px" }}
+          />
+          <Select
+            placeholder="Filter by category"
+            className="select-input-category"
+            style={{ width: "200px" }}
+            value={selectedCategory}
+            onChange={handleCategoryChange}
+            allowClear
+          >
+            {categories.map((category) => (
+              <Option key={category} value={category}>
+                {category}
+              </Option>
+            ))}
+          </Select>
+          <div className="create-menu-button">
+            <Button icon={<MdAddChart />}
+            onClick={() => setModalOpen(true)}
+            block>
+              Create Item
+            </Button>
+          </div>
+      </div>  
       <Table
         columns={menuColumns}
-        dataSource={menu} // Provide your data source here
+        dataSource={filteredMenu} // Provide your data source here
         loading={loading}
         rowKey="itemId"
         scroll={{ x: "max-content" }}

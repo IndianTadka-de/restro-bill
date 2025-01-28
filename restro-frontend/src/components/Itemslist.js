@@ -1,17 +1,24 @@
 import React, { useEffect, useState } from "react";
-import { Input, List, Button, Row, Col } from "antd";
+import { Input, List, Button, Row, Col, Select } from "antd";
 import { PlusOutlined, CheckOutlined } from "@ant-design/icons";
 import "./Itemslist.css";
 import axiosInstance from "../utils/AxiosInstance";
 
+const { Option } = Select;
+
 const ItemList = ({ data, handleAddToPayload, handleRemoveFromPayload }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [menu, setMenu] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [categories, setCategories] = useState([]);
+
   // Fetch reservations data
   const fetchMenu = async () => {
     try {
       const response = await axiosInstance.get(`/menu`);
       setMenu(response.data);
+      const uniqueCategories = [...new Set(response.data.map((item) => item.category))];
+      setCategories(uniqueCategories);
     } catch (error) {
       console.error("Error fetching menu", error);
     }
@@ -25,18 +32,42 @@ const ItemList = ({ data, handleAddToPayload, handleRemoveFromPayload }) => {
     setSearchTerm(e.target.value.toLowerCase());
   };
 
-  const filteredItems = menu.filter((item) =>
-    item.itemName.toLowerCase().includes(searchTerm)
-  );
+  const handleCategoryChange = (value) => {
+    setSelectedCategory(value);
+  };
+
+  const filteredItems = menu.filter((item) => {
+    const matchesSearch = item.itemName.toLowerCase().includes(searchTerm);
+    const matchesCategory = selectedCategory ? item.category === selectedCategory : true;
+    return matchesSearch && matchesCategory;
+  });
 
   return (
     <div className="item-list-container">
-      {/* Search Bar */}
-      <Input
-        className="search-bar"
-        placeholder="Search by name"
-        onChange={handleSearch}
-      />
+      <div style={{ display: "flex", gap: "10px", marginBottom: "20px" }}>
+        {/* Search Bar */}
+        <Input
+          className="search-bar"
+          placeholder="Search by name"
+          onChange={handleSearch}
+          style={{ width: "300px" }}
+        />
+
+        {/* Category Dropdown */}
+        <Select
+          className="itemlist-category"
+          placeholder="Filter by category"
+          onChange={handleCategoryChange}
+          allowClear
+          style={{ width: "200px" }}
+        >
+          {categories.map((category) => (
+            <Option key={category} value={category}>
+              {category}
+            </Option>
+          ))}
+        </Select>
+      </div>
 
       {/* Item List */}
       <List

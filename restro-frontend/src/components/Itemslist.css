@@ -18,6 +18,10 @@
     background-color: #fff;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   }
+
+  .itemlist-category{
+    height: 41px;
+  }
   
   /* List item */
   .ant-list-item {
