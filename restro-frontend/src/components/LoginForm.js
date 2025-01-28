@@ -18,7 +18,6 @@ const LoginForm = ({ setModelOpen, setLogin }) => {
       
             // Decode JWT payload
             const payload = JSON.parse(atob(jwtToken.split('.')[1]));
-            console.log('Decoded JWT Payload:', payload);
       
             // Update login state
             setLogin(true);
@@ -49,18 +48,19 @@ const LoginForm = ({ setModelOpen, setLogin }) => {
           style={{ maxWidth: 360}}
           onFinish={onFinish}
         >
-          
-          <div class="center-container">
-            <h2 className="login-title">Welcome Back!</h2>
-            <hr class="line" />
-            <p class="center-text">Please log in to continue.</p>
-            <hr class="line" />
+          <h2 className="login-title">Welcome Back!</h2>
+          <div className="center-container">
+            
+            <hr className="line" />
+            <p className="center-text">Please log in to continue.</p>
+            <hr className="line" />
           </div>
           <Form.Item
             name="username"
             rules={[{ required: true, message: 'Please input your Username!' }]}
+            style={{color: '#888'}}
           >
-            <Input prefix={<UserOutlined />} placeholder="Username" />
+            <Input prefix={<UserOutlined />} className='login-input-username' placeholder="Username" />
           </Form.Item>
           <Form.Item
             name="password"

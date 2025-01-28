@@ -57,10 +57,11 @@ function App() {
     <div className="main-content">
       {isAuthenticated && <Sidebar className="sidebar" onLogout={handleLogout} />}
       <div className="heading">The Indian Tadka</div>
-      <div className="content">
+        <div className={isModelOpen ? '' : 'content'}>
         <Routes>
           <Route path="/" element={isAuthenticated ? (
             <OrderList />) : ( <Login isModelOpen={isModelOpen} setModelOpen={setModelOpen} setLogin={setAuthenticated} />)} />
+
           <Route path="/orderCreate" element={<ProtectedRoute isAuthenticated={isAuthenticated}>
                 <OrderCreate />
               </ProtectedRoute>} />
