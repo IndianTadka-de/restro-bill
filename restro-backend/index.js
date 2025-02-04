@@ -5,6 +5,7 @@ const cors = require('cors');
 const orderRoutes = require('./src/orderlist/orderlist'); // Import order routes
 const bookingRoutes = require('./src/booking/booking'); // Import booking routes
 const menuRoutes = require('./src/menu/menu');
+const categoryRoutes = require('./src/category/category');
 const authRoutes = require('./src/auth/auth').router; // Import admin authentication routes
 const { authMiddleware } = require('./src/auth/auth'); // Import middleware for protecting routes
 const swaggerJsdoc = require('swagger-jsdoc');
@@ -44,7 +45,7 @@ const swaggerOptions = {
             },
         ],
     },
-    apis: ['./src/orderlist/orderlist.js', './src/booking/booking.js','./src/menu/menu.js','./src/auth/auth.js'],
+    apis: ['./src/orderlist/orderlist.js', './src/booking/booking.js','./src/menu/menu.js','./src/auth/auth.js','./src/category/category.js'],
 };
 
 // Initialize Swagger JSDoc
@@ -72,6 +73,7 @@ app.use(cors
 app.use('/api', orderRoutes); // All routes in orderRoutes will be prefixed with /api
 app.use('/api', bookingRoutes); // All routes in bookingRoutes will be prefixed with /api
 app.use('/api', menuRoutes); // All routes in bookingRoutes will be prefixed with /api
+app.use('/api',categoryRoutes);
 app.use('/api/auth', authRoutes); // Admin authentication routes
 
 app.use('/api/secure', authMiddleware, (req, res) => {
