@@ -64,10 +64,23 @@ app.use(express.json()); // Middleware to parse JSON request bodies
 // app.use(cors()); // Middleware to enable CORS
 app.use(cors
     ({
-    origin: ['https://admindashboard.indiantadka.eu','http://localhost:3000','https://testing.indiantadka.eu','https://testing.indiantadka.eu/'], // Allow your production domain
-    methods: ['GET', 'POST', 'PUT','DELETE'],
+    origin: function (origin, callback) {
+        const allowedOrigins = [
+            'https://admindashboard.indiantadka.eu',
+            'http://localhost:3000',
+            'https://testing.indiantadka.eu'
+        ];
+        
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
-  }));
+    credentials: true  // Enable credentials if using cookies or authentication
+}));
 
 // Mount the routes for orders and bookings with the /api prefix
 app.use('/api', orderRoutes); // All routes in orderRoutes will be prefixed with /api
