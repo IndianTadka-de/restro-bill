@@ -74,9 +74,9 @@ function App() {
           <Route path="/booking" element={<ProtectedRoute isAuthenticated={isAuthenticated}>
                 <Bookings />
               </ProtectedRoute>} />
-          <Route path="/menu" element={<ProtectedRoute isAuthenticated={isAuthenticated}>
-                <Menu />
-              </ProtectedRoute>} />
+          <Route path="/menu" element={
+                <Menu />}
+               />
           <Route path="/report" element={ <ProtectedRoute isAuthenticated={isAuthenticated}>
                 <OrderReport />
               </ProtectedRoute>} />

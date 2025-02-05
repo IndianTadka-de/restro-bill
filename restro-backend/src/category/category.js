@@ -11,8 +11,6 @@ const { authMiddleware } = require("../auth/auth");
  *       - Category
  *     summary: Get all Categories
  *     description: Retrieves all categories from the system.
- *     security:
- *       - bearerAuth: [] 
  *     responses:
  *       200:
  *         description: A list of all categories
@@ -71,7 +69,7 @@ const { authMiddleware } = require("../auth/auth");
  */
 
 
-router.get("/category",authMiddleware ,async (req, res) => {
+router.get("/category",async (req, res) => {
     try {
       const category = await Category.find();
       if (category.length === 0) {

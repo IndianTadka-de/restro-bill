@@ -119,8 +119,6 @@ router.post("/menu", authMiddleware,async (req, res) => {
  *       - Menu
  *     summary: Get all Menu Item
  *     description: Retrieves all menu items from the system.
- *     security:
- *       - bearerAuth: [] 
  *     responses:
  *       200:
  *         description: A list of all menu item
@@ -143,7 +141,7 @@ router.post("/menu", authMiddleware,async (req, res) => {
  *         description: Error fetching orders
  */
 
-router.get("/menu",authMiddleware ,async (req, res) => {
+router.get("/menu",async (req, res) => {
   try {
     const menu = await Menu.find();
     if (menu.length === 0) {
