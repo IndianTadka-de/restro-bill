@@ -97,6 +97,7 @@ export default function OrderForm({
   };
 
   const handleSubmit = () => {
+  
     const payload = {
       tableNumber,
       orderDate,
@@ -188,26 +189,15 @@ export default function OrderForm({
   };
 
   const handleSwicthToggle = (payload, type) => {
-    const orderTypes = {
-      pickup: setPickupOrder,
-      online: setOnlineOrder,
-    };
+    setPickupOrder((prevPickup) => (type === "pickup" ? payload : false));
+  setOnlineOrder((prevOnline) => (type === "online" ? payload : false));
 
-    // Toggle the selected type state
-    orderTypes[type](payload);
-
-    // Toggle the other type based on the current selection
-    const otherType = type === "pickup" ? "online" : "pickup";
-    const otherState = type === "pickup" ? onlineOrder : pickupOrder;
-
-    if (otherState) {
-      const otherOrderTypes = {
-        pickup: setPickupOrder,
-        online: setOnlineOrder,
-      };
-
-      otherOrderTypes[otherType](!payload);
-    }
+  if (type === "pickup" && payload) {
+    setTableNumber(""); // Remove table number for pickup orders
+  }
+  if (type === "online" && payload) {
+    setTableNumber(""); // Remove table number for online orders
+  }
   };
   
 

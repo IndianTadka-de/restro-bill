@@ -49,6 +49,8 @@ const OrderReport = () => {
       search.push(`dateRange:${startDate} TO ${endDate}`);
     }
 
+    console.log("Filters applied:", search.join(" AND "));
+
     try {
       const response = await axiosInstance.post(
         `/orders-listing`,
@@ -158,6 +160,7 @@ const OrderReport = () => {
   };
 
   const handleOrderTypeChange = (type) => {
+    console.log("Order type selected:", type);
     toggleFilter("orderType", type); // Toggle the orderType filter
   };
 
@@ -210,7 +213,7 @@ const OrderReport = () => {
       title: "Order Type",
       dataIndex: "orderType",
       key: "orderType",
-      render: (_, record) => getOrderType(record.orderType),
+      render: (_, record) => getOrderType(record), // ✅ Pass the full record
     },
     {
       title: "Order Price ",

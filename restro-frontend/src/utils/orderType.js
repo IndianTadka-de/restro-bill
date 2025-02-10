@@ -1,10 +1,8 @@
 export const getOrderType = (record) => {
-    const orderTypes = {
-      pickup: "PICKUP",
-      online: "ONLINE ORDER",
-      dine_in: "DINE-IN"  // Default case
-    };
-  
-    // Return the corresponding value, or default to "DINE-IN"
-    return orderTypes[record] || "DINE-IN";
-  };
+  if (!record) return "-"; // ✅ Prevents errors if record is undefined
+
+  if (record.pickupOrder) return "PICKUP";
+  if (record.onlineOrder) return "ONLINE ORDER";
+
+  return "DINE-IN"; // Default if neither pickup nor online order
+};

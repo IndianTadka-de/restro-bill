@@ -15,7 +15,7 @@ const orderSchema = new mongoose.Schema({
     tableNumber: {
         type: Number,
         required: function() {
-            return !(this.pickupOrder === true || this.onlineOrder === true);
+            return !this.pickupOrder && !this.onlineOrder;
         },
     },
     orderDate: {
@@ -24,11 +24,11 @@ const orderSchema = new mongoose.Schema({
     },
     pickupOrder: {
         type: Boolean,
-        required: false,
+        required: true,
     },
     onlineOrder: {
         type: Boolean,
-        required: false,
+        required: true,
     },
     address: {
         place:{
