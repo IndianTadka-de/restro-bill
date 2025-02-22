@@ -68,7 +68,8 @@ app.use(cors
         const allowedOrigins = [
             'https://admindashboard.indiantadka.eu',
             'http://localhost:3000',
-            'https://testing.indiantadka.eu'
+            'https://testing.indiantadka.eu',
+            'https://theindiantadka.vercel.app',
         ];
         
         if (!origin || allowedOrigins.includes(origin)) {
