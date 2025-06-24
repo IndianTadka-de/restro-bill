@@ -3,7 +3,7 @@ import { Button } from "antd";
 import { useNavigate } from "react-router-dom";
 import { MdRestaurant } from "react-icons/md";
 import { FiCalendar } from "react-icons/fi";
-import { FaBars, FaTimes } from "react-icons/fa"; // Hamburger menu
+import { FaBars, FaTimes, FaUsers } from "react-icons/fa"; // Hamburger menu
 import "./Sidebar.css";
 import BookingForm from "./BookingForm";
 import Modal from "./Modal";
@@ -15,7 +15,7 @@ import { MdMenuBook } from "react-icons/md";
 import { TbReport } from "react-icons/tb";
 import { RiLogoutBoxLine } from "react-icons/ri";
 
-const Sidebar = ({onLogout}) => {
+const Sidebar = ({ onLogout }) => {
   const navigate = useNavigate();
   const [reservation, setReservation] = useState(false);
   const [sidebarVisible, setSidebarVisible] = useState(false);
@@ -54,7 +54,6 @@ const Sidebar = ({onLogout}) => {
     }
   };
 
-
   const handleHomeButton = () => {
     navigate("/");
     toggleSidebar();
@@ -66,20 +65,24 @@ const Sidebar = ({onLogout}) => {
   };
 
   const handleReservation = () => {
-    navigate("/booking"); 
+    navigate("/booking");
     toggleSidebar();
   };
 
   const handleMenu = () => {
-    navigate("/menu"); 
+    navigate("/menu");
     toggleSidebar();
   };
 
   const handleReport = () => {
-    navigate("/report"); 
+    navigate("/report");
     toggleSidebar();
   };
 
+  const handleOnlineReservations = () => {
+    navigate("/online-reservations");
+    toggleSidebar();
+  };
   return (
     <div>
       <div className="hamburger-icon" onClick={toggleSidebar}>
@@ -95,27 +98,61 @@ const Sidebar = ({onLogout}) => {
           />
         </div>
 
-        <Button className="sidebar-btn" icon={<FaHome />} onClick={() => handleHomeButton()}>
+        <Button
+          className="sidebar-btn"
+          icon={<FaHome />}
+          onClick={() => handleHomeButton()}
+        >
           <span className="sidebar-text">Home</span>
         </Button>
-        <Button className="sidebar-btn" icon={<MdRestaurant />} onClick={() => handleOrderButton()}>
+        <Button
+          className="sidebar-btn"
+          icon={<MdRestaurant />}
+          onClick={() => handleOrderButton()}
+        >
           <span className="sidebar-text">Order</span>
         </Button>
-        <Button className="sidebar-btn" icon={<FiCalendar />} onClick={() => handleReservation()}>
+        <Button
+          className="sidebar-btn"
+          icon={<FiCalendar />}
+          onClick={() => handleReservation()}
+        >
           <span className="sidebar-text">Reservation</span>
         </Button>
-        <Button className="sidebar-btn" icon={<MdMenuBook />} onClick={() => handleMenu()}>
+        <Button
+          className="sidebar-btn"
+          icon={<MdMenuBook />}
+          onClick={() => handleMenu()}
+        >
           <span className="sidebar-text">Menu</span>
         </Button>
-        <Button className="sidebar-btn" icon={<TbReport />} onClick={() => handleReport()}>
+        <Button
+          className="sidebar-btn"
+          icon={<FaUsers />}
+          onClick={handleOnlineReservations}
+        >
+          <span className="sidebar-text">Online Reservations</span>
+        </Button>
+        <Button
+          className="sidebar-btn"
+          icon={<TbReport />}
+          onClick={() => handleReport()}
+        >
           <span className="sidebar-text">Report</span>
         </Button>
-        <Button className="sidebar-btn logout-btn" icon={<RiLogoutBoxLine />} onClick={onLogout}>
+        <Button
+          className="sidebar-btn logout-btn"
+          icon={<RiLogoutBoxLine />}
+          onClick={onLogout}
+        >
           <span className="sidebar-text">Logout</span>
         </Button>
         {reservation && (
           <Modal onClose={() => setReservation(false)} size="small">
-            <BookingForm initialValues={initialValues} handleFormSubit={handleBookingSubmit} />
+            <BookingForm
+              initialValues={initialValues}
+              handleFormSubit={handleBookingSubmit}
+            />
           </Modal>
         )}
       </div>

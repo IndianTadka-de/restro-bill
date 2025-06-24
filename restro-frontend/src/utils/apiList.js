@@ -1,6 +1,6 @@
 
 export const base_url = process.env.REACT_APP_API_BASE_URL;
-
+export const client_url = process.env.REACT_APP_CLIENT_BASE_URL;
 
 export const orderList = 'orders';
 export const orderUpdate='';

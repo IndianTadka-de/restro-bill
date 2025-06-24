@@ -13,20 +13,19 @@ import OrderReport from "./pages/Report/OrderReport";
 import Login from "./pages/Login/Login";
 import { useEffect, useState } from "react";
 import ProtectedRoute from "./components/ProtectedRoute";
-
+import OnlineReservationList from "./pages/OnlineReservationList/OnlineReservationList";
 
 function App() {
-
-  const [isModelOpen,setModelOpen]= useState(false)
+  const [isModelOpen, setModelOpen] = useState(false);
   const [isAuthenticated, setAuthenticated] = useState(false);
   const navigate = useNavigate();
 
-  console.log("isAuthenticated",isAuthenticated)
+  console.log("isAuthenticated", isAuthenticated);
   const checkToken = () => {
-    const token = window.localStorage.getItem('access_token');
+    const token = window.localStorage.getItem("access_token");
     if (token) {
       try {
-        const payload = JSON.parse(atob(token.split('.')[1]));
+        const payload = JSON.parse(atob(token.split(".")[1]));
         const isExpired = payload.exp * 1000 < Date.now(); // Check expiration
         if (!isExpired) {
           setAuthenticated(true);
@@ -34,7 +33,7 @@ function App() {
           return;
         }
       } catch (error) {
-        console.error('Invalid token:', error);
+        console.error("Invalid token:", error);
       }
     }
     setAuthenticated(false); // Token is invalid or expired
@@ -48,38 +47,82 @@ function App() {
     navigate("/"); // Redirect to the login page
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     checkToken();
-    
-  },[])
+  }, []);
 
   return (
     <div className="main-content">
-      {isAuthenticated && <Sidebar className="sidebar" onLogout={handleLogout} />}
+      {isAuthenticated && (
+        <Sidebar className="sidebar" onLogout={handleLogout} />
+      )}
       <div className="heading">The Indian Tadka</div>
-        <div className={isModelOpen ? '' : 'content'}>
+      <div className={isModelOpen ? "" : "content"}>
         <Routes>
-          <Route path="/" element={isAuthenticated ? (
-            <OrderList />) : ( <Login isModelOpen={isModelOpen} setModelOpen={setModelOpen} setLogin={setAuthenticated} />)} />
+          <Route
+            path="/"
+            element={
+              isAuthenticated ? (
+                <OrderList />
+              ) : (
+                <Login
+                  isModelOpen={isModelOpen}
+                  setModelOpen={setModelOpen}
+                  setLogin={setAuthenticated}
+                />
+              )
+            }
+          />
 
-          <Route path="/orderCreate" element={<ProtectedRoute isAuthenticated={isAuthenticated}>
+          <Route
+            path="/orderCreate"
+            element={
+              <ProtectedRoute isAuthenticated={isAuthenticated}>
                 <OrderCreate />
-              </ProtectedRoute>} />
-          <Route path="/orderUpdate/:id" element={<ProtectedRoute isAuthenticated={isAuthenticated}>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/orderUpdate/:id"
+            element={
+              <ProtectedRoute isAuthenticated={isAuthenticated}>
                 <OrderUpdate />
-              </ProtectedRoute>} />
-          <Route path="/orderDetails/:id" element={<ProtectedRoute isAuthenticated={isAuthenticated}>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/orderDetails/:id"
+            element={
+              <ProtectedRoute isAuthenticated={isAuthenticated}>
                 <OrderDetails />
-              </ProtectedRoute>} />
-          <Route path="/booking" element={<ProtectedRoute isAuthenticated={isAuthenticated}>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/booking"
+            element={
+              <ProtectedRoute isAuthenticated={isAuthenticated}>
                 <Bookings />
-              </ProtectedRoute>} />
-          <Route path="/menu" element={
-                <Menu />}
-               />
-          <Route path="/report" element={ <ProtectedRoute isAuthenticated={isAuthenticated}>
+              </ProtectedRoute>
+            }
+          />
+          <Route path="/menu" element={<Menu />} />
+          <Route
+            path="/online-reservations"
+            element={
+              <ProtectedRoute isAuthenticated={isAuthenticated}>
+                <OnlineReservationList />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/report"
+            element={
+              <ProtectedRoute isAuthenticated={isAuthenticated}>
                 <OrderReport />
-              </ProtectedRoute>} />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </div>
       <ToastContainer

@@ -67,6 +67,7 @@ app.use(cors
     origin: function (origin, callback) {
         const allowedOrigins = [
             'https://admindashboard.indiantadka.eu',
+            'https://www.indiantadka.eu/',
             'http://localhost:3000',
             'https://testing.indiantadka.eu',
             'https://theindiantadka.vercel.app',
