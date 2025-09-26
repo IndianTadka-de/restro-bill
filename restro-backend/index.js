@@ -68,7 +68,7 @@ app.use(cors
         const allowedOrigins = [
             'https://admindashboard.indiantadka.eu',
             'https://www.indiantadka.eu/',
-            'https://test.pisavilla.com',
+            'https://admindashboard.pisavilla.de,
             'http://localhost:3000',
             'https://testing.indiantadka.eu',
             'https://theindiantadka.vercel.app',
